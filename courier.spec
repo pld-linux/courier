@@ -367,9 +367,8 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},%{_prefix}/lib} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/{userdb,hosteddomains,shared} \
-	$RPM_BUILD_ROOT%{_localstatedir}{/calendar/{private,public},/tmp/broken} \
+	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/{hosteddomains,userdb} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -566,6 +565,8 @@ run makealiases
 
 Enter user, who should receive mail for root, mailer-daemon and postmaster
 into /etc/courier/aliases/system
+
+Default maildir is in ~/Mail/Maildir
 
 EOF
 fi
@@ -820,9 +821,9 @@ fi
 %{_datadir}/rootcerts
 %attr(755,root,root) %dir %{_datadir}/courierwebadmin
 %dir %{_libdir}/filters
-%attr(755,root,root) %{_libdir}/filters/*
-%attr(755,root,root) %{_datadir}/perlfilter-*.pl
-%dir %{_localstatedir}
+%attr(755,daemon,daemon) %{_libdir}/filters/*
+%attr(755,daemon,daemon) %{_datadir}/perlfilter-*.pl
+%attr(755,bin,bin) %dir %{_localstatedir}
 %attr(770,daemon,daemon) %dir %{_localstatedir}/tmp
 %attr(750,daemon,daemon) %dir %{_localstatedir}/msgs
 %attr(750,daemon,daemon) %dir %{_localstatedir}/msgq
@@ -887,12 +888,12 @@ fi
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
 %{_libdir}/courier/modules/modules.ctl
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
-%attr(750,root,daemon) %{_libdir}/courier/courierd
-%attr(750,root,daemon) %{_libdir}/courier/aliasexp
-%attr(750,root,daemon) %{_libdir}/courier/aliascombine
-%attr(750,root,daemon) %{_libdir}/courier/aliascreate
-%attr(750,root,daemon) %{_libdir}/courier/submit
-%attr(755,root,root) %{_libdir}/courier/makedatprog
+%attr(750,daemon,daemon) %{_libdir}/courier/courierd
+%attr(750,daemon,daemon) %{_libdir}/courier/aliasexp
+%attr(750,daemon,daemon) %{_libdir}/courier/aliascombine
+%attr(750,daemon,daemon) %{_libdir}/courier/aliascreate
+%attr(750,daemon,daemon) %{_libdir}/courier/submit
+%attr(755,daemon,daemon) %{_libdir}/courier/makedatprog
 %attr(755,root,root) %{_sbindir}/authenumerate
 %attr(6555,daemon,daemon) %{_bindir}/cancelmsg
 %attr(755,root,root) %{_sbindir}/courier
@@ -905,7 +906,7 @@ fi
 %attr(755,root,root) %{_bindir}/dotforward
 %attr(755,root,root) %{_bindir}/lockmail
 %attr(755,root,root) %{_bindir}/mailbot
-%attr(2755,root,daemon) %{_bindir}/mailq
+%attr(2755,daemon,daemon) %{_bindir}/mailq
 %attr(750,root,daemon) %{_datadir}/makealiases
 %attr(750,root,daemon) %{_sbindir}/makealiases
 %attr(755,root,root) %{_datadir}/makedat
@@ -945,7 +946,8 @@ fi
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
-%attr(750,daemon,daemon) %dir %{_sysconfdir}/shared
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
 %attr(755,root,root) /usr/lib/sendmail
 
@@ -1043,10 +1045,10 @@ fi
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
-%attr(751,bin,bin) %dir %{_localstatedir}/calendar
-%attr(700,bin,bin) %dir %{_localstatedir}/calendar/localcache
-%attr(750,bin,bin) %dir %{_localstatedir}/calendar/private
-%attr(755,bin,bin) %dir %{_localstatedir}/calendar/public
+%attr(755,bin,daemon) %dir %{_localstatedir}/calendar
+%attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
+%attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
+%attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
 
 %files maildrop
 %defattr(644,root,root,755)
