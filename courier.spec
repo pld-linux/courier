@@ -61,7 +61,6 @@ Obsoletes:	ssmtp
 Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		apachedir	/home/services/httpd
 %define		_datadir	%{_prefix}/share/courier
 %define		_mandir		/usr/share/man
 %define		_libdir		%{_prefix}/%{_lib}/courier
@@ -71,12 +70,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_certsdir	%{_sysconfdir}/certs
 %define		initdir		/etc/rc.d/init.d
 
-# Change the following if your DocumentRoot and cgibindir differ.  This is
-# the default redhat build:
-
-%define		_cgibindir		%{apachedir}/cgi-bin
-%define		_imagedir		%{_datadir}/sqwebmail/images
-%define		_imageurl		/webmail
+%define		_httpdir	/home/services/httpd
+%define		_cgibindir	%{_httpdir}/cgi-bin
+%define		_imagedir	%{_datadir}/sqwebmail/images
+%define		_imageurl	/webmail
+%define		_apache1dir	/etc/apache
+%define		_apache2dir	/etc/httpd
 
 %description
 Courier is a fully functional mail server, that can completely take
@@ -376,9 +375,6 @@ mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
 
-# And here's why we delete all images from filelist.webmail:
-#mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
-
 # install a cron job to clean out webmail's cache
 install webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
 
@@ -472,8 +468,8 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
 # for apache
-echo "Alias /webmail %{_imagedir}" >%{name}.conf
-install %{name}.conf $RPM_BUILD_ROOT/etc/httpd
+echo "Alias /webmail %{_imagedir}" >apache-%{name}.conf
+install apache-%{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache-%{name}.conf
 
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
@@ -604,16 +600,20 @@ else
 	echo Type "%{_sbindir}/webmaild start" to start webmail server
 	echo
 fi
-if [ -f /etc/apache/apache.conf ] && ! grep -q "^Include.*%{name}.conf" /etc/apache/apache.conf; then
-    echo "Include /etc/httpd/%{name}.conf" >> /etc/apache/apache.conf
-    if [ -f /var/lock/subsys/apache ]; then
-        /etc/rc.d/init.d/apache restart 1>&2
-    fi
-elif [ -d /etc/httpd/httpd.conf ]; then
-    ln -sf /etc/httpd/%{name}.conf /etc/httpd/httpd.conf/99_%{name}.conf
-    if [ -f /var/lock/subsys/httpd ]; then
-        /usr/sbin/apachectl restart 1>&2
-    fi
+
+# apache1
+if [ -d %{_apache1dir}/conf.d ]; then
+	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache1dir}/conf.d/99_%{name}.conf
+	if [ -f /var/lock/subsys/apache ]; then
+    		/etc/rc.d/init.d/apache restart 1>&2
+	fi
+fi
+# apache2
+if [ -d %{_apache2dir}/httpd.conf ]; then
+	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
+	if [ -f /var/lock/subsys/httpd ]; then
+    		/etc/rc.d/init.d/httpd restart 1>&2
+	fi
 fi
 
 %preun webmail
@@ -621,18 +621,20 @@ if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 		%{_sbindir}/webmaild stop
 	fi
-fi
-if [ -d /etc/httpd/httpd.conf ]; then
-    rm -f /etc/httpd/httpd.conf/99_%{name}.conf
-    if [ -f /var/lock/subsys/httpd ]; then
-	/usr/sbin/apachectl restart 1>&2
-    fi
-elif [ -f /etc/apache/apache.conf ]; then
-    grep -v "^Include.*%{name}.conf" /etc/apache/apache.conf > /etc/apache/apache.conf.tmp
-    mv -f /etc/apache/apache.conf.tmp /etc/apache/apache.conf
-    if [ -f /var/lock/subsys/apache ]; then
-        /etc/rc.d/init.d/apache restart 1>&2
-    fi
+	# apache1
+	if [ -d %{_apache1dir}/conf.d ]; then
+    		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
+        	if [ -f /var/lock/subsys/apache ]; then
+                        /etc/rc.d/init.d/apache restart 1>&2
+                fi
+        fi
+        # apache2
+	if [ -d %{_apache2dir}/httpd.conf ]; then
+                rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
+                if [ -f /var/lock/subsys/httpd ]; then
+                        /etc/rc.d/init.d/httpd restart 1>&2
+	        fi
+        fi
 fi
 
 %files
@@ -907,7 +909,7 @@ fi
 %attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/%{name}.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/apache-%{name}.conf
 
 %files maildrop
 %defattr(644,root,root,755)
