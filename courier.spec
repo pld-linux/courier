@@ -39,7 +39,7 @@ Requires(post):	openssl-tools >= 0.9.7c
 Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		apachedir	/srv/httpd
+%define		apachedir	/home/services/httpd
 %define		_prefix		/usr/lib/courier
 %define		_mandir		/usr/share/man
 %define		_localstatedir	/var/spool/courier
@@ -452,9 +452,6 @@ install -d $RPM_BUILD_ROOT/usr/lib
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
-# default maildir folder in /etc/skel
-install -d $RPM_BUILD_ROOT/etc/skel/Mail/Maildir/{new,cur,tmp}
-
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
@@ -524,6 +521,16 @@ EOF
 %preun pop3d
 if [ "$1" = "0" ]; then
 	%{_sbindir}/pop3d stop
+fi
+
+%post webmail
+if ps -A |grep -q authdaemond; then
+    %{_prefix}/lib/courier/sqwebmaild start
+fi
+
+%preun webmail
+if ps -A |grep -q sqwebmaild; then
+    %{_prefix}/lib/courier/sqwebmaild stop
 fi
 
 %post smtpauth
@@ -802,13 +809,6 @@ fi
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
 /usr/lib/sendmail
 /usr/sbin/sendmail
-
-# default folder - Maildir/                                                     
-%attr(700,root,root) %dir /etc/skel/Mail
-%attr(700,root,root) %dir /etc/skel/Mail/Maildir
-%attr(700,root,root) %dir /etc/skel/Mail/Maildir/cur
-%attr(700,root,root) %dir /etc/skel/Mail/Maildir/new
-%attr(700,root,root) %dir /etc/skel/Mail/Maildir/tmp
 
 %files pop3d
 %defattr(644,root,root,755)
