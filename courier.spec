@@ -352,8 +352,8 @@ rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},%{_prefix}/lib} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/{userdb,hosteddomains,shared} \
-	$RPM_BUILD_ROOT%{_localstatedir}{/calendar/{private,public},/tmp/broken}} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/{userdb,hosteddomains,shared} \
+	$RPM_BUILD_ROOT%{_localstatedir}{/calendar/{private,public},/tmp/broken} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
 
 %{__make} install \
@@ -1002,10 +1002,10 @@ fi
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
-%attr(751,daemon,daemon) %dir %{_localstatedir}/calendar
-%attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/localcache
-%attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/private
-%attr(755,daemon,daemon) %dir %{_localstatedir}/calendar/public
+%attr(751,bin,bin) %dir %{_localstatedir}/calendar
+%attr(700,bin,bin) %dir %{_localstatedir}/calendar/localcache
+%attr(750,bin,bin) %dir %{_localstatedir}/calendar/private
+%attr(755,bin,bin) %dir %{_localstatedir}/calendar/public
 
 %files maildrop
 %defattr(644,root,root,755)
