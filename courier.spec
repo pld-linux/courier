@@ -1,10 +1,8 @@
-%bcond_without	tests	# don't perform "make check"
-
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -231,7 +229,7 @@ rm -f missing
 	--with-db=db
 
 %{__make}
-%{?with_tests:%{__make} check}
+%{__make} check
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -720,8 +718,9 @@ fi
 %dir %{_datadir}/sqwebmail/html
 %dir %{_datadir}/sqwebmail/html/en-us
 %{_datadir}/sqwebmail/html/en
-%config %{_datadir}/sqwebmail/html/en-us/[CIL]*
-%{_datadir}/sqwebmail/html/en-us/*
+%config %{_datadir}/sqwebmail/html/en-us/[CILT]*
+%{_datadir}/sqwebmail/html/en-us/*.html
+%{_datadir}/sqwebmail/html/en-us/*.txt
 %attr(755,root,root) %{_datadir}/sqwebmail/cleancache.pl
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
