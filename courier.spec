@@ -20,11 +20,11 @@ Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
+Patch6:		%{name}-db.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel
-BuildRequires:	db-static
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
@@ -258,6 +258,7 @@ potrzebny do filtrowania przychodz±cej poczty.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 # we don't want fax module
@@ -279,21 +280,18 @@ cd ..
 cd courier
 %{__aclocal}
 %{__autoconf}
-ln -s ../ltmain.sh .
-%{__automake}
+automake -a -c --foreign
 
 cd module.esmtp
 %{__aclocal}
 %{__autoconf}
-ln -s ../ltmain.sh .
-%{__automake}
+automake -a -c --foreign
 cd ../..
 
 cd imap
 %{__aclocal}
 %{__autoconf}
-ln -s ../ltmain.sh .
-%{__automake}
+automake -a -c --foreign
 cd ..
 
 cd webadmin
@@ -305,8 +303,13 @@ cd ..
 cd maildir
 %{__aclocal}
 %{__autoconf}
-ln -s ../ltmain.sh .
-%{__automake}
+automake -a -c --foreign
+cd ..
+
+cd maildrop
+%{__aclocal}
+%{__autoconf}
+automake -a -c --foreign
 cd ..
 
 %configure \
