@@ -1,16 +1,19 @@
 #
+# TODO:
+#	- tests
+#
 # Conditional build:
 %bcond_without	fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.47
-Release:	5
+Version:	0.49.0
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	639bb3b236914e3b86f287ce3f55264e
+# Source0-md5:	2c0f3d3d2eab405aaf633d9e17363bae
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -20,27 +23,28 @@ Patch5:		%{name}-certs.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	courier-authlib-devel
 BuildRequires:	db-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
-BuildRequires:	mysql-devel
-BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
-BuildRequires:	postgresql-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
-BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
+# only for light upgrade from old version < 0.47
+# remove it after some time
+Requires(post):	courier-authlib-userdb
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
+Obsoletes:	courier-smtpauth
 Obsoletes:	exim
 Obsoletes:	masqmail
 Obsoletes:	nullmailer
@@ -56,7 +60,6 @@ Obsoletes:	ssmtp
 Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		apachedir	/home/services/httpd
 %define		_datadir	%{_prefix}/share/courier
 %define		_mandir		/usr/share/man
 %define		_libdir		%{_prefix}/%{_lib}/courier
@@ -66,12 +69,12 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_certsdir	%{_sysconfdir}/certs
 %define		initdir		/etc/rc.d/init.d
 
-# Change the following if your DocumentRoot and cgibindir differ.  This is
-# the default redhat build:
-
-%define		_cgibindir		%{apachedir}/cgi-bin
-%define		_documentrootdir	%{apachedir}/html
-%define		_imageurl		/webmail/
+%define		_httpdir	/home/services/httpd
+%define		_cgibindir	%{_httpdir}/cgi-bin
+%define		_imagedir	%{_datadir}/sqwebmail/images
+%define		_imageurl	/webmail
+%define		_apache1dir	/etc/apache
+%define		_apache2dir	/etc/httpd
 
 %description
 Courier is a fully functional mail server, that can completely take
@@ -172,7 +175,6 @@ Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{_cgibindir}
-Requires:	%{_documentrootdir}
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
@@ -248,57 +250,6 @@ incoming mail.
 Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
 potrzebny do filtrowania przychodz±cej poczty.
 
-%package smtpauth
-Summary:	Courier mail server authenticated ESMTP module
-Summary(pl):	Modu³ uwierzytelniania ESMTP (SMTP AUTH) do Couriera
-Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
-
-%description smtpauth
-Authenticated ESMTP allows remote users to authenticate themselves and
-be able to relay outbound mail through the Courier mail server.
-
-%description smtpauth -l pl
-SMTP AUTH pozwala zdalnym u¿ytkownikom na uwierzytelnianie i
-umo¿liwienie przekazania wychodz±cej poczty poprzez serwer poczty
-Courier.
-
-%package authldap
-Summary:	LDAP authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji LDAP do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authldap
-This package provides LDAP authentication for Courier.
-
-%description authldap -l pl
-Ten pakiet pozwala na korzystanie z autentykacji LDAP w Courierze.
-
-%package authmysql
-Summary:	MySQL authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji MySQL do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authmysql
-This package provides MySQL authentication for Courier.
-
-%description authmysql -l pl
-Ten pakiet pozwala na korzystanie z autentykacji MySQL w Courierze.
-
-%package authpgsql
-Summary:	PostgreSQL authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji PostgreSQL do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authpgsql
-This package provides PostgreSQL authentication for Courier.
-
-%description authpgsql -l pl
-Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
-
 %prep
 %setup -q
 %patch0 -p1
@@ -315,12 +266,6 @@ cp -f /usr/share/automake/config.sub webmail
 
 cd rootcerts
 %{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
-
-cd authlib
 %{__aclocal}
 %{__autoconf}
 %{__automake}
@@ -347,6 +292,20 @@ cd ../..
 cd imap
 %{__aclocal}
 %{__autoconf}
+ln -s ../ltmain.sh .
+%{__automake}
+cd ..
+
+cd webadmin
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+cd ..
+
+cd maildir
+%{__aclocal}
+%{__autoconf}
+ln -s ../ltmain.sh .
 %{__automake}
 cd ..
 
@@ -354,10 +313,15 @@ cd ..
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
+	--enable-imagedir=%{_imagedir} \
 	--enable-imageurl=%{_imageurl} \
 	--with-certsdir=%{_certsdir} \
 	--with-db=db \
-	--with-mailer=%{_sbindir}/sendmail
+	--with-mailer=%{_sbindir}/sendmail \
+	--with-mailuser=daemon \
+	--with-mailgroup=daemon \
+	--with-mailuid=2 \
+	--with-mailgid=2
 
 %{__make}
 %{__make} check
@@ -366,8 +330,7 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},/usr/lib} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/{hosteddomains,userdb} \
+	$RPM_BUILD_ROOT{%{_cgibindir},/usr/lib,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -388,44 +351,19 @@ done
 # delete dead links
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1 \
 $RPM_BUILD_ROOT%{_mandir}/man1/rmail.1 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authcram.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authldap.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authpam.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7 \
 $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8 \
-$RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8 \
-$RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 
 # make man links
 echo '.so dot-forward.1' > $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1
 echo '.so sendmail.1' > $RPM_BUILD_ROOT%{_mandir}/man1/rmail.1
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authcram.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authldap.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpgsql.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpam.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7
 echo '.so esmtpd.8' > $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8
 echo '.so courierfilter.8' > $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8
 echo '.so makesmtpaccess.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8
 echo '.so courieruucp.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8
-echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8
-echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8
 echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 
 %{__make} install-perms
@@ -435,9 +373,6 @@ mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
 mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
-
-# And here's why we delete all images from filelist.webmail:
-mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
 # install a cron job to clean out webmail's cache
 install webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
@@ -531,6 +466,10 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
+# for apache
+echo "Alias /webmail %{_imagedir}" >apache-%{name}.conf
+install apache-%{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache-%{name}.conf
+
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
 rm -rf $RPM_BUILD_ROOT%{_datadir}/faxmail
@@ -570,7 +509,7 @@ if [ -e /var/lock/subsys/courier ]; then
 	%{initdir}/courier restart
 else
 	echo
-	echo Type "%{initdir}/courier start" to start courier
+	echo 'Type "%{initdir}/courier start" to start courier'
 	echo
 fi
 
@@ -588,7 +527,7 @@ if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
 	%{_sbindir}/imapd start
 else
 	echo
-	echo Type "%{_sbindir}/imapd start" to start imapd server
+	echo 'Type "%{_sbindir}/imapd start" to start imapd server'
 	echo
 fi
 if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
@@ -616,7 +555,7 @@ if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
 	%{_sbindir}/pop3d start
 else
 	echo
-	echo Type "%{_sbindir}/pop3d start" to start pop3d server
+	echo 'Type "%{_sbindir}/pop3d start" to start pop3d server'
 	echo
 fi
 if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
@@ -624,7 +563,7 @@ if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
 	%{_sbindir}/pop3d-ssl start
 else
 	echo
-	echo Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server
+	echo 'Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server'
 	echo
 fi
 
@@ -657,8 +596,23 @@ if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 	%{_sbindir}/webmaild start
 else
 	echo
-	echo Type "%{_sbindir}/webmaild start" to start webmail server
+	echo 'Type "%{_sbindir}/webmaild start" to start webmail server'
 	echo
+fi
+
+# apache1
+if [ -d %{_apache1dir}/conf.d ]; then
+	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache1dir}/conf.d/99_%{name}.conf
+	if [ -f /var/lock/subsys/apache ]; then
+    		/etc/rc.d/init.d/apache restart 1>&2
+	fi
+fi
+# apache2
+if [ -d %{_apache2dir}/httpd.conf ]; then
+	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
+	if [ -f /var/lock/subsys/httpd ]; then
+    		/etc/rc.d/init.d/httpd restart 1>&2
+	fi
 fi
 
 %preun webmail
@@ -666,77 +620,20 @@ if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 		%{_sbindir}/webmaild stop
 	fi
-fi
-
-%post smtpauth
-if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-	%{_sbindir}/esmtpd stop
-	%{_sbindir}/esmtpd start
-fi
-if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-	%{_sbindir}/esmtpd-ssl stop
-	%{_sbindir}/esmtpd-ssl start
-fi
-
-if [ "$1" = "1" ]; then
-	echo
-	echo To enable smtpauth look for ESMTPAUTH option
-	echo in esmtpd config files
-	echo
-fi
-
-%postun smtpauth
-if [ "$1" = "0" ]; then
-	if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-		%{_sbindir}/esmtpd stop
-		%{_sbindir}/esmtpd start
-	fi
-	if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-		%{_sbindir}/esmtpd-ssl stop
-		%{_sbindir}/esmtpd-ssl start
-	fi
-fi
-
-%post authldap
-if ps -A |grep -q authdaemond.lda; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authldap
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.lda; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
-	fi
-fi
-
-%post authmysql
-if ps -A |grep -q authdaemond.mys; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authmysql
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.mys; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
-	fi
-fi
-
-%post authpgsql
-if ps -A |grep -q authdaemond.pgs; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authpgsql
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.pgs; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
-	fi
+	# apache1
+	if [ -d %{_apache1dir}/conf.d ]; then
+    		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
+        	if [ -f /var/lock/subsys/apache ]; then
+                        /etc/rc.d/init.d/apache restart 1>&2
+                fi
+        fi
+        # apache2
+	if [ -d %{_apache2dir}/httpd.conf ]; then
+                rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
+                if [ -f /var/lock/subsys/httpd ]; then
+                        /etc/rc.d/init.d/httpd restart 1>&2
+	        fi
+        fi
 fi
 
 %files
@@ -756,22 +653,12 @@ fi
 %{_mandir}/man1/testmxlookup.1*
 %{_mandir}/man1/dot-forward.1*
 %{_mandir}/man1/couriertls.1*
-%{_mandir}/man1/courierlogger.1*
 %{_mandir}/man1/mailq*
 %{_mandir}/man1/couriertcpd*
 %{_mandir}/man1/dotforward.1*
 %{_mandir}/man1/rmail.1*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
-%{_mandir}/man7/authlib.7*
-%{_mandir}/man7/authcram.7*
-%{_mandir}/man7/authdaemon.7*
-%{_mandir}/man7/authdaemond.7*
-%{_mandir}/man7/authpam.7*
-%{_mandir}/man7/authpwd.7*
-%{_mandir}/man7/authshadow.7*
-%{_mandir}/man7/authuserdb.7*
-%{_mandir}/man7/authvchkpw.7*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
@@ -785,17 +672,12 @@ fi
 %{_mandir}/man8/makealiases.8*
 %{_mandir}/man8/makepercentrelay.8*
 %{_mandir}/man8/makesmtpaccess.8*
-%{_mandir}/man8/makeuserdb.8*
 %{_mandir}/man8/submit.8*
-%{_mandir}/man8/userdb.8*
-%{_mandir}/man8/userdbpw.8*
 %{_mandir}/man8/courieruucp.8*
 %{_mandir}/man8/esmtpd-msa.8*
 %{_mandir}/man8/filterctl.8*
 %{_mandir}/man8/makesmtpaccess-msa.8*
 %{_mandir}/man8/makeuucpneighbors.8*
-%{_mandir}/man8/pw2userdb.8*
-%{_mandir}/man8/vchkpw2userdb.8*
 %attr(755,daemon,daemon) %dir %{_sysconfdir}
 %attr(750,daemon,daemon) %dir %{_certsdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
@@ -817,6 +699,7 @@ fi
 %dir %{_datadir}
 %{_datadir}/rootcerts
 %attr(755,root,root) %dir %{_datadir}/courierwebadmin
+%{_datadir}/courierwebadmin/admin-15*
 %dir %{_libdir}/filters
 %attr(755,daemon,daemon) %{_libdir}/filters/*
 %attr(755,daemon,daemon) %{_datadir}/perlfilter-*.pl
@@ -884,7 +767,6 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/rfcerr*.txt
 %dir %{_libdir}/courier/modules/dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
-%{_libdir}/courier/modules/modules.ctl
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
 %attr(750,daemon,daemon) %{_libdir}/courier/courierd
 %attr(750,daemon,daemon) %{_libdir}/courier/aliasexp
@@ -892,13 +774,11 @@ fi
 %attr(750,daemon,daemon) %{_libdir}/courier/aliascreate
 %attr(750,daemon,daemon) %{_libdir}/courier/submit
 %attr(755,daemon,daemon) %{_libdir}/courier/makedatprog
-%attr(755,root,root) %{_sbindir}/authenumerate
 %attr(6555,daemon,daemon) %{_bindir}/cancelmsg
 %attr(755,root,root) %{_sbindir}/courier
 %attr(755,root,root) %{_datadir}/courierctl.start
 %attr(755,root,root) %{_bindir}/couriertls
 %attr(755,root,root) %{_sbindir}/couriertcpd
-%attr(755,root,root) %{_sbindir}/courierlogger
 %attr(755,root,root) %{_bindir}/courier-config
 %attr(755,root,root) %{_bindir}/deliverquota
 %attr(755,root,root) %{_bindir}/dotforward
@@ -912,41 +792,21 @@ fi
 %attr(755,root,root) %{_datadir}/makehosteddomains
 %attr(755,root,root) %{_sbindir}/makehosteddomains
 %attr(755,root,root) %{_bindir}/makemime
-%attr(755,root,root) %{_datadir}/makeuserdb
-%attr(755,root,root) %{_sbindir}/makeuserdb
 %attr(755,root,root) %{_bindir}/mimegpg
-%attr(755,root,root) %{_datadir}/pw2userdb
-%attr(755,root,root) %{_sbindir}/pw2userdb
 %attr(4755,root,root) %{_bindir}/rmail
 %attr(755,root,root) %{_sbindir}/showconfig
 %attr(750,root,daemon) %{_sbindir}/showmodules
 %attr(4755,root,root) %{_sbindir}/sendmail
 %attr(755,root,root) %{_bindir}/testmxlookup
-%attr(755,root,root) %{_datadir}/userdb
-%attr(755,root,root) %{_sbindir}/userdb
-%attr(755,root,root) %{_sbindir}/userdbpw
-%attr(755,root,root) %{_datadir}/vchkpw2userdb
-%attr(755,root,root) %{_sbindir}/vchkpw2userdb
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authdaemonrc
-%dir %{_libdir}/authlib
-%attr(755,root,root) %{_libdir}/authlib/authdaemon
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
-%attr(755,root,root) %{_libdir}/authlib/authdaemond
-%attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
-%attr(755,root,root) %dir %{_libdir}/authlib/changepwd
-%attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
-%attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
-%attr(755,root,root) %{_datadir}/authsystem.passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
-%attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
+%attr(755,daemon,daemon) %dir %{_localstatedir}/track
 %attr(755,root,root) /usr/lib/sendmail
 
 %files pop3d
@@ -1018,16 +878,16 @@ fi
 %files webmail
 %defattr(644,root,root,755)
 %doc htmldoc/pcp* gpglib/README.html
-%attr(4755,root,root) %{_cgibindir}/webmail
+%attr(755,root,root) %{_cgibindir}/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
-%{_documentrootdir}/webmail
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sqwebmaild
 %attr(755,root,root) %{_sbindir}/webmaild
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
 %dir %{_datadir}/sqwebmail/html/en-us
 %{_datadir}/sqwebmail/html/en
+%{_datadir}/sqwebmail/images
 %config %{_datadir}/sqwebmail/html/en-us/[CILT]*
 %{_datadir}/sqwebmail/html/en-us/*.html
 %{_datadir}/sqwebmail/html/en-us/*.txt
@@ -1040,6 +900,7 @@ fi
 %attr(755,root,root) %{_sbindir}/webgpg
 %attr(755,root,root) %{_libdir}/courier/pcpd
 %attr(755,root,root) %{_libdir}/courier/sqwebmaild
+%attr(755,root,root) %{_libdir}/courier/sqwebpasswd
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
@@ -1047,6 +908,7 @@ fi
 %attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/apache-%{name}.conf
 
 %files maildrop
 %defattr(644,root,root,755)
@@ -1077,37 +939,3 @@ fi
 %{_mandir}/man1/couriermlm.1*
 %attr(755,root,root) %{_bindir}/couriermlm
 %{_datadir}/couriermlm
-
-%files smtpauth
-%defattr(644,root,root,755)
-%attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
-%attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
-
-%files authldap
-%defattr(644,root,root,755)
-%doc authlib/README.ldap
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
-%{_mandir}/man7/authldap.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldap.pl
-%{_datadir}/courierwebadmin/admin-15ldap.html
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldapa.pl
-%{_datadir}/courierwebadmin/admin-15ldapa.html
-
-%files authmysql
-%defattr(644,root,root,755)
-%doc authlib/README.authmysql.html authlib/README.authmysql.myownquery
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
-%{_mandir}/man7/authmysql.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15mysql.pl
-%{_datadir}/courierwebadmin/admin-15mysql.html
-
-%files authpgsql
-%defattr(644,root,root,755)
-%doc authlib/README.authpostgres.html
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
-%{_mandir}/man7/authpgsql.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15pgsql.pl
-%{_datadir}/courierwebadmin/admin-15pgsql.html

@@ -1,6 +1,6 @@
 diff -Nur old/configure.in new/configure.in
---- old/configure.in	2004-05-16 02:40:19.000000000 +0000
-+++ new/configure.in	2004-05-25 07:37:13.000000000 +0000
+--- old/configure.in	2005-03-01 03:16:43.000000000 +0000
++++ new/configure.in	2005-03-04 19:53:15.000000000 +0000
 @@ -58,6 +58,11 @@
  eval "localstatedir=$localstatedir"
  eval "datadir=$datadir"
@@ -10,13 +10,13 @@ diff -Nur old/configure.in new/configure.in
 +
 +AC_SUBST(certsdir)
 +
- AC_ARG_WITH(userdb, [
- -- see INSTALL, or courier/doc/install.html for configuration options -- ], ,
- 	ac_configure_args="$ac_configure_args --with-userdb=${sysconfdir}/userdb")
+ AC_ARG_WITH(makedatprog, [], ,
+ 	ac_configure_args="$ac_configure_args --with-makedatprog=${libexecdir}/courier/makedatprog")
+ 
 diff -Nur old/courier/configure.in new/courier/configure.in
---- old/courier/configure.in	2004-05-02 14:59:42.000000000 +0000
-+++ new/courier/configure.in	2004-05-25 07:38:14.000000000 +0000
-@@ -575,6 +575,12 @@
+--- old/courier/configure.in	2005-03-01 03:16:43.000000000 +0000
++++ new/courier/configure.in	2005-03-04 19:46:17.000000000 +0000
+@@ -462,6 +462,12 @@
  
  eval "exec_prefix=$exec_prefix"
  eval "bindir=$bindir"
@@ -30,20 +30,20 @@ diff -Nur old/courier/configure.in new/courier/configure.in
  MAILDROP="$bindir/maildrop"
  AC_SUBST(MAILDROP)
 diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
---- old/courier/imapd-ssl.rc.in	2004-05-24 21:25:19.000000000 +0000
-+++ new/courier/imapd-ssl.rc.in	2004-05-24 21:32:29.000000000 +0000
+--- old/courier/imapd-ssl.rc.in	2005-02-16 23:42:13.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2005-03-04 19:47:54.000000000 +0000
 @@ -28,6 +28,11 @@
  
  case $1 in
  start)
-+	# If we do not have a certificate, make one up.
-+	if [ ! -f @certsdir@/imapd.pem ]; then
-+	@sbindir@/mkimapdcert
-+	fi
++        # If we do not have a certificate, make one up.
++        if [ ! -f @certsdir@/imapd.pem ]; then
++        @sbindir@/mkimapdcert
++        fi
 +
- 	LIBAUTHMODULES=""
- 	for f in `echo $AUTHMODULES`
- 	do
+ 	umask $IMAP_UMASK
+ 	@ULIMIT@ $IMAP_ULIMITD
+ 	@SETENV@ -i @SHELL@ -c " set -a ;
 diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configure.in
 --- old/courier/module.esmtp/configure.in	2004-05-11 00:16:05.000000000 +0000
 +++ new/courier/module.esmtp/configure.in	2004-05-25 07:46:38.000000000 +0000
@@ -149,20 +149,20 @@ diff -Nur old/courier/module.esmtp/mkesmtpdcert.in new/courier/module.esmtp/mkes
 +@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/esmtpd.pem || cleanup
 +rm -f @certsdir@/esmtpd.rand
 diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
---- old/courier/pop3d-ssl.in	2004-05-24 21:25:31.000000000 +0000
-+++ new/courier/pop3d-ssl.in	2004-05-24 21:33:05.000000000 +0000
+--- old/courier/pop3d-ssl.in	2005-02-16 23:42:13.000000000 +0000
++++ new/courier/pop3d-ssl.in	2005-03-04 19:48:23.000000000 +0000
 @@ -29,6 +29,11 @@
  
  case $1 in
  start)
-+	# If we do not have a certificate, make one up.
-+	if [ ! -f @certsdir@/pop3d.pem ]; then
-+	@sbindir@/mkpop3dcert
-+	fi
++        # If we do not have a certificate, make one up.
++        if [ ! -f @certsdir@/pop3d.pem ]; then
++        @sbindir@/mkpop3dcert
++        fi
 +
- 	LIBAUTHMODULES=""
- 	for f in `echo $AUTHMODULES`
- 	do
+ 	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
+ 		@SHELL@ -c " set -a ; \
+ 		prefix=@prefix@ ; \
 diff -Nur old/courier.sysvinit.in new/courier.sysvinit.in
 --- old/courier.sysvinit.in	2004-05-02 14:24:06.000000000 +0000
 +++ new/courier.sysvinit.in	2004-05-24 20:56:37.000000000 +0000
