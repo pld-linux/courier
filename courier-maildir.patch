@@ -1,6 +1,6 @@
 diff -Nur old/courier/courierd.dist.in new/courier/courierd.dist.in
 --- old/courier/courierd.dist.in	2002-03-15 19:17:18.000000000 +0000
-+++ new/courier/courierd.dist.in	2004-02-17 12:47:18.000000000 +0000
++++ new/courier/courierd.dist.in	2004-02-20 12:25:45.000000000 +0000
 @@ -76,7 +76,7 @@
  #  Yes, it's two lines long, with an embedded newline.  Of course, you can use
  #  any default local mail delivery instruction in place of ./Maildir.
@@ -21,7 +21,7 @@ diff -Nur old/courier/courierd.dist.in new/courier/courierd.dist.in
  #
 diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
 --- old/courier/imapd.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd.rc.in	2004-02-17 12:47:34.000000000 +0000
++++ new/courier/imapd.rc.in	2004-02-20 12:25:45.000000000 +0000
 @@ -49,7 +49,7 @@
  			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
  			-pid=$PIDFILE $TCPDOPTS \
@@ -33,7 +33,7 @@ diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
  	@sbindir@/couriertcpd -pid=$PIDFILE -stop
 diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
 --- old/courier/imapd-ssl.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd-ssl.rc.in	2004-02-17 12:47:27.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2004-02-20 12:25:45.000000000 +0000
 @@ -50,7 +50,7 @@
  			-pid=$SSLPIDFILE $TCPDOPTS \
  			$SSLPORT $COURIERTLS -server -tcpd \
@@ -45,7 +45,7 @@ diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
 diff -Nur old/courier/pop3d.in new/courier/pop3d.in
 --- old/courier/pop3d.in	2003-11-28 01:04:59.000000000 +0000
-+++ new/courier/pop3d.in	2004-02-17 12:47:47.000000000 +0000
++++ new/courier/pop3d.in	2004-02-20 12:25:45.000000000 +0000
 @@ -77,4 +77,4 @@
  		-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
  		-pid=$PIDFILE $TCPDOPTS -address=$ADDRESS $PORT \
@@ -54,7 +54,7 @@ diff -Nur old/courier/pop3d.in new/courier/pop3d.in
 +			@libexecdir@/courier/courierpop3d Mail/Maildir"
 diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
 --- old/courier/pop3d-ssl.in	2003-11-29 01:37:34.000000000 +0000
-+++ new/courier/pop3d-ssl.in	2004-02-17 12:47:41.000000000 +0000
++++ new/courier/pop3d-ssl.in	2004-02-20 12:25:45.000000000 +0000
 @@ -54,7 +54,7 @@
  			-pid=$SSLPIDFILE $TCPDOPTS \
  			$SSLPORT $COURIERTLS -server -tcpd \
@@ -64,3 +64,24 @@ diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
  	;;
  stop)
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
+diff -Nur old/webmail/auth.c new/webmail/auth.c
+--- old/webmail/auth.c	2003-10-11 00:54:37.000000000 +0000
++++ new/webmail/auth.c	2004-02-20 12:26:31.000000000 +0000
+@@ -79,7 +79,7 @@
+ static int login_maildir(const char *maildir)
+ {
+ 	if (!maildir || !*maildir)
+-		maildir="Maildir";
++		maildir="Mail/Maildir";
+ 	if (chdir(maildir))	return (-1);
+ 	maildir_loginexec();
+ 	return (0);
+@@ -107,7 +107,7 @@
+ char	*buf;
+ struct stat stat_buf;
+ 
+-	if (!p || !*p)	p="Maildir";
++	if (!p || !*p)	p="Mail/Maildir";
+ 
+ 	buf=malloc(strlen(h)+strlen(p)+sizeof(PASSFILE)+100);
+ 
