@@ -38,6 +38,16 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7c
 %{?with_fam:Requires:	fam}
 Provides:	smtpdaemon
+Obsoletes:      smtpdaemon
+Obsoletes:	exim
+Obsoletes:	masqmail
+Obsoletes:	omta
+Obsoletes:	qmail
+Obsoletes:	sendmail
+Obsoletes:	sendmail-cf
+Obsoletes:	sendmail-doc
+Obsoletes:	smail
+Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		apachedir	/home/services/httpd
