@@ -143,7 +143,7 @@ standalone version.
 %description imapd -l pl
 Ten pakiet zawiera zintegrowany serwer IMAP do Couriera. Pozwala
 ¶ci±gaæ pocztê przy pomocy klienta IMAP. Serwer IMAP Couriera mo¿e byæ
-u¿ywany tylko ze skrzynami Maildir, nie obs³uguje skrzynek w postaci
+u¿ywany tylko ze skrzynkami Maildir, nie obs³uguje skrzynek w postaci
 pojedynczych plików.
 
 Ten pakiet wymaga serwera Courier, to NIE jest samodzielna wersja
