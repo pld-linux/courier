@@ -239,7 +239,8 @@ install -d -p $RPM_BUILD_ROOT{%{_prefix},/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 ln -sf %{_sysconfdir}/pop3d.authpam $RPM_BUILD_ROOT/etc/pam.d/pop3
 ln -sf %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
