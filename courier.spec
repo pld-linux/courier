@@ -500,15 +500,15 @@ fi
 %{_mandir}/man8/makeuucpneighbors.8*
 %{_mandir}/man8/pw2userdb.8*
 %{_mandir}/man8/vchkpw2userdb.8*
-%config %{_sysconfdir}/ldapaddressbook
 %dir %{_sysconfdir}
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
 %attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
-%attr(644,daemon,daemon) %config %{_sysconfdir}/enablefiltering
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/enablefiltering
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
-%attr(644,daemon,daemon) %config %{_sysconfdir}/smtpaccess/default
-%attr(644,daemon,daemon) %config %{_sysconfdir}/courierd
-%attr(640,daemon,daemon) %config %{_sysconfdir}/aliases/system
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
+%attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
 %attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
 %dir %{_prefix}
 %dir %{_bindir}
@@ -551,18 +551,18 @@ fi
 %{_datadir}/courierwebadmin/notsupp.html
 %dir %{_libdir}/courier/modules
 %dir %{_libdir}/courier/modules/uucp
-%attr(644,daemon,daemon) %config %{_sysconfdir}/module.uucp
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.uucp
 %attr(755,root,root) %{_libdir}/courier/modules/uucp/courieruucp
 %attr(755,root,root) %{_sbindir}/makeuucpneighbors
 %attr(755,root,root) %{_datadir}/makeuucpneighbors
 %dir %{_libdir}/courier/modules/local
-%attr(644,daemon,daemon) %config %{_sysconfdir}/module.local
-%attr(644,daemon,daemon) %config %{_sysconfdir}/authmodulelist
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.local
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmodulelist
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierlocal
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierdeliver
 %attr(755,root,root) %{_bindir}/preline
 %dir %{_libdir}/courier/modules/esmtp
-%attr(644,daemon,daemon) %config %{_sysconfdir}/module.esmtp
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.esmtp
 %attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtp
 %attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtpd
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/addcr
@@ -582,24 +582,24 @@ fi
 %attr(755,root,root) %{_datadir}/mkesmtpdcert
 %attr(755,root,root) %{_sbindir}/esmtpd-msa
 %attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-msa
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-msa
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-ssl
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtp.authpam
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd.cnf
-%attr(600,daemon,daemon) %config %{_sysconfdir}/esmtpauthclient
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtp.authpam
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd.cnf
+%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpauthclient
 %dir %{_libdir}/courier/modules/dsn
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsndelayed.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsndelivered.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnfailed.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnrelayed.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnfooter.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnsubjectnotice.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnsubjectwarn.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnheader.txt
-%attr(644,daemon,daemon) %config %{_sysconfdir}/module.dsn
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsndelayed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsndelivered.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnfailed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnrelayed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnfooter.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnsubjectnotice.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnsubjectwarn.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnheader.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
 %{_libdir}/courier/modules/modules.ctl
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
@@ -647,11 +647,11 @@ fi
 %attr(755,root,root) %{_sbindir}/vchkpw2userdb
 %attr(755,root,root) %{_datadir}/courierctl.start
 %attr(755,root,root) %{_bindir}/couriertls
-%attr(640,daemon,daemon) %config %{_sysconfdir}/ldapaliasrc
+%attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authldaprc
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authpgsqlrc
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authdaemonrc
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authdaemonrc
 %dir %{_libdir}/authlib
 %attr(755,root,root) %{_libdir}/authlib/authdaemon
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
@@ -663,7 +663,7 @@ fi
 %attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
 %attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
 %attr(755,root,root) %{_datadir}/authsystem.passwd
-%config(noreplace) /etc/pam.d/esmtp
+%config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
@@ -681,10 +681,10 @@ fi
 %{_mandir}/man8/courierpop3login.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
-%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d
-%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.authpam
-%attr(600,daemon,daemon) %config %{_sysconfdir}/pop3d.cnf
-%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.authpam
+%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.cnf
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d-ssl
 %attr(755,root,root) %{_libdir}/courier/courierpop3d
 %attr(755,root,root) %{_libdir}/courier/courierpop3login
 %attr(755,root,root) %{_datadir}/pop3d
@@ -701,10 +701,10 @@ fi
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
 %attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
-%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd
-%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd-ssl
-%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd.authpam
-%attr(600,daemon,daemon) %config %{_sysconfdir}/imapd.cnf
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd.authpam
+%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd.cnf
 %attr(755,root,root) %{_libdir}/courier/imaplogin
 %attr(755,root,root) %{_sbindir}/imapd
 %attr(755,root,root) %{_sbindir}/imapd-ssl
@@ -730,7 +730,7 @@ fi
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
-%attr(644,daemon,daemon) %config %{_sysconfdir}/webmail.authpam
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webmail.authpam
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 
 %files maildrop
@@ -738,7 +738,7 @@ fi
 %{_mandir}/man1/maildrop.1*
 %{_mandir}/man1/refor*
 %{_mandir}/man5/maildrop*
-%attr(644,daemon,daemon) %config %{_sysconfdir}/maildrop
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/maildrop
 %attr(755,root,root)  %{_bindir}/reformail
 %attr(755,root,root)  %{_bindir}/reformime
 %attr(4755,root,root) %{_bindir}/maildrop
