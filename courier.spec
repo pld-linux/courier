@@ -6,6 +6,7 @@ Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	553258a369f941a99661fec5edc66861
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
