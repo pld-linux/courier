@@ -896,7 +896,7 @@ fi
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
 %attr(755,root,root) %{_libdir}/%{name}/sqwebmaild
-%dir %{_libdir}/%{name}/webmail/
+%dir %{_libdir}/%{name}/webmail
 %attr(755,root,root) %{_libdir}/%{name}/webmail/webadmin
 %attr(755,root,root) %{_libdir}/%{name}/webmail/webmail
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
@@ -924,19 +924,22 @@ fi
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
 
 %files authldap
+%defattr(644,root,root,755)
 %doc authlib/README.ldap
-%{_mandir}/man7/authldap.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
+%{_mandir}/man7/authldap.7*
 
 %files authmysql
+%defattr(644,root,root,755)
 %doc authlib/README.authmysql.html authlib/README.authmysql.myownquery
-%{_mandir}/man7/authmysql.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
+%{_mandir}/man7/authmysql.7*
 
 %files authpgsql
+%defattr(644,root,root,755)
 %doc authlib/README.authpostgres.html
-%{_mandir}/man7/authpgsql.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
+%{_mandir}/man7/authpgsql.7*
