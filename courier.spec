@@ -379,7 +379,7 @@ install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 for X in imap esmtp pop3 webmail calendar
 do
-cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
+	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
 #%PAM-1.0
 auth	required	pam_unix.so shadow nullok
 account	required	pam_unix.so
@@ -554,8 +554,8 @@ echo
 /sbin/chkconfig --add courier
 
 if [ "$1" = "1" ]; then
-/bin/hostname -f >/etc/courier/me
-cat <<EOF
+	/bin/hostname -f >/etc/courier/me
+	cat <<EOF
 
 Now courier will refuse to accept SMTP messages except to localhost
 add hosts to /etc/courier/esmtpacceptmailfor.dir/default
@@ -571,133 +571,133 @@ EOF
 fi
 
 if [ -e /var/lock/subsys/courier ]; then
-    %{initdir}/courier restart
+	%{initdir}/courier restart
 else
-echo
-echo Type "%{initdir}/courier start" to start courier
-echo
+	echo
+	echo Type "%{initdir}/courier start" to start courier
+	echo
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-    if [ -e /var/lock/subsys/courier ]; then
-	%{initdir}/courier stop
-    fi
+	if [ -e /var/lock/subsys/courier ]; then
+		%{initdir}/courier stop
+	fi
 	/sbin/chkconfig --del courier
 fi
 
 %post imapd
 if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
-    %{_sbindir}/imapd stop
-    %{_sbindir}/imapd start
+	%{_sbindir}/imapd stop
+	%{_sbindir}/imapd start
 else
-echo
-echo Type "%{_sbindir}/imapd start" to start imapd server
-echo
+	echo
+	echo Type "%{_sbindir}/imapd start" to start imapd server
+	echo
 fi
 if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
-    %{_sbindir}/imapd-ssl stop
-    %{_sbindir}/imapd-ssl start
+	%{_sbindir}/imapd-ssl stop
+	%{_sbindir}/imapd-ssl start
 else
-echo
-echo Type "%{_sbindir}/imapd-ssl start" to start imapd-ssl server
-echo
+	echo
+	echo Type "%{_sbindir}/imapd-ssl start" to start imapd-ssl server
+	echo
 fi
 
 %preun imapd
 if [ "$1" = "0" ]; then
-    if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
-	%{_sbindir}/imapd stop
-    fi
-    if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
-	%{_sbindir}/imapd-ssl stop
-    fi
+	if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
+		%{_sbindir}/imapd stop
+	fi
+	if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
+		%{_sbindir}/imapd-ssl stop
+	fi
 fi
 
 %post pop3d
 if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
-    %{_sbindir}/pop3d stop
-    %{_sbindir}/pop3d start
+	%{_sbindir}/pop3d stop
+	%{_sbindir}/pop3d start
 else
-echo
-echo Type "%{_sbindir}/pop3d start" to start pop3d server
-echo
+	echo
+	echo Type "%{_sbindir}/pop3d start" to start pop3d server
+	echo
 fi
 if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
-    %{_sbindir}/pop3d-ssl stop
-    %{_sbindir}/pop3d-ssl start
+	%{_sbindir}/pop3d-ssl stop
+	%{_sbindir}/pop3d-ssl start
 else
-echo
-echo Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server
-echo
+	echo
+	echo Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server
+	echo
 fi
 
 %preun pop3d
 if [ "$1" = "0" ]; then
-    if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
-	%{_sbindir}/pop3d stop
-    fi
-    if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
-	%{_sbindir}/pop3d-ssl stop
-    fi
+	if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
+		%{_sbindir}/pop3d stop
+	fi
+	if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
+		%{_sbindir}/pop3d-ssl stop
+	fi
 fi
 
 %post webadmin
 if [ "$1" = "1" ]; then
-echo
-echo Remember to put your webadmin password to %{_sysconfdir}/webadmin/password
-echo
+	echo
+	echo Remember to put your webadmin password to %{_sysconfdir}/webadmin/password
+	echo
 fi
 
 %post webmail
 if [ "$1" = "1" ]; then
-echo
-echo If you want to have calendar starting by default then
-echo put word net to %{_sysconfdir}/calendarmode
-echo
+	echo
+	echo If you want to have calendar starting by default then
+	echo put word net to %{_sysconfdir}/calendarmode
+	echo
 fi
 if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
-    %{_sbindir}/webmaild stop
-    %{_sbindir}/webmaild start
+	%{_sbindir}/webmaild stop
+	%{_sbindir}/webmaild start
 else
-echo
-echo Type "%{_sbindir}/webmaild start" to start webmail server
-echo
+	echo
+	echo Type "%{_sbindir}/webmaild start" to start webmail server
+	echo
 fi
 
 %preun webmail
 if [ "$1" = "0" ]; then
-    if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
-	%{_sbindir}/webmaild stop
-    fi
+	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
+		%{_sbindir}/webmaild stop
+	fi
 fi
 
 %post smtpauth
 if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-    %{_sbindir}/esmtpd stop
-    %{_sbindir}/esmtpd start
+	%{_sbindir}/esmtpd stop
+	%{_sbindir}/esmtpd start
 fi
 if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-    %{_sbindir}/esmtpd-ssl stop
-    %{_sbindir}/esmtpd-ssl start
+	%{_sbindir}/esmtpd-ssl stop
+	%{_sbindir}/esmtpd-ssl start
 fi
 
 if [ "$1" = "1" ]; then
-echo
-echo Remember to enable auth in esmtp config files
-echo
+	echo
+	echo Remember to enable auth in esmtp config files
+	echo
 fi
 
 %postun smtpauth
 if [ "$1" = "0" ]; then
-    if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-	%{_sbindir}/esmtpd stop
-	%{_sbindir}/esmtpd start
-    fi
-    if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-	%{_sbindir}/esmtpd-ssl stop
-	%{_sbindir}/esmtpd-ssl start
-    fi
+	if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
+		%{_sbindir}/esmtpd stop
+		%{_sbindir}/esmtpd start
+	fi
+	if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
+		%{_sbindir}/esmtpd-ssl stop
+		%{_sbindir}/esmtpd-ssl start
+	fi
 fi
 
 %post authldap
