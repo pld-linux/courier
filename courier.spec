@@ -9,7 +9,7 @@ Version:	0.47
 Release:	5
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	639bb3b236914e3b86f287ce3f55264e
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
