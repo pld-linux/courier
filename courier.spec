@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.5
-Release:	0.6
+Release:	0.7
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -640,19 +640,19 @@ echo If you want to have calendar starting by default then
 echo put word net to %{_sysconfdir}/calendarmode
 echo
 fi
-if ps -A |grep -q sqwebmaild; then
-    %{_libdir}/courier/sqwebmaild stop
-    %{_libdir}/courier/sqwebmaild start
+if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
+    %{_sbindir}/webmaild stop
+    %{_sbindir}/webmaild start
 else
 echo
-echo Type "%{_libdir}/courier/sqwebmaild start" to start webmail server
+echo Type "%{_sbindir}/webmaild start" to start webmail server
 echo
 fi
 
 %preun webmail
 if [ "$1" = "0" ]; then
-    if ps -A |grep -q sqwebmaild; then
-	%{_libdir}/courier/sqwebmaild stop
+    if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
+	%{_sbindir}/webmaild stop
     fi
 fi
 
