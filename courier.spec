@@ -93,7 +93,7 @@ filtrowania spamu.
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7c
 
 %description pop3d
@@ -114,7 +114,7 @@ obs³uguje skrzynek w postaci pojedynczych plików.
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7c
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
@@ -148,7 +148,7 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	%{_cgibindir}
 Requires:	%{_documentrootdir}
 
@@ -176,7 +176,7 @@ SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 Summary:	Courier Integrated Mailing List Manager
 Summary(pl):	Zintegrowany zarz±dca list dyskusyjnych do Couriera
 Group:		Applications/Mail
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description mlm
 This package installs couriermlm - a mailing list manager for the
@@ -203,7 +203,7 @@ aliasy pocztowe tylko do wysy³ania i listy moderowane.
 Summary:	Courier Integrated mail filter
 Summary(pl):	Zintegrowany filtr poczty do Couriera
 Group:		Applications/Mail
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description maildrop
 This package installs Courier mail server's integrated mail filter.
@@ -218,7 +218,7 @@ potrzebny do filtrowania przychodz±cej poczty.
 Summary:	Courier mail server authenticated ESMTP module
 Summary(pl):	Modu³ uwierzytelniania ESMTP (SMTP AUTH) do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description smtpauth
 Authenticated ESMTP allows remote users to authenticate themselves and
@@ -233,7 +233,7 @@ Courier.
 Summary:        LDAP authentication daemon for Courier mail server
 Summary(pl):    Demon autentykacji LDAP do Couriera
 Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{version}
+PreReq:         %{name} = %{version}-%{release}
 
 %description authldap
 This package provides LDAP authentication for Courier.
@@ -245,7 +245,7 @@ Ten pakiet pozwala na korzystanie z autentykacji LDAP w Courierze.
 Summary:        MySQL authentication daemon for Courier mail server
 Summary(pl):    Demon autentykacji MySQL do Couriera
 Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{version}
+PreReq:         %{name} = %{version}-%{release}
 
 %description authmysql
 This package provides MySQL authentication for Courier.
@@ -257,7 +257,7 @@ Ten pakiet pozwala na korzystanie z autentykacji MySQL w Courierze.
 Summary:        PostgreSQL authentication daemon for Courier mail server
 Summary(pl):    Demon autentykacji PostgreSQL do Couriera
 Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{version}
+PreReq:         %{name} = %{version}-%{release}
 
 %description authpgsql
 This package provides PostgreSQL authentication for Courier.
