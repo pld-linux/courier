@@ -26,9 +26,9 @@ BuildRequires:	libtool
 BuildRequires:	mailcap
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel >= 0.9.7c
-BuildRequires:	openssl-tools >= 0.9.7c
-BuildRequires:	openssl-tools-perl >= 0.9.7c
+BuildRequires:	openssl-devel >= 0.9.7d
+BuildRequires:	openssl-tools >= 0.9.7d
+BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
@@ -36,7 +36,7 @@ BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
-Requires(post):	openssl-tools >= 0.9.7c
+Requires(post):	openssl-tools >= 0.9.7d
 %{?with_fam:Requires:	fam}
 Provides:	smtpdaemon
 Obsoletes:	exim
