@@ -328,6 +328,11 @@ mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imap
 sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
 mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
 
+# run script from install-configure (make config files)
+for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissions.dat`
+do /usr/bin/perl ././sysconftool $RPM_BUILD_ROOT$confdist
+done
+
 install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
 #
@@ -495,16 +500,15 @@ fi
 %{_mandir}/man8/makeuucpneighbors.8*
 %{_mandir}/man8/pw2userdb.8*
 %{_mandir}/man8/vchkpw2userdb.8*
-%config %{_sysconfdir}/ldapaddressbook.dist
+%config %{_sysconfdir}/ldapaddressbook
 %dir %{_sysconfdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
 %attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
 %attr(644,daemon,daemon) %config %{_sysconfdir}/enablefiltering
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
 %attr(644,daemon,daemon) %config %{_sysconfdir}/smtpaccess/default
-%attr(644,daemon,daemon) %config %{_sysconfdir}/courierd.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config %{_sysconfdir}/aliases/system
-%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d-ssl.dist
 %attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
 %dir %{_prefix}
 %dir %{_bindir}
@@ -578,9 +582,9 @@ fi
 %attr(755,root,root) %{_datadir}/mkesmtpdcert
 %attr(755,root,root) %{_sbindir}/esmtpd-msa
 %attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd.dist
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-msa.dist
-%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-ssl.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-msa
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-ssl
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
 %attr(644,daemon,daemon) %config %{_sysconfdir}/esmtp.authpam
@@ -631,8 +635,6 @@ fi
 %attr(750,root,daemon) %{_sbindir}/makealiases
 %attr(755,root,root) %{_datadir}/makehosteddomains
 %attr(755,root,root) %{_sbindir}/makehosteddomains
-%attr(755,root,root) %{_datadir}/pop3d-ssl
-%attr(755,root,root) %{_sbindir}/pop3d-ssl
 %attr(755,root,root) %{_datadir}/makeuserdb
 %attr(755,root,root) %{_sbindir}/makeuserdb
 %attr(755,root,root) %{_datadir}/sqwebmail/webgpg
@@ -645,11 +647,11 @@ fi
 %attr(755,root,root) %{_sbindir}/vchkpw2userdb
 %attr(755,root,root) %{_datadir}/courierctl.start
 %attr(755,root,root) %{_bindir}/couriertls
-%attr(640,daemon,daemon) %config %{_sysconfdir}/ldapaliasrc.dist
+%attr(640,daemon,daemon) %config %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authldaprc.dist
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authpgsqlrc.dist
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authdaemonrc.dist
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authldaprc
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authpgsqlrc
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authdaemonrc
 %dir %{_libdir}/authlib
 %attr(755,root,root) %{_libdir}/authlib/authdaemon
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
@@ -679,13 +681,16 @@ fi
 %{_mandir}/man8/courierpop3login.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
-%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d
 %attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.authpam
 %attr(600,daemon,daemon) %config %{_sysconfdir}/pop3d.cnf
+%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d-ssl
 %attr(755,root,root) %{_libdir}/courier/courierpop3d
 %attr(755,root,root) %{_libdir}/courier/courierpop3login
 %attr(755,root,root) %{_datadir}/pop3d
 %attr(755,root,root) %{_sbindir}/pop3d
+%attr(755,root,root) %{_datadir}/pop3d-ssl
+%attr(755,root,root) %{_sbindir}/pop3d-ssl
 %attr(755,root,root) %{_datadir}/mkpop3dcert
 %attr(755,root,root) %{_sbindir}/mkpop3dcert
 
@@ -696,8 +701,8 @@ fi
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
 %attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
-%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd.dist
-%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd-ssl.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd
+%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd-ssl
 %attr(644,daemon,daemon) %config %{_sysconfdir}/imapd.authpam
 %attr(600,daemon,daemon) %config %{_sysconfdir}/imapd.cnf
 %attr(755,root,root) %{_libdir}/courier/imaplogin
