@@ -67,7 +67,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		_certsdir	%{_sysconfdir}/certs
-%define		_initrddir		/etc/rc.d/init.d
+%define		_initrddir	/etc/rc.d/init.d
 
 %define		_httpdir	/home/services/httpd
 %define		_cgibindir	%{_httpdir}/cgi-bin
