@@ -1,0 +1,154 @@
+diff -Nur old/courier/configure.in new/courier/configure.in
+--- old/courier/configure.in	2003-10-30 00:53:31.000000000 +0000
++++ new/courier/configure.in	2004-03-02 12:51:12.000000000 +0000
+@@ -547,6 +547,7 @@
+ 
+ eval "exec_prefix=$exec_prefix"
+ eval "bindir=$bindir"
++eval "datadir=$datadir"
+ 
+ MAILDROP="$bindir/maildrop"
+ AC_SUBST(MAILDROP)
+diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
+--- old/courier/imapd.rc.in	2004-02-24 15:15:10.000000000 +0000
++++ new/courier/imapd.rc.in	2004-03-02 12:44:49.000000000 +0000
+@@ -53,6 +53,7 @@
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$PIDFILE -stop
++	rm -f $PIDFILE
+ 	;;
+ restart)
+ 	@sbindir@/couriertcpd -pid=$PIDFILE -restart
+diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
+--- old/courier/imapd-ssl.rc.in	2004-02-24 15:15:10.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2004-03-02 14:06:44.000000000 +0000
+@@ -28,6 +28,11 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @datadir@/imapd.pem ]; then
++        @sbindir@/mkimapdcert
++	fi
++
+ 	LIBAUTHMODULES=""
+ 	for f in `echo $AUTHMODULES`
+ 	do
+@@ -54,6 +59,7 @@
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
++	rm -f $SSLPIDFILE
+ 	;;
+ esac
+ exit 0
+diff -Nur old/courier/module.esmtp/esmtpd.in new/courier/module.esmtp/esmtpd.in
+--- old/courier/module.esmtp/esmtpd.in	2001-08-05 20:36:08.000000000 +0000
++++ new/courier/module.esmtp/esmtpd.in	2004-03-02 12:44:24.000000000 +0000
+@@ -38,6 +38,7 @@
+ 	;;
+ stop)
+ 	${sbindir}/couriertcpd -pid=$PIDFILE -stop
++	rm -f $PIDFILE
+ 	exit 0
+ 	;;
+ restart)
+diff -Nur old/courier/module.esmtp/esmtpd-ssl.in new/courier/module.esmtp/esmtpd-ssl.in
+--- old/courier/module.esmtp/esmtpd-ssl.in	2002-07-09 19:38:18.000000000 +0000
++++ new/courier/module.esmtp/esmtpd-ssl.in	2004-03-02 14:06:51.000000000 +0000
+@@ -25,9 +25,14 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @datadir@/esmtpd.pem ]; then
++        @sbindir@/mkesmtpdcert
++	fi
+ 	;;
+ stop)
+ 	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
++	rm -f $SSLPIDFILE
+ 	exit 0
+ 	;;
+ restart)
+diff -Nur old/courier/pop3d.in new/courier/pop3d.in
+--- old/courier/pop3d.in	2004-02-24 15:15:10.000000000 +0000
++++ new/courier/pop3d.in	2004-03-02 12:45:16.000000000 +0000
+@@ -42,6 +42,7 @@
+ 	;;
+ stop)
+ 	${sbindir}/couriertcpd -pid=$PIDFILE -stop
++	rm -f $PIDFILE
+ 	exit 0
+ 	;;
+ restart)
+diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
+--- old/courier/pop3d-ssl.in	2004-02-24 15:15:10.000000000 +0000
++++ new/courier/pop3d-ssl.in	2004-03-02 14:06:40.000000000 +0000
+@@ -29,6 +29,11 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @datadir@/pop3d.pem ]; then
++        @sbindir@/mkpop3dcert
++	fi
++
+ 	LIBAUTHMODULES=""
+ 	for f in `echo $AUTHMODULES`
+ 	do
+@@ -58,6 +63,7 @@
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
++	rm -f $SSLPIDFILE
+ 	;;
+ restart)
+ 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -restart
+diff -Nur old/courier.sysvinit.in new/courier.sysvinit.in
+--- old/courier.sysvinit.in	2003-11-28 02:31:55.000000000 +0000
++++ new/courier.sysvinit.in	2004-03-02 17:06:32.000000000 +0000
+@@ -8,6 +8,9 @@
+ #
+ #
+ 
++# Source function library
++. /etc/rc.d/init.d/functions
++
+ prefix="@prefix@"
+ exec_prefix="@exec_prefix@"
+ sysconfdir="@sysconfdir@"
+@@ -24,6 +27,11 @@
+ 
+ case "$1" in
+ start)
++	if [ -e /var/lock/subsys/courier ]; then
++	    msg_already_running Courier
++	    exit 0
++	fi
++
+         cd /
+         # Start daemons.
+         touch /var/lock/subsys/courier
+@@ -209,6 +217,9 @@
+ 	echo ""
+         ;;
+ stop)
++    if [ -e /var/lock/subsys/courier ]; then
++
++        rm -f /var/lock/subsys/courier
+         echo -n "Stopping Courier mail server:"
+ 
+ 	if test -x ${sbindir}/imapd
+@@ -273,6 +284,10 @@
+ 	fi
+ 	${sbindir}/courierfilter stop
+ 	echo " courierfilter"
++
++    else
++	    msg_not_running Courier
++    fi
+ 	;;
+ restart)
+ 	$0 stop
