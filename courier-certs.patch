@@ -46,7 +46,7 @@ diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
  	do
 diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configure.in
 --- old/courier/module.esmtp/configure.in	2004-05-11 00:16:05.000000000 +0000
-+++ new/courier/module.esmtp/configure.in	2004-05-25 07:37:36.000000000 +0000
++++ new/courier/module.esmtp/configure.in	2004-05-25 07:46:38.000000000 +0000
 @@ -300,6 +300,11 @@
  eval "datadir=$datadir"
  eval "localstatedir=$localstatedir"
@@ -59,6 +59,16 @@ diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configu
  dnl
  dnl  Check what libraries are available
  dnl
+diff -Nur old/courier/module.esmtp/esmtpd.cnf.in new/courier/module.esmtp/esmtpd.cnf.in
+--- old/courier/module.esmtp/esmtpd.cnf.in	2001-08-18 22:18:12.000000000 +0000
++++ new/courier/module.esmtp/esmtpd.cnf.in	2004-05-30 22:38:12.000000000 +0000
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @datadir@/esmtpd.rnd
++RANDFILE = @certsdir@/esmtpd.rand
+ 
+ [ req ]
+ default_bits = 1024
 diff -Nur old/courier/module.esmtp/esmtpd-ssl.dist.in new/courier/module.esmtp/esmtpd-ssl.dist.in
 --- old/courier/module.esmtp/esmtpd-ssl.dist.in	2004-04-24 19:56:19.000000000 +0000
 +++ new/courier/module.esmtp/esmtpd-ssl.dist.in	2004-05-24 20:57:52.000000000 +0000
@@ -195,6 +205,16 @@ diff -Nur old/imap/configure.in new/imap/configure.in
  #
  # Check for PAM configuration flavor
  
+diff -Nur old/imap/imapd.cnf.in new/imap/imapd.cnf.in
+--- old/imap/imapd.cnf.in	2001-03-24 04:59:55.000000000 +0000
++++ new/imap/imapd.cnf.in	2004-05-30 22:37:03.000000000 +0000
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @datadir@/imapd.rand
++RANDFILE = @certsdir@/imapd.rand
+ 
+ [ req ]
+ default_bits = 1024
 diff -Nur old/imap/imapd-ssl.dist.in new/imap/imapd-ssl.dist.in
 --- old/imap/imapd-ssl.dist.in	2004-01-25 05:40:03.000000000 +0000
 +++ new/imap/imapd-ssl.dist.in	2004-05-24 20:57:29.000000000 +0000
@@ -439,6 +459,16 @@ diff -Nur old/imap/mkpop3dcert.in new/imap/mkpop3dcert.in
 +@OPENSSL@ gendh -rand @certsdir@/pop3d.rand 512 >>@certsdir@/pop3d.pem || cleanup
 +@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/pop3d.pem || cleanup
 +rm -f @certsdir@/pop3d.rand
+diff -Nur old/imap/pop3d.cnf.in new/imap/pop3d.cnf.in
+--- old/imap/pop3d.cnf.in	2001-03-24 04:59:55.000000000 +0000
++++ new/imap/pop3d.cnf.in	2004-05-30 22:37:10.000000000 +0000
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @datadir@/pop3d.rand
++RANDFILE = @certsdir@/pop3d.rand
+ 
+ [ req ]
+ default_bits = 1024
 diff -Nur old/imap/pop3d-ssl.dist.in new/imap/pop3d-ssl.dist.in
 --- old/imap/pop3d-ssl.dist.in	2004-01-25 05:40:04.000000000 +0000
 +++ new/imap/pop3d-ssl.dist.in	2004-05-24 20:57:32.000000000 +0000
