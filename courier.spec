@@ -190,6 +190,18 @@ nie obs³uguje skrzynek w postaci pojedynczych plików.
 Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazw±
 SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 
+%package maildir
+Summary:	Tools for mail folders in Maildir format
+Summary(pl):	Narzêdzia do zarz±dzania skrzynkami Maildir
+Group:		Applications/Mail
+Requires:	%{name} = %{version}-%{release}
+
+%description maildir
+This package contains tools for mail folders in Maildir format.
+
+%description maildir -l pl
+Ten pakiet zawiera narzêdzia do zarz±dzania folderami w formacie Maildir.
+
 %package mlm
 Summary:	Courier Integrated Mailing List Manager
 Summary(pl):	Zintegrowany zarz±dca list dyskusyjnych do Couriera
@@ -681,12 +693,9 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/* maildir/README.*.html
+%doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/*
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
-%{_mandir}/man1/maildirmake.1*
-%{_mandir}/man1/maildirkw.1*
-%{_mandir}/man1/maildiracl.1*
 %{_mandir}/man1/cancelmsg.1*
 %{_mandir}/man1/lockmail.1*
 %{_mandir}/man1/mailbot.1*
@@ -701,9 +710,7 @@ fi
 %{_mandir}/man1/dotforward.1*
 %{_mandir}/man1/rmail.1*
 %{_mandir}/man5/dot-courier.5*
-%{_mandir}/man5/maildir.5*
 %{_mandir}/man7/localmailfilter.7*
-%{_mandir}/man7/maildirquota.7*
 %{_mandir}/man7/authlib.7*
 %{_mandir}/man7/authcram.7*
 %{_mandir}/man7/authdaemon.7*
@@ -840,9 +847,6 @@ fi
 %attr(755,root,root) %{_bindir}/dotforward
 %attr(755,root,root) %{_bindir}/lockmail
 %attr(755,root,root) %{_bindir}/mailbot
-%attr(755,root,root) %{_bindir}/maildirmake
-%attr(755,root,root) %{_bindir}/maildirkw
-%attr(755,root,root) %{_bindir}/maildiracl
 %attr(2755,root,daemon) %{_bindir}/mailq
 %attr(750,root,daemon) %{_datadir}/makealiases
 %attr(750,root,daemon) %{_sbindir}/makealiases
@@ -857,8 +861,6 @@ fi
 %attr(755,root,root) %{_datadir}/pw2userdb
 %attr(755,root,root) %{_sbindir}/pw2userdb
 %attr(4755,root,root) %{_bindir}/rmail
-%attr(755,root,root) %{_sbindir}/sharedindexinstall
-%attr(755,root,root) %{_sbindir}/sharedindexsplit
 %attr(755,root,root) %{_sbindir}/showconfig
 %attr(750,root,daemon) %{_sbindir}/showmodules
 %attr(4755,root,root) %{_sbindir}/sendmail
@@ -987,6 +989,20 @@ fi
 %attr(4755,root,root) %{_bindir}/maildrop
 %attr(755,root,root) %{_bindir}/reformail
 %attr(755,root,root) %{_bindir}/reformime
+
+%files maildir
+%defattr(644,root,root,755)
+%doc maildir/README.*.html
+%{_mandir}/man1/maildirmake.1*
+%{_mandir}/man1/maildirkw.1*
+%{_mandir}/man1/maildiracl.1*
+%{_mandir}/man5/maildir.5*
+%{_mandir}/man7/maildirquota.7*
+%attr(755,root,root) %{_bindir}/maildirmake
+%attr(755,root,root) %{_bindir}/maildirkw
+%attr(755,root,root) %{_bindir}/maildiracl
+%attr(755,root,root) %{_sbindir}/sharedindexinstall
+%attr(755,root,root) %{_sbindir}/sharedindexsplit
 
 %files mlm
 %defattr(644,root,root,755)
