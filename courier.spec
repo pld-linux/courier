@@ -693,7 +693,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/*
+%doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/[adehqstu]*
+%doc htmldoc/courierperl* htmldoc/courier.html htmldoc/courier[fltu]*
+%doc htmldoc/local* htmldoc/mailbot* htmldoc/mailq* htmldoc/make*
+%doc htmldoc/mime* htmldoc/mkesmtpd* htmldoc/modules* htmldoc/preline*
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
 %{_mandir}/man1/cancelmsg.1*
@@ -893,6 +896,7 @@ fi
 
 %files pop3d
 %defattr(644,root,root,755)
+%doc htmldoc/*pop3d*
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/courierpop3login.8*
@@ -914,6 +918,7 @@ fi
 
 %files imapd
 %defattr(644,root,root,755)
+%doc htmldoc/*imapd*
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
 %{_mandir}/man8/imapd.8*
 %{_mandir}/man8/mkimapdcert.8*
@@ -957,6 +962,7 @@ fi
 
 %files webmail
 %defattr(644,root,root,755)
+%doc htmldoc/pcp*
 %attr(4755,root,root) %{_cgibindir}/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
@@ -982,6 +988,7 @@ fi
 
 %files maildrop
 %defattr(644,root,root,755)
+%doc htmldoc/r* htmldoc/maildrop* htmldoc/lockmail*
 %{_mandir}/man1/maildrop.1*
 %{_mandir}/man1/refor*
 %{_mandir}/man5/maildrop*
@@ -992,7 +999,7 @@ fi
 
 %files maildir
 %defattr(644,root,root,755)
-%doc maildir/README.*.html
+%doc maildir/README.*.html htmldoc/maildir*
 %{_mandir}/man1/maildirmake.1*
 %{_mandir}/man1/maildirkw.1*
 %{_mandir}/man1/maildiracl.1*
@@ -1006,6 +1013,7 @@ fi
 
 %files mlm
 %defattr(644,root,root,755)
+%doc htmldoc/couriermlm.html
 %{_mandir}/man1/couriermlm.1*
 %attr(755,root,root) %{_bindir}/couriermlm
 %{_datadir}/couriermlm
