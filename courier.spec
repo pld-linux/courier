@@ -18,9 +18,9 @@ BuildRequires:	libtool
 BuildRequires:	mysql-devel
 BuildRequires:	mailcap
 BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel >= 0.9.7
-BuildRequires:	openssl-tools >= 0.9.7
-BuildRequires:	openssl-tools-perl >= 0.9.7
+BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-tools >= 0.9.7c
+BuildRequires:	openssl-tools-perl >= 0.9.7c
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	sysconftool
