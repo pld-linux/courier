@@ -1,20 +1,21 @@
 diff -Nur old/courier/Makefile.am new/courier/Makefile.am
---- old/courier/Makefile.am	2003-11-15 21:04:45.000000000 +0000
-+++ new/courier/Makefile.am	2004-02-25 00:36:06.000000000 +0000
-@@ -50,14 +50,14 @@
+--- old/courier/Makefile.am	2004-01-11 05:37:59.000000000 +0000
++++ new/courier/Makefile.am	2004-03-16 18:20:36.000000000 +0000
+@@ -51,7 +51,7 @@
  extrabin=maildrop lockmail reformail reformime mailbot mimegpg \
- 	imapd makemime deliverquota maildirmake maildirkw
+ 	imapd makemime deliverquota maildirmake maildiracl maildirkw
  
 -bin_PROGRAMS=cancelmsg mailq sendmail \
 +bin_PROGRAMS=cancelmsg mailq \
  	testmxlookup dotforward \
  	couriermlm \
  	courier-config @couriertls@ @EXTRABIN@
- 
- extrasbin=couriertcpd courierlogger userdbpw
+@@ -60,7 +60,7 @@
+ 	authenumerate$(EXEEXT) \
+ 	sharedindexsplit sharedindexinstall
  
 -sbin_PROGRAMS=courier showconfig showmodules \
-+sbin_PROGRAMS=courier showconfig showmodules sendmail\
++sbin_PROGRAMS=courier showconfig showmodules sendmail \
  	@COURIERLDAPALIASD@ @EXTRASBIN@
  
  sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \

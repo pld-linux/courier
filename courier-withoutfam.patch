@@ -1,10 +1,10 @@
 diff -Nur old/maildir/configure.in new/maildir/configure.in
---- old/maildir/configure.in	2003-01-30 06:33:31.000000000 +0000
-+++ new/maildir/configure.in	2003-12-15 11:15:36.000000000 +0000
-@@ -59,20 +59,7 @@
+--- old/maildir/configure.in	2004-01-11 02:59:03.000000000 +0000
++++ new/maildir/configure.in	2004-03-16 18:16:07.000000000 +0000
+@@ -60,20 +60,7 @@
  dnl Checks for library functions.
  AC_CHECK_HEADER(fam.h, :, :)
- AC_CHECK_FUNCS(symlink readlink strcasecmp)
+ AC_CHECK_FUNCS(symlink readlink strcasecmp utime utimes)
 -AC_CHECK_LIB(fam, FAMOpen,  [
 -			LIBFAM=-lfam
 -			AC_DEFINE_UNQUOTED(HAVE_FAM,1,

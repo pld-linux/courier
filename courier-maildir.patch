@@ -64,6 +64,24 @@ diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
  	;;
  stop)
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
+diff -Nur old/imap/imapd.dist.in new/imap/imapd.dist.in
+--- old/imap/imapd.dist.in	2004-01-25 05:40:04.000000000 +0000
++++ new/imap/imapd.dist.in	2004-03-16 17:45:49.000000000 +0000
+@@ -371,4 +371,4 @@
+ #
+ # MAILDIRPATH - directory name of the maildir directory.
+ #
+-MAILDIRPATH=Maildir
++MAILDIRPATH=Mail/Maildir
+diff -Nur old/imap/pop3d.dist.in new/imap/pop3d.dist.in
+--- old/imap/pop3d.dist.in	2004-01-25 05:40:04.000000000 +0000
++++ new/imap/pop3d.dist.in	2004-03-16 17:45:56.000000000 +0000
+@@ -145,4 +145,4 @@
+ #
+ # MAILDIRPATH - directory name of the maildir directory.
+ #
+-MAILDIRPATH=Maildir
++MAILDIRPATH=Mail/Maildir
 diff -Nur old/webmail/auth.c new/webmail/auth.c
 --- old/webmail/auth.c	2003-10-11 00:54:37.000000000 +0000
 +++ new/webmail/auth.c	2004-02-20 12:26:31.000000000 +0000
