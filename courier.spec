@@ -2,7 +2,9 @@
 #  Need to version-upgrade RH builds due to different directory locations.
 #
 
-%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; echo "$release")
+#%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; echo "$release")
+# we aren't RH we are PLD
+%define courier_release 0
 
 Summary:	Courier %{version} mail server
 Name:		courier
@@ -11,8 +13,9 @@ Release:	1%{courier_release}
 Copyright:	GPL
 Group:		Applications/Mail
 Source:		courier-0.26.20000822.tar.gz
-Packager:	%{PACKAGER}
-BuildRoot:	/var/tmp/courier-install
+#Packager:	%{PACKAGER}
+#BuildRoot:	/var/tmp/courier-install
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	smtpdaemon
 AutoProv:	no
 Requires:	/sbin/chkconfig
@@ -25,14 +28,15 @@ Requires:	/sbin/chkconfig
 #  httpd         /home/httpd        /var/www
 #  initscripts   /etc/rc.d/init.d   /etc/init.d
 
-%{expand:%%define manpagedir %(if test -d %{_prefix}/share/man ; then echo %{_prefix}/share/man ; else echo %{_prefix}/man ; fi)}
+#%{expand:%%define manpagedir %(if test -d %{_prefix}/share/man ; then echo %{_prefix}/share/man ; else echo %{_prefix}/man ; fi)}
 
 %define apachedir %(if test -d /var/www ; then echo /var/www ; else echo /home/httpd ; fi)
 
 %define	_prefix				/usr/lib/courier
 %define _localstatedir			/var/spool/courier
 %define	_sysconfdir			/etc/courier
-%define	_mandir				%{manpagedir}
+# silly wabbit
+#%define	_mandir				%{manpagedir}
 
 %define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
 
@@ -190,14 +194,14 @@ Manual pages:                    %{_mandir}
 EOF
 
 %build
-make
-make check
+%{__make}
+%{__make} check
 %install
 
 umask 022
 test "$RPM_BUILD_ROOT" != "" && rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_prefix}
-mkdir -p $RPM_BUILD_ROOT/etc/pam.d
+install -d $RPM_BUILD_ROOT%{_prefix}
+install -d $RPM_BUILD_ROOT/etc/pam.d
 
 if test "%{_package_maintainer}" = "1"
 then
@@ -292,20 +296,20 @@ sed -n '/sqwebmail/p;/webmail.authpam/p;/webmail-logincache/p;/ldapaddressbook$/
 # and adds everything except the executable, webmail, to filelist.webmail.
 # Here's why:
 
-mkdir -p $RPM_BUILD_ROOT%{_cgibindir}
+install -d $RPM_BUILD_ROOT%{_cgibindir}
 cp $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
 
 # And here's why we delete all images from filelist.webmail:
 
-mkdir -p $RPM_BUILD_ROOT%{_documentrootdir}
+install -d $RPM_BUILD_ROOT%{_documentrootdir}
 mv $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
 # Do we need to install a cron job to clean out webmail's cache?
 
 if test -f webmail/cron.cmd
 then
-	mkdir -p $RPM_BUILD_ROOT/etc/cron.hourly
+	install -d $RPM_BUILD_ROOT/etc/cron.hourly
 	cp webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
 	echo "%attr(555, root, wheel) /etc/cron.hourly/courier-webmail-cleancache" >>filelist.webmail
 fi
@@ -336,7 +340,7 @@ mv $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/ima
 # Red Hat init.d file
 #
 
-mkdir -p $RPM_BUILD_ROOT%{initdir}
+install -d $RPM_BUILD_ROOT%{initdir}
 
 cp courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
@@ -344,7 +348,7 @@ cp courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 # Red Hat /etc/profile.d scripts
 #
 
-mkdir -p $RPM_BUILD_ROOT/etc/profile.d
+install -d $RPM_BUILD_ROOT/etc/profile.d
 cat >$RPM_BUILD_ROOT/etc/profile.d/courier.sh <<EOF
 if echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
 then
@@ -379,9 +383,9 @@ EOF
 # sendmail soft links
 #
 
-mkdir -p $RPM_BUILD_ROOT/usr/sbin
-mkdir -p $RPM_BUILD_ROOT/usr/lib
-mkdir -p $RPM_BUILD_ROOT/usr/bin
+install -d $RPM_BUILD_ROOT/usr/sbin
+install -d $RPM_BUILD_ROOT/usr/lib
+install -d $RPM_BUILD_ROOT/usr/bin
 
 ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
@@ -391,7 +395,7 @@ ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
 # maildrop wrapper soft links
 #
 
-mkdir -p $RPM_BUILD_ROOT/usr/local/bin
+install -d $RPM_BUILD_ROOT/usr/local/bin
 
 for f in dotlock maildirmake maildrop makedat reformail reformime deliverquota
 do
@@ -407,8 +411,8 @@ done
 # The following directories are not created by default, but I want them here.
 #
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/userdb
-mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/tmp/broken
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/userdb
+install -d $RPM_BUILD_ROOT%{_localstatedir}/tmp/broken
 
 . courier/uidgid || exit 1
 
