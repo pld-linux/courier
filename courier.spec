@@ -24,7 +24,7 @@ BuildRequires:	zlib-devel
 Provides:	smtpdaemon
 Prereq:		/sbin/chkconfig
 
-%define		apachedir	/home/httpd
+%define		apachedir	/home/services/httpd
 %define		_prefix		/usr/lib/courier
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
