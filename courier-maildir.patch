@@ -37,51 +37,6 @@ diff -Nur old/courier/courierd.dist.in new/courier/courierd.dist.in
  
  ##NAME: ESMTP_CORK:0
  #
-diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
---- old/courier/imapd.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd.rc.in	2004-02-20 12:25:45.000000000 +0000
-@@ -49,7 +49,7 @@
- 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
- 			-pid=$PIDFILE $TCPDOPTS \
- 			$PORT @libexecdir@/courier/imaplogin $LIBAUTHMODULES \
--				@bindir@/imapd Maildir"
-+				@bindir@/imapd Mail/Maildir"
- 	;;
- stop)
- 	@sbindir@/couriertcpd -pid=$PIDFILE -stop
-diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
---- old/courier/imapd-ssl.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd-ssl.rc.in	2004-02-20 12:25:45.000000000 +0000
-@@ -50,7 +50,7 @@
- 			-pid=$SSLPIDFILE $TCPDOPTS \
- 			$SSLPORT $COURIERTLS -server -tcpd \
- 				@libexecdir@/courier/imaplogin $LIBAUTHMODULES \
--				@bindir@/imapd Maildir"
-+				@bindir@/imapd Mail/Maildir"
- 	;;
- stop)
- 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
-diff -Nur old/courier/pop3d.in new/courier/pop3d.in
---- old/courier/pop3d.in	2003-11-28 01:04:59.000000000 +0000
-+++ new/courier/pop3d.in	2004-02-20 12:25:45.000000000 +0000
-@@ -77,4 +77,4 @@
- 		-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
- 		-pid=$PIDFILE $TCPDOPTS -address=$ADDRESS $PORT \
- 		@libexecdir@/courier/courierpop3login $AUTHMODULELIST \
--			@libexecdir@/courier/courierpop3d Maildir"
-+			@libexecdir@/courier/courierpop3d Mail/Maildir"
-diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
---- old/courier/pop3d-ssl.in	2003-11-29 01:37:34.000000000 +0000
-+++ new/courier/pop3d-ssl.in	2004-02-20 12:25:45.000000000 +0000
-@@ -54,7 +54,7 @@
- 			-pid=$SSLPIDFILE $TCPDOPTS \
- 			$SSLPORT $COURIERTLS -server -tcpd \
- 				$libexecdir/courier/courierpop3login $LIBAUTHMODULES \
--				$libexecdir/courier/courierpop3d Maildir"
-+				$libexecdir/courier/courierpop3d Mail/Maildir"
- 	;;
- stop)
- 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
 diff -Nur old/imap/imapd.dist.in new/imap/imapd.dist.in
 --- old/imap/imapd.dist.in	2004-01-25 05:40:04.000000000 +0000
 +++ new/imap/imapd.dist.in	2004-03-16 17:45:49.000000000 +0000
@@ -146,15 +101,6 @@ diff -Nur old/webmail/auth.c new/webmail/auth.c
  	if (chdir(maildir))	return (-1);
  	maildir_loginexec();
  	return (0);
-@@ -111,7 +111,7 @@
- struct stat stat_buf;
- 
- 	if (!p || !*p)	p=getenv("MAILDIRPATH");
--	if (!p || !*p)	p="Maildir";
-+	if (!p || !*p)	p="Mail/Maildir";
- 
- 	buf=malloc(strlen(h)+strlen(p)+sizeof(PASSFILE)+100);
- 
 diff -Nur old/webmail/sqwebmaild.dist.in new/webmail/sqwebmaild.dist.in
 --- old/webmail/sqwebmaild.dist.in	2004-05-09 03:33:22.000000000 +0000
 +++ new/webmail/sqwebmaild.dist.in	2004-05-28 10:50:17.000000000 +0000
