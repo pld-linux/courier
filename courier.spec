@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_with fam     # with fam support
+#
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
@@ -8,6 +12,7 @@ Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	8c607c70a692d8f8ccb769a3f96d2f28
 Patch0: 	%{name}-openssl-path.patch
+Patch1:		%{name}-withoutfam.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -25,7 +30,9 @@ BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
+%{?with_fam:BuildRequires:    fam-devel}
 Requires(post,preun):	/sbin/chkconfig
+%{?with_fam:Requires:    fam}
 Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -205,7 +212,8 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
 %prep
 %setup -q
-%patch -p1
+%patch0 -p1
+%{!?with_fam:%patch1 -p1}
 
 %build
 # we don't want fax module
