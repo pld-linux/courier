@@ -9,19 +9,18 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.48
-Release:	0.2
+Version:	0.49.0
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://www.courier-mta.org/beta/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	8f7a0929a8faa6f58dc250178aaf3f27
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	2c0f3d3d2eab405aaf633d9e17363bae
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
-Patch6:		%{name}-build.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -40,8 +39,10 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
+# only for light upgrade from old version < 0.47
+# remove it after some time
+Requires(post):	courier-authlib-userdb
 Requires(post):	openssl-tools >= 0.9.7d
-%{?with_fam:Requires:	fam}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
 Obsoletes:	courier-smtpauth
@@ -74,8 +75,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # the default redhat build:
 
 %define		_cgibindir		%{apachedir}/cgi-bin
-%define		_documentrootdir	%{apachedir}/html
-%define		_imageurl		/webmail/
+%define		_imagedir		%{_datadir}/sqwebmail/images
+%define		_imageurl		/webmail
 
 %description
 Courier is a fully functional mail server, that can completely take
@@ -176,7 +177,6 @@ Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{_cgibindir}
-Requires:	%{_documentrootdir}
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
@@ -260,7 +260,6 @@ potrzebny do filtrowania przychodz±cej poczty.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %build
 # we don't want fax module
@@ -316,6 +315,7 @@ cd ..
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
+	--enable-imagedir=%{_imagedir} \
 	--enable-imageurl=%{_imageurl} \
 	--with-certsdir=%{_certsdir} \
 	--with-db=db \
@@ -332,8 +332,7 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},/usr/lib} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/hosteddomains \
+	$RPM_BUILD_ROOT{%{_cgibindir},/usr/lib,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -378,7 +377,7 @@ mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
 
 # And here's why we delete all images from filelist.webmail:
-mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
+#mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
 # install a cron job to clean out webmail's cache
 install webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
@@ -472,6 +471,10 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
+# for apache
+echo "Alias /webmail %{_imagedir}" >%{name}.conf
+install %{name}.conf $RPM_BUILD_ROOT/etc/httpd
+
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
 rm -rf $RPM_BUILD_ROOT%{_datadir}/faxmail
@@ -483,15 +486,6 @@ rm -rf $RPM_BUILD_ROOT
 %triggerin -- courier < 0.45.5
 echo
 echo Directory with certificates has changed to %{_certsdir}
-echo
-
-%triggerin -- courier < 0.48
-echo
-echo !!! WARNING !!!
-echo Userdb has been moved to courier-authlib-userdb.
-echo Please install this package, move files
-echo from /etc/courier/userdb to /etc/authlib/userdb
-echo and run makeuserdb.
 echo
 
 %post
@@ -610,12 +604,35 @@ else
 	echo Type "%{_sbindir}/webmaild start" to start webmail server
 	echo
 fi
+if [ -f /etc/apache/apache.conf ] && ! grep -q "^Include.*%{name}.conf" /etc/apache/apache.conf; then
+    echo "Include /etc/httpd/%{name}.conf" >> /etc/apache/apache.conf
+    if [ -f /var/lock/subsys/apache ]; then
+        /etc/rc.d/init.d/apache restart 1>&2
+    fi
+elif [ -d /etc/httpd/httpd.conf ]; then
+    ln -sf /etc/httpd/%{name}.conf /etc/httpd/httpd.conf/99_%{name}.conf
+    if [ -f /var/lock/subsys/httpd ]; then
+        /usr/sbin/apachectl restart 1>&2
+    fi
+fi
 
 %preun webmail
 if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 		%{_sbindir}/webmaild stop
 	fi
+fi
+if [ -d /etc/httpd/httpd.conf ]; then
+    rm -f /etc/httpd/httpd.conf/99_%{name}.conf
+    if [ -f /var/lock/subsys/httpd ]; then
+	/usr/sbin/apachectl restart 1>&2
+    fi
+elif [ -f /etc/apache/apache.conf ]; then
+    grep -v "^Include.*%{name}.conf" /etc/apache/apache.conf > /etc/apache/apache.conf.tmp
+    mv -f /etc/apache/apache.conf.tmp /etc/apache/apache.conf
+    if [ -f /var/lock/subsys/apache ]; then
+        /etc/rc.d/init.d/apache restart 1>&2
+    fi
 fi
 
 %files
@@ -788,7 +805,7 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
-%attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
+%attr(755,daemon,daemon) %dir %{_localstatedir}/track
 %attr(755,root,root) /usr/lib/sendmail
 
 %files pop3d
@@ -860,16 +877,16 @@ fi
 %files webmail
 %defattr(644,root,root,755)
 %doc htmldoc/pcp* gpglib/README.html
-%attr(4755,root,root) %{_cgibindir}/webmail
+%attr(755,root,root) %{_cgibindir}/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
-%{_documentrootdir}/webmail
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sqwebmaild
 %attr(755,root,root) %{_sbindir}/webmaild
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
 %dir %{_datadir}/sqwebmail/html/en-us
 %{_datadir}/sqwebmail/html/en
+%{_datadir}/sqwebmail/images
 %config %{_datadir}/sqwebmail/html/en-us/[CILT]*
 %{_datadir}/sqwebmail/html/en-us/*.html
 %{_datadir}/sqwebmail/html/en-us/*.txt
@@ -890,6 +907,7 @@ fi
 %attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/httpd/%{name}.conf
 
 %files maildrop
 %defattr(644,root,root,755)
