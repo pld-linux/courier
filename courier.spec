@@ -5,18 +5,17 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.45.1
+Version:	0.45.2
 Release:	0.9
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	449b03a7d61e2174ad7dc65e4ddf57c6
+# Source0-md5:	6242d984744e1969db970ea798ecd564
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
-Patch3:		%{name}-no_res_query.patch
-Patch4:		%{name}-sendmail_dir.patch
-Patch5:		%{name}-start_scripts.patch
+Patch3:		%{name}-sendmail_dir.patch
+Patch4:		%{name}-start_scripts.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -276,7 +275,6 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 
 %build
 # we don't want fax module
