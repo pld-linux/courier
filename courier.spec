@@ -2,7 +2,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.35.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Mail
 Group(de):	Applikationen/Post
@@ -564,16 +564,16 @@ fi
 
 %files pop3d -f filelist.pop3
 %defattr(644,root,root,755)
-%attr(644, root, wheel) /etc/pam.d/pop3
+%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
 
 %files imapd -f filelist.imap
 %defattr(644,root,root,755)
-%attr(644, root, wheel) /etc/pam.d/imap
+%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
 
 %files webmail -f filelist.webmail
 %defattr(644,root,root,755)
 %attr(4511, root, wheel) %{_cgibindir}/webmail
-%attr(644, root, wheel) /etc/pam.d/webmail
+%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(755, bin, bin) %dir %{_documentrootdir}/webmail
 %attr(444, bin, bin) %{_documentrootdir}/webmail/*
 
