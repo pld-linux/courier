@@ -1,4 +1,7 @@
 #
+# TODO:
+#	- pam_stack.so - missing in PLD
+#
 # Conditional build:
 %bcond_with fam     # with fam support
 #
@@ -210,6 +213,42 @@ be able to relay outbound mail through the Courier mail server.
 SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
 przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
+%package authldap
+Summary:        LDAP authentication daemon for Courier mail server
+Summary(pl):    Demon autentykacji LDAP do Couriera
+Group:          Networking/Daemons
+PreReq:         %{name} = %{version}
+
+%description authldap
+This package provides LDAP authentication for Courier.
+
+%description authldap -l pl
+Ten pakiet pozwala na korzystanie z autentykacji LDAP w Courierze.
+
+%package authmysql
+Summary:        MySQL authentication daemon for Courier mail server
+Summary(pl):    Demon autentykacji MySQL do Couriera
+Group:          Networking/Daemons
+PreReq:         %{name} = %{version}
+
+%description authmysql
+This package provides MySQL authentication for Courier.
+
+%description authmysql -l pl
+Ten pakiet pozwala na korzystanie z autentykacji MySQL w Courierze.
+
+%package authpgsql
+Summary:        PostgreSQL authentication daemon for Courier mail server
+Summary(pl):    Demon autentykacji PostgreSQL do Couriera
+Group:          Networking/Daemons
+PreReq:         %{name} = %{version}
+
+%description authpgsql
+This package provides PostgreSQL authentication for Courier.
+
+%description authpgsql -l pl
+Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -287,6 +326,7 @@ echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authldap.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7
+echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpgsql.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpam.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7
 echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7
@@ -338,6 +378,10 @@ mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imap
 
 sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
 mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
+
+# Want to have esmtpd running by default
+sed 's/^ESMTPDSTART.*/ESMTPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.dist >$RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.new
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.new $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.dist
 
 # run script from install-configure (make config files)
 for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissions.dat`
@@ -456,6 +500,48 @@ if [ "$1" = "0" ]; then
 	%{_sbindir}/esmtpd start
 fi
 
+%post authldap
+if ps -A |grep -q authdaemond; then
+    %{_libdir}/authlib/authdaemond stop
+    %{_libdir}/authlib/authdaemond start
+fi
+
+%postun authldap
+if [ -x %{_libdir}/authlib/authdaemond ]; then
+    if ps -A |grep -q authdaemond; then
+	%{_libdir}/authlib/authdaemond stop;
+	%{_libdir}/authlib/authdaemond start;
+    fi
+fi
+
+%post authmysql
+if ps -A |grep -q authdaemond; then
+    %{_libdir}/authlib/authdaemond stop
+    %{_libdir}/authlib/authdaemond start
+fi
+
+%postun authmysql
+if [ -x %{_libdir}/authlib/authdaemond ]; then
+    if ps -A |grep -q authdaemond; then
+	%{_libdir}/authlib/authdaemond stop;
+	%{_libdir}/authlib/authdaemond start;
+    fi
+fi
+
+%post authpgsql
+if ps -A |grep -q authdaemond; then
+    %{_libdir}/authlib/authdaemond stop
+    %{_libdir}/authlib/authdaemond start
+fi
+
+%postun authpgsql
+if [ -x %{_libdir}/authlib/authdaemond ]; then
+    if ps -A |grep -q authdaemond; then
+	%{_libdir}/authlib/authdaemond stop;
+	%{_libdir}/authlib/authdaemond start;
+    fi
+fi
+
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS BENCHMARKS NEWS README TODO htmldoc/*
@@ -483,8 +569,6 @@ fi
 %{_mandir}/man7/authcram.7*
 %{_mandir}/man7/authdaemon.7*
 %{_mandir}/man7/authdaemond.7*
-%{_mandir}/man7/authldap.7*
-%{_mandir}/man7/authmysql.7*
 %{_mandir}/man7/authpam.7*
 %{_mandir}/man7/authpwd.7*
 %{_mandir}/man7/authshadow.7*
@@ -661,14 +745,10 @@ fi
 %attr(755,root,root) %{_bindir}/couriertls
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authdaemonrc
 %dir %{_libdir}/authlib
 %attr(755,root,root) %{_libdir}/authlib/authdaemon
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
 %attr(755,root,root) %{_libdir}/authlib/authdaemond
 %attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
 %attr(755,root,root) %dir %{_libdir}/authlib/changepwd
@@ -774,3 +854,18 @@ fi
 %defattr(644,root,root,755)
 %attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
+
+%files authldap
+%{_mandir}/man7/authldap.7*
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
+
+%files authmysql
+%{_mandir}/man7/authmysql.7*
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
+
+%files authpgsql
+%{_mandir}/man7/authpgsql.7*
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
+%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
