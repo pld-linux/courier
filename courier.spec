@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.5
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -590,7 +590,6 @@ fi
 if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
     %{_sbindir}/imapd stop
     %{_sbindir}/imapd start
-fi
 else
 echo
 echo Type "%{_sbindir}/imapd start" to start imapd server
@@ -599,7 +598,6 @@ fi
 if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
     %{_sbindir}/imapd-ssl stop
     %{_sbindir}/imapd-ssl start
-fi
 else
 echo
 echo Type "%{_sbindir}/imapd-ssl start" to start imapd-ssl server
@@ -620,7 +618,6 @@ fi
 if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
     %{_sbindir}/pop3d stop
     %{_sbindir}/pop3d start
-fi
 else
 echo
 echo Type "%{_sbindir}/pop3d start" to start pop3d server
@@ -629,7 +626,6 @@ fi
 if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
     %{_sbindir}/pop3d-ssl stop
     %{_sbindir}/pop3d-ssl start
-fi
 else
 echo
 echo Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server
