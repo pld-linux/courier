@@ -119,6 +119,18 @@ diff -Nur old/webmail/auth.c new/webmail/auth.c
  
  	buf=malloc(strlen(h)+strlen(p)+sizeof(PASSFILE)+100);
  
+diff -Nur old/webmail/sqwebmaild.dist.in new/webmail/sqwebmaild.dist.in
+--- old/webmail/sqwebmaild.dist.in	2004-05-09 03:33:22.000000000 +0000
++++ new/webmail/sqwebmaild.dist.in	2004-05-28 10:50:17.000000000 +0000
+@@ -32,7 +32,7 @@
+ #
+ # MAILDIRPATH - directory name of the maildir directory.
+ 
+-MAILDIRPATH=Maildir
++MAILDIRPATH=Mail/Maildir
+ 
+ ##NAME: AUTHMODULES:0
+ #
 diff -Nur old/webmail/sqwebmail.h new/webmail/sqwebmail.h
 --- old/webmail/sqwebmail.h	2004-02-29 20:50:13.000000000 +0000
 +++ new/webmail/sqwebmail.h	2004-04-15 10:58:47.000000000 +0000
