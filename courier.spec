@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	5
+Release:	6
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -16,6 +16,7 @@ Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-no_res_query.patch
 Patch4:		%{name}-sendmail_dir.patch
+Patch5:		%{name}-start_scripts.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -275,6 +276,7 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 # we don't want fax module
@@ -491,14 +493,8 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/man5/maildir.5*
 rm -rf $RPM_BUILD_ROOT
 
 %post
+if [ "$1" = "1" ]; then
 /sbin/chkconfig --add courier
-%{_sbindir}/makealiases 2>/dev/null || true
-%{_sbindir}/makesmtpaccess 2>/dev/null || true
-
-# If we do not have a certificate, make one up.
-if [ ! -f %{_datadir}/esmtpd.pem ]; then
-	%{_sbindir}/mkesmtpdcert
-fi
 
 cat <<EOF
 
@@ -513,40 +509,58 @@ Enter user, who should receive mail for root, mailer-daemon and postmaster
 into /etc/courier/aliases/system
 
 EOF
+fi
+
+if [ -e /var/lock/subsys/courier ]; then
+    %{initdir}/courier restart
+fi
 
 %preun
 if [ "$1" = "0" ]; then
+    if [ -e /var/lock/subsys/courier ]; then
 	%{initdir}/courier stop
+    fi
 	/sbin/chkconfig --del courier
 fi
 
 %post imapd
-# If we do not have a certificate, make one up.
-if [ ! -f %{_datadir}/imapd.pem ]; then
-	%{_sbindir}/mkimapdcert
+if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
+    %{_sbindir}/imapd stop
+    %{_sbindir}/imapd start
 fi
-%{_sbindir}/imapd stop
-%{_sbindir}/imapd start
-%{_sbindir}/imapd-ssl stop
-%{_sbindir}/imapd-ssl start
+if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
+    %{_sbindir}/imapd-ssl stop
+    %{_sbindir}/imapd-ssl start
+fi
 
 %preun imapd
 if [ "$1" = "0" ]; then
+    if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
 	%{_sbindir}/imapd stop
+    fi
+    if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
 	%{_sbindir}/imapd-ssl stop
+    fi
 fi
 
 %post pop3d
-# If we do not have a certificate, make one up.
-if [ ! -f %{_datadir}/pop3d.pem ]; then
-	%{_sbindir}/mkpop3dcert
+if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
+    %{_sbindir}/pop3d stop
+    %{_sbindir}/pop3d start
 fi
-%{_sbindir}/pop3d stop
-%{_sbindir}/pop3d start
+if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
+    %{_sbindir}/pop3d-ssl stop
+    %{_sbindir}/pop3d-ssl start
+fi
 
 %preun pop3d
 if [ "$1" = "0" ]; then
+    if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
 	%{_sbindir}/pop3d stop
+    fi
+    if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
+	%{_sbindir}/pop3d-ssl stop
+    fi
 fi
 
 %post webmail
@@ -560,17 +574,31 @@ if ps -A |grep -q sqwebmaild; then
 fi
 
 %post smtpauth
-%{_sbindir}/esmtpd stop
-%{_sbindir}/esmtpd start
+if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
+    %{_sbindir}/esmtpd stop
+    %{_sbindir}/esmtpd start
+fi
+if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
+    %{_sbindir}/esmtpd-ssl stop
+    %{_sbindir}/esmtpd-ssl start
+fi
 
+if [ "$1" = "1" ]; then
 echo
 echo Remember to enable auth in esmtp config files
 echo
+fi
 
 %postun smtpauth
 if [ "$1" = "0" ]; then
+    if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
 	%{_sbindir}/esmtpd stop
 	%{_sbindir}/esmtpd start
+    fi
+    if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
+	%{_sbindir}/esmtpd-ssl stop
+	%{_sbindir}/esmtpd-ssl start
+    fi
 fi
 
 %post authldap
