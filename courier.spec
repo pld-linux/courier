@@ -28,7 +28,6 @@ Prereq:		/sbin/chkconfig
 %define		_prefix		/usr/lib/courier
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
-%define		_mandir		/usr/share/man
 %define		initdir		/etc/rc.d/init.d
 
 # Change the following if your DocumentRoot and cgibindir differ.  This is
