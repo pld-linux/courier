@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.47
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -40,6 +40,7 @@ BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7d
 %{?with_fam:Requires:	fam}
+Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
 Obsoletes:	exim
 Obsoletes:	masqmail
