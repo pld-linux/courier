@@ -8,11 +8,12 @@ Group:		Networking/Daemons
 Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
-BuildRequires:	sysconftool
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	db-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
+BuildRequires:	libtool
 BuildRequires:	mysql-devel
 BuildRequires:	mailcap
 BuildRequires:	openldap-devel
@@ -21,6 +22,7 @@ BuildRequires:	openssl-tools >= 0.9.7
 BuildRequires:	openssl-tools-perl >= 0.9.7
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
+BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
 Requires(post,preun):	/sbin/chkconfig
 Provides:	smtpdaemon
@@ -205,12 +207,13 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %patch -p1
 
 %build
-(cd rootcerts
+cd rootcerts
 rm -f missing
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
-%{__automake})
+%{__automake}
+cd ..
 
 rm -f missing
 %{__libtoolize}
