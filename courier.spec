@@ -14,9 +14,9 @@ BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel
-BuildRequires:	openssl-tools
-BuildRequires:	openssl-tools-perl
+BuildRequires:	openssl-devel >= 0.9.7
+BuildRequires:	openssl-tools >= 0.9.7
+BuildRequires:	openssl-tools-perl >= 0.9.7
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	zlib-devel
