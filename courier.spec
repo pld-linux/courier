@@ -319,8 +319,6 @@ ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 # The following directories are not created by default, but I want them here.
 #
 
-gzip -9nf AUTHORS BENCHMARKS NEWS README TODO
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -377,7 +375,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz htmldoc/*
+%doc AUTHORS BENCHMARKS NEWS README TODO htmldoc/*
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
 %{_mandir}/man1/maildirmake.1*
