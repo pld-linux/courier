@@ -5,7 +5,7 @@
  
  AC_PATH_PROG(OPENSSL, openssl, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin)
 -AC_PATH_PROG(REHASH, c_rehash, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin)
-+AC_PATH_PROG(REHASH, c_rehash, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/lib/openssl)
++AC_PATH_PROG(REHASH, c_rehash, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/lib/openssl:/usr/bin)
  AC_PATH_PROGS(PERL, perl5 perl, "", $PATH:/usr/local/bin)
  
  if test "$PERL" = ""
