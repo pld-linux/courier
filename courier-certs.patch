@@ -61,7 +61,7 @@ diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configu
  dnl
 diff -Nur old/courier/module.esmtp/esmtpd.cnf.in new/courier/module.esmtp/esmtpd.cnf.in
 --- old/courier/module.esmtp/esmtpd.cnf.in	2001-08-18 22:18:12.000000000 +0000
-+++ new/courier/module.esmtp/esmtpd.cnf.in	2004-05-30 22:38:12.000000000 +0000
++++ new/courier/module.esmtp/esmtpd.cnf.in	2004-05-30 22:45:59.000000000 +0000
 @@ -1,5 +1,5 @@
  
 -RANDFILE = @datadir@/esmtpd.rnd
@@ -69,6 +69,18 @@ diff -Nur old/courier/module.esmtp/esmtpd.cnf.in new/courier/module.esmtp/esmtpd
  
  [ req ]
  default_bits = 1024
+diff -Nur old/courier/module.esmtp/esmtpd.dist.in new/courier/module.esmtp/esmtpd.dist.in
+--- old/courier/module.esmtp/esmtpd.dist.in	2004-05-11 00:48:14.000000000 +0000
++++ new/courier/module.esmtp/esmtpd.dist.in	2004-07-11 18:09:20.000000000 +0000
+@@ -143,7 +143,7 @@
+ # servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
+ # treated as confidential, and must not be world-readable.
+ #
+-TLS_CERTFILE=@datadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_CERTINFO:0
+ #
 diff -Nur old/courier/module.esmtp/esmtpd-ssl.dist.in new/courier/module.esmtp/esmtpd-ssl.dist.in
 --- old/courier/module.esmtp/esmtpd-ssl.dist.in	2004-04-24 19:56:19.000000000 +0000
 +++ new/courier/module.esmtp/esmtpd-ssl.dist.in	2004-05-24 20:57:52.000000000 +0000
