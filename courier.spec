@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.47
-Release:	4
+Release:	5
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
