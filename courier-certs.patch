@@ -52,7 +52,7 @@ diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configu
  eval "localstatedir=$localstatedir"
  
 +AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
-+certsdir="$withval", certsdir=$datadir
++certsdir="$withval", certsdir=$datadir)
 +
 +AC_SUBST(certsdir)
 +
