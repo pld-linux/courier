@@ -1,12 +1,12 @@
 #
 # Conditional build:
-%bcond_with	fam		# with fam support
+%bcond_without	fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.47
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -39,7 +39,6 @@ BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7d
-%{?with_fam:Requires:	fam}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
 Obsoletes:	exim
