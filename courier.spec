@@ -338,7 +338,11 @@ cd ..
 	--enable-imageurl=%{_imageurl} \
 	--with-certsdir=%{_certsdir} \
 	--with-db=db \
-	--with-mailer=%{_sbindir}/sendmail
+	--with-mailer=%{_sbindir}/sendmail \
+	--with-mailuser=daemon \
+	--with-mailgroup=daemon \
+	--with-mailuid=2 \
+	--with-mailgid=2
 
 %{__make}
 %{__make} check
@@ -674,22 +678,12 @@ fi
 %{_mandir}/man1/testmxlookup.1*
 %{_mandir}/man1/dot-forward.1*
 %{_mandir}/man1/couriertls.1*
-%{_mandir}/man1/courierlogger.1*
 %{_mandir}/man1/mailq*
 %{_mandir}/man1/couriertcpd*
 %{_mandir}/man1/dotforward.1*
 %{_mandir}/man1/rmail.1*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
-%{_mandir}/man7/authlib.7*
-%{_mandir}/man7/authcram.7*
-%{_mandir}/man7/authdaemon.7*
-%{_mandir}/man7/authdaemond.7*
-%{_mandir}/man7/authpam.7*
-%{_mandir}/man7/authpwd.7*
-%{_mandir}/man7/authshadow.7*
-%{_mandir}/man7/authuserdb.7*
-%{_mandir}/man7/authvchkpw.7*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
@@ -703,10 +697,7 @@ fi
 %{_mandir}/man8/makealiases.8*
 %{_mandir}/man8/makepercentrelay.8*
 %{_mandir}/man8/makesmtpaccess.8*
-%{_mandir}/man8/makeuserdb.8*
 %{_mandir}/man8/submit.8*
-%{_mandir}/man8/userdb.8*
-%{_mandir}/man8/userdbpw.8*
 %{_mandir}/man8/courieruucp.8*
 %{_mandir}/man8/esmtpd-msa.8*
 %{_mandir}/man8/filterctl.8*
@@ -802,7 +793,6 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/rfcerr*.txt
 %dir %{_libdir}/courier/modules/dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
-%{_libdir}/courier/modules/modules.ctl
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
 %attr(750,daemon,daemon) %{_libdir}/courier/courierd
 %attr(750,daemon,daemon) %{_libdir}/courier/aliasexp
@@ -810,13 +800,11 @@ fi
 %attr(750,daemon,daemon) %{_libdir}/courier/aliascreate
 %attr(750,daemon,daemon) %{_libdir}/courier/submit
 %attr(755,daemon,daemon) %{_libdir}/courier/makedatprog
-%attr(755,root,root) %{_sbindir}/authenumerate
 %attr(6555,daemon,daemon) %{_bindir}/cancelmsg
 %attr(755,root,root) %{_sbindir}/courier
 %attr(755,root,root) %{_datadir}/courierctl.start
 %attr(755,root,root) %{_bindir}/couriertls
 %attr(755,root,root) %{_sbindir}/couriertcpd
-%attr(755,root,root) %{_sbindir}/courierlogger
 %attr(755,root,root) %{_bindir}/courier-config
 %attr(755,root,root) %{_bindir}/deliverquota
 %attr(755,root,root) %{_bindir}/dotforward
@@ -830,33 +818,15 @@ fi
 %attr(755,root,root) %{_datadir}/makehosteddomains
 %attr(755,root,root) %{_sbindir}/makehosteddomains
 %attr(755,root,root) %{_bindir}/makemime
-%attr(755,root,root) %{_datadir}/makeuserdb
-%attr(755,root,root) %{_sbindir}/makeuserdb
 %attr(755,root,root) %{_bindir}/mimegpg
-%attr(755,root,root) %{_datadir}/pw2userdb
-%attr(755,root,root) %{_sbindir}/pw2userdb
 %attr(4755,root,root) %{_bindir}/rmail
 %attr(755,root,root) %{_sbindir}/showconfig
 %attr(750,root,daemon) %{_sbindir}/showmodules
 %attr(4755,root,root) %{_sbindir}/sendmail
 %attr(755,root,root) %{_bindir}/testmxlookup
-%attr(755,root,root) %{_datadir}/userdb
-%attr(755,root,root) %{_sbindir}/userdb
-%attr(755,root,root) %{_sbindir}/userdbpw
-%attr(755,root,root) %{_datadir}/vchkpw2userdb
-%attr(755,root,root) %{_sbindir}/vchkpw2userdb
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authdaemonrc
-%dir %{_libdir}/authlib
-%attr(755,root,root) %{_libdir}/authlib/authdaemon
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
-%attr(755,root,root) %{_libdir}/authlib/authdaemond
 %attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
-%attr(755,root,root) %dir %{_libdir}/authlib/changepwd
-%attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
-%attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
-%attr(755,root,root) %{_datadir}/authsystem.passwd
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
@@ -998,5 +968,6 @@ fi
 
 %files smtpauth
 %defattr(644,root,root,755)
-%attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
-%attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
+# ???
+#%attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
+#%attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
