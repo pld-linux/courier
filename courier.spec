@@ -1,15 +1,16 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.38.1
-Release:	1.1
+Version:	0.42.0
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
+Source0:	http://prdownloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
+BuildRequires:	sysconftool
 BuildRequires:	autoconf
-BuildRequires:	db3-devel
+BuildRequires:	db-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	mysql-devel
@@ -200,18 +201,29 @@ SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
 przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
 %prep
-%setup -q
+%setup -q 
 %patch -p1
 
-(cd rootcerts ; autoconf)
-%configure2_13 \
+%build
+(cd rootcerts
+rm -f missing
+%{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__automake})
+
+rm -f missing
+%{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+%configure \
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
 	--enable-imageurl=%{_imageurl} \
 	--with-db=db
 
-%build
 %{__make}
 %{__make} check
 
