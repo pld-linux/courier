@@ -1,11 +1,11 @@
---- courier-0.35.1/rootcerts/configure.in.orig	Sun May 27 05:02:12 2001
-+++ courier-0.35.1/rootcerts/configure.in	Thu Jan  3 12:40:51 2002
+--- courier-0.42.0/rootcerts/configure.in.orig	Sun Mar 30 23:52:10 2003
++++ courier-0.42.0/rootcerts/configure.in	Sun Mar 30 23:52:50 2003
 @@ -10,7 +10,7 @@
+ AC_PROG_LN_S
  AM_INIT_AUTOMAKE(rootcerts, 0.50)
  
- AC_PATH_PROG(OPENSSL, openssl, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin)
--AC_PATH_PROG(REHASH, c_rehash, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin)
-+AC_PATH_PROG(REHASH, c_rehash, "", $PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/lib/openssl:/usr/bin)
- AC_PATH_PROGS(PERL, perl5 perl, "", $PATH:/usr/local/bin)
- 
- if test "$PERL" = ""
+-EXTRA_PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin
++EXTRA_PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/lib/openssl:/usr/bin
+ AC_PATH_PROG(OPENSSL, openssl, "", $EXTRA_PATH)
+ AC_PATH_PROG(REHASH, c_rehash, "", $EXTRA_PATH)
+ AC_PATH_PROGS(PERL, perl5 perl, "", $EXTRA_PATH)
