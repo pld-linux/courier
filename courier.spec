@@ -5,12 +5,12 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.45.5
-Release:	2
+Version:	0.45.6
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	59f69d851740a11a0172eb803f9ab12f
+# Source0-md5:	da08b5f7d2fc9f4a871a5584914011c6
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
