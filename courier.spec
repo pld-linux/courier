@@ -215,7 +215,7 @@ ln -s %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
 ln -s %{_sysconfdir}/imapd.authpam $RPM_BUILD_ROOT/etc/pam.d/imap
 ln -s %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 
-make install-perms
+%{__make} install-perms
 
 #
 # We're going to create some more config files later, so let's just make
