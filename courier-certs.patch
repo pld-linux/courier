@@ -1,0 +1,179 @@
+diff -Nur old/configure.in new/configure.in
+--- old/configure.in	2004-05-16 02:40:19.000000000 +0000
++++ new/configure.in	2004-05-24 20:57:17.000000000 +0000
+@@ -58,6 +58,11 @@
+ eval "localstatedir=$localstatedir"
+ eval "datadir=$datadir"
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$sysconfdir/certs)
++
++AC_SUBST(certsdir)
++
+ AC_ARG_WITH(userdb, [
+ -- see INSTALL, or courier/doc/install.html for configuration options -- ], ,
+ 	ac_configure_args="$ac_configure_args --with-userdb=${sysconfdir}/userdb")
+diff -Nur old/courier/configure.in new/courier/configure.in
+--- old/courier/configure.in	2004-05-02 14:59:42.000000000 +0000
++++ new/courier/configure.in	2004-05-24 21:29:43.000000000 +0000
+@@ -576,6 +576,11 @@
+ eval "exec_prefix=$exec_prefix"
+ eval "bindir=$bindir"
+ 
++AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$sysconfdir/certs)
++
++AC_SUBST(certsdir)
++
+ MAILDROP="$bindir/maildrop"
+ AC_SUBST(MAILDROP)
+ 
+diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
+--- old/courier/imapd-ssl.rc.in	2004-05-24 21:25:19.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2004-05-24 21:32:29.000000000 +0000
+@@ -28,6 +28,11 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @certsdir@/imapd.pem ]; then
++	@sbindir@/mkimapdcert
++	fi
++
+ 	LIBAUTHMODULES=""
+ 	for f in `echo $AUTHMODULES`
+ 	do
+diff -Nur old/courier/module.esmtp/configure.in new/courier/module.esmtp/configure.in
+--- old/courier/module.esmtp/configure.in	2004-05-11 00:16:05.000000000 +0000
++++ new/courier/module.esmtp/configure.in	2004-05-24 20:57:47.000000000 +0000
+@@ -300,6 +300,11 @@
+ eval "datadir=$datadir"
+ eval "localstatedir=$localstatedir"
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$sysconfdir/certs)
++
++AC_SUBST(certsdir)
++
+ dnl
+ dnl  Check what libraries are available
+ dnl
+diff -Nur old/courier/module.esmtp/esmtpd-ssl.dist.in new/courier/module.esmtp/esmtpd-ssl.dist.in
+--- old/courier/module.esmtp/esmtpd-ssl.dist.in	2004-04-24 19:56:19.000000000 +0000
++++ new/courier/module.esmtp/esmtpd-ssl.dist.in	2004-05-24 20:57:52.000000000 +0000
+@@ -168,7 +168,7 @@
+ # servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
+ # treated as confidential, and must not be world-readable.
+ #
+-TLS_CERTFILE=@datadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
+diff -Nur old/courier/module.esmtp/esmtpd-ssl.in new/courier/module.esmtp/esmtpd-ssl.in
+--- old/courier/module.esmtp/esmtpd-ssl.in	2004-05-24 21:24:41.000000000 +0000
++++ new/courier/module.esmtp/esmtpd-ssl.in	2004-05-24 21:31:31.000000000 +0000
+@@ -25,6 +25,10 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @certsdir@/esmtpd.pem ]; then
++	@sbindir@/mkesmtpdcert
++	fi
+ 	;;
+ stop)
+ 	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
+diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
+--- old/courier/pop3d-ssl.in	2004-05-24 21:25:31.000000000 +0000
++++ new/courier/pop3d-ssl.in	2004-05-24 21:33:05.000000000 +0000
+@@ -29,6 +29,11 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @certsdir@/pop3d.pem ]; then
++	@sbindir@/mkpop3dcert
++	fi
++
+ 	LIBAUTHMODULES=""
+ 	for f in `echo $AUTHMODULES`
+ 	do
+diff -Nur old/courier.sysvinit.in new/courier.sysvinit.in
+--- old/courier.sysvinit.in	2004-05-02 14:24:06.000000000 +0000
++++ new/courier.sysvinit.in	2004-05-24 20:56:37.000000000 +0000
+@@ -14,7 +14,7 @@
+ sbindir="@sbindir@"
+ bindir="@bindir@"
+ libexecdir="@libexecdir@"
+-datadir="@datadir@"
++certsdir="@certsdir@"
+ 
+ if test ! -f ${sysconfdir}/esmtpd
+ then
+@@ -82,7 +82,7 @@
+ 	then
+ # If we do not have a certificate, make one up.
+ 
+-		if test ! -f ${datadir}/esmtpd.pem
++		if test ! -f ${certsdir}/esmtpd.pem
+ 		then
+ 			if test -x $COURIERTLS
+ 			then
+@@ -149,7 +149,7 @@
+ 			then
+ # If we do not have a certificate, make one up.
+ 
+-				if test ! -f ${datadir}/pop3d.pem
++				if test ! -f ${certsdir}/pop3d.pem
+ 				then
+ 					echo -n " generating-POP3-SSL-certificate..."
+ 
+@@ -179,7 +179,7 @@
+ 			then
+ # If we do not have a certificate, make one up.
+ 
+-				if test ! -f ${datadir}/imapd.pem
++				if test ! -f ${certsdir}/imapd.pem
+ 				then
+ 					echo -n " generating-IMAP-SSL-certificate..."
+ 
+diff -Nur old/imap/configure.in new/imap/configure.in
+--- old/imap/configure.in	2004-05-16 02:38:13.000000000 +0000
++++ new/imap/configure.in	2004-05-24 20:57:12.000000000 +0000
+@@ -283,6 +283,11 @@
+ eval "sysconfdir=$sysconfdir"
+ eval "localstatedir=$localstatedir"
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$sysconfdir/certs)
++
++AC_SUBST(certsdir)
++
+ #
+ # Check for PAM configuration flavor
+ 
+diff -Nur old/imap/imapd-ssl.dist.in new/imap/imapd-ssl.dist.in
+--- old/imap/imapd-ssl.dist.in	2004-01-25 05:40:03.000000000 +0000
++++ new/imap/imapd-ssl.dist.in	2004-05-24 20:57:29.000000000 +0000
+@@ -146,7 +146,7 @@
+ # servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
+ # treated as confidential, and must not be world-readable.
+ #
+-TLS_CERTFILE=@datadir@/imapd.pem
++TLS_CERTFILE=@certsdir@/imapd.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
+diff -Nur old/imap/pop3d-ssl.dist.in new/imap/pop3d-ssl.dist.in
+--- old/imap/pop3d-ssl.dist.in	2004-01-25 05:40:04.000000000 +0000
++++ new/imap/pop3d-ssl.dist.in	2004-05-24 20:57:32.000000000 +0000
+@@ -135,7 +135,7 @@
+ # servers, and is optional for SSL/TLS clients.  TLS_CERTFILE is usually
+ # treated as confidential, and must not be world-readable.
+ #
+-TLS_CERTFILE=@datadir@/pop3d.pem
++TLS_CERTFILE=@certsdir@/pop3d.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
