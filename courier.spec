@@ -3,7 +3,7 @@
 #	- pam_stack.so - missing in PLD
 #
 # Conditional build:
-%bcond_with fam     # with fam support
+%bcond_with fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
@@ -33,9 +33,9 @@ BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
-%{?with_fam:BuildRequires:    fam-devel}
+%{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
-%{?with_fam:Requires:    fam}
+%{?with_fam:Requires:	fam}
 Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -201,7 +201,7 @@ potrzebny do filtrowania przychodz±cej poczty.
 
 %package smtpauth
 Summary:	Courier mail server authenticated ESMTP module
-Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
+Summary(pl):	Modu³ uwierzytelniania ESMTP (SMTP AUTH) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 
@@ -210,8 +210,9 @@ Authenticated ESMTP allows remote users to authenticate themselves and
 be able to relay outbound mail through the Courier mail server.
 
 %description smtpauth -l pl
-SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
-przekazania wychodz±cej poczty poprzez serwer poczty Courier.
+SMTP AUTH pozwala zdalnym u¿ytkownikom na uwierzytelnianie i
+umo¿liwienie przekazania wychodz±cej poczty poprzez serwer poczty
+Courier.
 
 %package authldap
 Summary:        LDAP authentication daemon for Courier mail server
@@ -462,7 +463,7 @@ fi
 %preun
 if [ "$1" = "0" ]; then
 	%{initdir}/courier stop
-        /sbin/chkconfig --del courier
+	/sbin/chkconfig --del courier
 fi
 
 %post imapd
