@@ -215,8 +215,9 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d $RPM_BUILD_ROOT%{_prefix}
-install -d $RPM_BUILD_ROOT/etc/pam.d
+install -d $RPM_BUILD_ROOT{%{_prefix},/etc/{crn.hourly,pam.d},%{initdir}}
+	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
+	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken}
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
@@ -232,18 +233,13 @@ ln -sf %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 # and adds everything except the executable, webmail, to filelist.webmail.
 # Here's why:
 
-install -d $RPM_BUILD_ROOT%{_cgibindir}
 cp -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
 
 # And here's why we delete all images from filelist.webmail:
-
-install -d $RPM_BUILD_ROOT%{_documentrootdir}
 mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
 # install a cron job to clean out webmail's cache
-
-install -d $RPM_BUILD_ROOT/etc/cron.hourly
 install webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
 
 # Move .html documentation back to build dir, so that RPM will move it to
@@ -269,11 +265,6 @@ mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imap
 sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
 mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
 
-#
-# Red Hat init.d file
-#
-
-install -d $RPM_BUILD_ROOT%{initdir}
 install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
 #
@@ -324,9 +315,6 @@ ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 #
 # The following directories are not created by default, but I want them here.
 #
-
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/userdb
-install -d $RPM_BUILD_ROOT%{_localstatedir}/tmp/broken
 
 gzip -9nf AUTHORS BENCHMARKS NEWS README TODO
 
