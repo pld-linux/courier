@@ -476,11 +476,17 @@ if [ ! -f %{_datadir}/esmtpd.pem ]; then
 fi
 
 cat <<EOF
+
 Now courier will refuse to accept SMTP messages except to localhost
 add hosts to /etc/courier/esmtpacceptmailfor.dir/esmtpacceptmailfor
 run /usr/lib/courier/sbin/makeacceptmailfor
+
+Add hosts to /etc/courier/locals you want to accept mail for
+run /usr/lib/courier/sbin/makealiases
+
 Enter user, who should receive mail for root, mailer-daemon and postmaster
 into /etc/courier/aliases/system
+
 EOF
 
 %preun
@@ -513,11 +519,6 @@ fi
 %{_sbindir}/pop3d stop
 %{_sbindir}/pop3d start
 
-cat <<EOF
-Add hosts to /etc/courier/locals you want to accept mail for
-run /usr/lib/courier/sbin/makealiases
-EOF
-
 %preun pop3d
 if [ "$1" = "0" ]; then
 	%{_sbindir}/pop3d stop
@@ -537,7 +538,9 @@ fi
 %{_sbindir}/esmtpd stop
 %{_sbindir}/esmtpd start
 
+echo
 echo Remember to enable auth in esmtp config files
+echo
 
 %postun smtpauth
 if [ "$1" = "0" ]; then
@@ -651,6 +654,7 @@ fi
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/esmtpacceptmailfor
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
 %attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
@@ -822,7 +826,6 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d
 %attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.cnf
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d-ssl
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
 %attr(755,root,root) %{_libdir}/courier/courierpop3d
 %attr(755,root,root) %{_libdir}/courier/courierpop3login
 %attr(755,root,root) %{_datadir}/pop3d
