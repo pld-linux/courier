@@ -15,15 +15,21 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	autoconf
 BuildRequires:	db3-devel
 BuildRequires:	libstdc++-devel
+BuildRequires:	mysql-devel
+BuildRequires:	openldap-devel
+BuildRequires:	openssl-devel
 BuildRequires:	openssl-tools-perl
+BuildRequires:	pam-devel
+BuildRequires:	perl-devel
+BuildRequires:	zlib-devel
 Provides:	smtpdaemon
-#AutoProv:	no
 Prereq:		/sbin/chkconfig
 
 %define		apachedir	/home/httpd
 %define		_prefix		/usr/lib/courier
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
+%define		_mandir		/usr/share/man
 %define		initdir		/etc/rc.d/init.d
 
 # Change the following if your DocumentRoot and cgibindir differ.  This is
@@ -55,26 +61,6 @@ lepsze alternatywy.
 Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME. Ma
 tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
 filtrowania spamu.
-
-%package sendmail-wrapper
-Summary:	Courier soft links for sendmail
-Summary(pl):	Wrapper sendmail do Couriera
-Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
-Requires:	%{name} = %{version}
-
-%description sendmail-wrapper
-This package contains two soft links from /usr/sbin/sendmail and
-/usr/lib/sendmail to %{_bindir}/sendmail. This allows application that
-use sendmail to transparently use Courier for sending mail.
-
-%description sendmail-wrapper -l pl
-# acc. FHS these symlinks should be in main package...
-Ten pakiet zawiera symlinki z /usr/sbin/sendmail i /usr/lib/sendmail
-do %{_bindir}/sendmail. Pozwala to aplikacjom u¿ywaj±cym sendmaila
-korzystaæ z Couriera.
 
 %package pop3d
 Summary:	Courier Integrated POP3 server
@@ -214,32 +200,6 @@ incoming mail.
 Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
 potrzebny do filtrowania przychodz±cej poczty.
 
-%package maildrop-wrapper
-Summary:	Courier soft links for maildrop
-Summary(pl):	Wrapper maildrop do Couriera
-Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
-Requires:	%{name}-maildrop = %{version}
-
-%description maildrop-wrapper
-This package installs several soft links from the /usr/local/bin
-directory to Courier's integrated maildrop mail filter. Maildrop is
-available as a standalone package, which installs in %{_bindir}. If
-you have applications that expect to find maildrop in /usr/local/bin
-you can install this package to create soft links that point to
-Courier's integrated maildrop version instead, in order to continue to
-use those applications, without needing to reconfigure them.
-
-%description maildrop-wrapper -l pl
-# hmmm ??? to be removed...
-Ten pakiet zawiera symlinki z katalogu /usr/local/bin do filtru
-maildrop Couriera. maildrop jest dostêpnym w oddzielnym pakiecie,
-instaluj±cym siê w %{_bindir}. Przydaje siê aplikacjom szukaj±cym
-maildropa w /usr/local/bin do u¿ywania z Courierem bez
-rekonfigurowania.
-
 %package smtpauth
 Summary:	Courier mail server authenticated ESMTP module
 Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
@@ -288,80 +248,6 @@ ln -sf %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 
 %{__make} install-perms
 
-#
-# We're going to create some more config files later, so let's just make
-# sure they're processed as all other Courier config files
-#
-
-echo '/etc/pam.d/esmtp 644 root root' >>permissions.dat
-echo '/etc/profile.d/courier.sh 755 bin bin config' >>permissions.dat
-echo '/etc/profile.d/courier.csh 755 bin bin config' >>permissions.dat
-echo '%{initdir}/courier 755 bin bin config' >>permissions.dat
-
-#
-#  Translate permissions.dat to spec file filelist.
-#
-
-perl -e '
-$buildroot=$ENV{"RPM_BUILD_ROOT"};
-$prefix="%{_prefix}";
-$exec_prefix="%{_exec_prefix}";
-
-while (<>)
-{
-	chop if /\n$/;
-	($file,$mode,$uid,$gid,$special)=split(/ +/);
-	$file=$prefix if $file eq "$prefix/.";
-
-	next if $special eq "doc";
-	next if $file eq "$prefix/doc";
-
-	# Ignore dir/. entries
-
-	next if $file =~ /\/\.$/;
-
-	# Ignore man directories
-
-	next if $file eq "%{_mandir}";
-	next if substr($file, 0, length("%{_mandir}")) eq "%{_mandir}"
-		&& substr($file, length("%{_mandir}")) =~ /^\/man[1-9]$/;
-
-	$mode = "-" if $special eq "%doc";
-	$special="%config" if $special eq "config";
-	$special="%dir" if ! -l "$buildroot/$file" && -d "$buildroot/$file";
-	if ($special eq "man")
-	{
-		if ( -l "$buildroot/$file" )
-		{
-			print STDERR "ln -s " . readlink("$buildroot$file")
-				. ".gz $buildroot/$file.gz\n";
-			symlink readlink("$buildroot$file")
-				. ".gz", "$buildroot/$file.gz";
-		}
-		else
-		{
-			print STDERR "gzip <$buildroot$file >$buildroot$file.gz\n";
-			system("gzip <$buildroot$file >$buildroot$file.gz ; rm -f $buildroot$file");
-		}
-		$file="$file.gz"
-	}
-	$special="" unless $special =~ /%/;
-
-	$special="%attr($mode, $uid, $gid) $special";
-	print "$special $file\n";
-}
-
-' <permissions.dat >filelist1 || exit 1
-
-sed -n '/imap[\.a-z0-9]*$/p;/imapd-ssl/p' <filelist1 >filelist.imap
-sed -n '/pop3[\.a-z0-9]*$/p' <filelist1 >filelist.pop3
-sed -n '/couriermlm/p' <filelist1 >filelist.mlm
-sed -n '/authstart$/p;/authend$/p' <filelist1 >filelist.auth
-sed -n '/maildrop[^/]*$/p;/reformail[^/]*$/p;/reformime[^/]*$/p' <filelist1 >filelist.maildrop
-sed '/imap[\.a-z0-9]*$/d;/imapd-ssl/d;/pop3[\.a-z0-9]*$/d;/couriermlm/d;/webmail/d;/ldapaddressbook$/d;/maildrop[^/]*$/d;/reformail[^/]*$/d;/reformime[^/]*$/d;/authstart$/d;/authend$/d' <filelist1 >filelist
-
-sed -n '/sqwebmail/p;/webmail.authpam/p;/webmail-logincache/p;/ldapaddressbook$/p' <filelist1 | sed '/images/d' >filelist.webmail
-
 # Note that we delete all 'webmail's, but copy over only 'sqwebmail's.
 # This removes all webmail-related stuff from the main filelist,
 # and adds everything except the executable, webmail, to filelist.webmail.
@@ -376,19 +262,13 @@ cp -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 install -d $RPM_BUILD_ROOT%{_documentrootdir}
 mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
-# Do we need to install a cron job to clean out webmail's cache?
+# install a cron job to clean out webmail's cache
 
-if test -f webmail/cron.cmd
-then
-	install -d $RPM_BUILD_ROOT/etc/cron.hourly
-	cp webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
-	echo "%attr(555, root, wheel) /etc/cron.hourly/courier-webmail-cleancache" >>filelist.webmail
-fi
+install -d $RPM_BUILD_ROOT/etc/cron.hourly
+install webmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache
 
-#
 # Move .html documentation back to build dir, so that RPM will move it to
 # the appropriate docdir
-#
 
 rm -rf htmldoc
 mkdir htmldoc
@@ -398,22 +278,24 @@ chmod a-w htmldoc/*
 # Manually set POP3DSTART and IMAPDSTART to yes, they'll go into a separate
 # package, so after it's installed they should be runnable.
 
-sed 's/^POP3DSTART.*/POP3DSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d
+sed 's/^POP3DSTART.*/POP3DSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist
 
-sed 's/^IMAPDSTART.*/IMAPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imapd
+sed 's/^POP3DSSLSTART.*/POP3DSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.new
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist
 
-sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl
+sed 's/^IMAPDSTART.*/IMAPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist
+
+sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
 
 #
 # Red Hat init.d file
 #
 
 install -d $RPM_BUILD_ROOT%{initdir}
-
-cp -f courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
+install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
 #
 # Red Hat /etc/profile.d scripts
@@ -456,27 +338,9 @@ EOF
 
 install -d $RPM_BUILD_ROOT/usr/sbin
 install -d $RPM_BUILD_ROOT/usr/lib
-install -d $RPM_BUILD_ROOT/usr/bin
 
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
-ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
-
-#
-# maildrop wrapper soft links
-#
-
-install -d $RPM_BUILD_ROOT/usr/local/bin
-
-for f in dotlock maildirmake maildrop makedat reformail reformime deliverquota
-do
-	ln -s %{_bindir}/$f $RPM_BUILD_ROOT/usr/local/bin/$f
-done
-
-for f in makeuserdb pw2userdb userdb userdbpw vchkpw2userdb
-do
-	ln -s %{_sbindir}/$f $RPM_BUILD_ROOT/usr/local/bin/$f
-done
 
 #
 # The following directories are not created by default, but I want them here.
@@ -484,14 +348,6 @@ done
 
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/userdb
 install -d $RPM_BUILD_ROOT%{_localstatedir}/tmp/broken
-
-. courier/uidgid || exit 1
-
-mailuser=daemon
-mailgroup=daemon
-
-echo "%attr(700, $mailuser, $mailgroup) %dir %{_sysconfdir}/userdb" >>filelist
-echo "%attr(755, $mailuser, $mailgroup) %dir %{_localstatedir}/tmp/broken" >>filelist
 
 gzip -9nf AUTHORS BENCHMARKS NEWS README TODO
 
@@ -504,76 +360,342 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/makesmtpaccess 2>/dev/null || true
 
 # If we do not have a certificate, make one up.
-
-if test ! -f %{_datadir}/esmtpd.pem
-then
+if [ ! -f %{_datadir}/esmtpd.pem ]; then
 	%{_sbindir}/mkesmtpdcert
 fi
 
 %preun
-%{initdir}/courier stop
-if test "$1" = "0"
-then
+if [ "$1" = "0" ]; then
+	%{initdir}/courier stop
         /sbin/chkconfig --del courier
 fi
 
 %post imapd
 # If we do not have a certificate, make one up.
-
-if test ! -f %{_datadir}/imapd.pem
-then
+if [ ! -f %{_datadir}/imapd.pem ]; then
 	%{_sbindir}/mkimapdcert
 fi
-%preun imapd
 %{_sbindir}/imapd stop
+%{_sbindir}/imapd start
 %{_sbindir}/imapd-ssl stop
+%{_sbindir}/imapd-ssl start
+
+%preun imapd
+if [ "$1" = "0" ]; then
+	%{_sbindir}/imapd stop
+	%{_sbindir}/imapd-ssl stop
+fi
+
+%post pop3d
+%{_sbindir}/pop3d stop
+%{_sbindir}/pop3d start
 
 %preun pop3d
-%{_sbindir}/pop3d stop
+if [ "$1" = "0" ]; then
+	%{_sbindir}/pop3d stop
+fi
 
 %post smtpauth
 %{_sbindir}/esmtpd stop
 %{_sbindir}/esmtpd start
 
 %postun smtpauth
-%{_sbindir}/esmtpd stop
-%{_sbindir}/esmtpd start
+if [ "$1" = "0" ]; then
+	%{_sbindir}/esmtpd stop
+	%{_sbindir}/esmtpd start
+fi
 
-%files -f filelist
+%files
 %defattr(644,root,root,755)
 %doc *.gz htmldoc/*
+%{_mandir}/man1/sendmail.1*
+%{_mandir}/man1/preline.1*
+%{_mandir}/man1/maildirmake.1*
+%{_mandir}/man1/cancelmsg.1*
+%{_mandir}/man1/dotlock.1*
+%{_mandir}/man1/mailbot.1*
+%{_mandir}/man1/makemime.1*
+%{_mandir}/man1/mimegpg.1*
+%{_mandir}/man1/makedat.1*
+%{_mandir}/man1/testmxlookup.1*
+%{_mandir}/man1/dot-forward.1*
+%{_mandir}/man1/couriertls.1*
+%{_mandir}/man1/rmail.1*
+%{_mandir}/man1/dotforward.1*
+%{_mandir}/man5/dot-courier.5*
+%{_mandir}/man7/localmailfilter.7*
+%{_mandir}/man7/maildirquota.7*
+%{_mandir}/man8/auth*
+%{_mandir}/man8/courierfilter.8*
+%{_mandir}/man8/courierperlfilter.8*
+%{_mandir}/man8/dupfilter.8*
+%{_mandir}/man8/filterctl.8*
+%{_mandir}/man8/courier.8*
+%{_mandir}/man8/courierldapaliasd.8*
+%{_mandir}/man8/couriertcpd.8*
+%{_mandir}/man8/deliverquota.8*
+%{_mandir}/man8/esmtpd.8*
+%{_mandir}/man8/mailq.8*
+%{_mandir}/man8/makeacceptmailfor.8*
+%{_mandir}/man8/makehosteddomains.8*
+%{_mandir}/man8/mkesmtpdcert.8*
+%{_mandir}/man8/makealiases.8*
+%{_mandir}/man8/makepercentrelay.8*
+%{_mandir}/man8/makesmtpaccess.8*
+%{_mandir}/man8/makeuserdb.8*
+%{_mandir}/man8/submit.8*
+%{_mandir}/man8/userdb.8*
+%{_mandir}/man8/userdbpw.8*
+%{_mandir}/man8/pw2userdb.8*
+%{_mandir}/man8/vchkpw2userdb.8*
+%{_mandir}/man8/makesmtpaccess-msa.8*
+%{_mandir}/man8/esmtpd-msa.8*
+%{_mandir}/man8/courieruucp.8*
+%{_mandir}/man8/makeuucpneighbors.8*
+%config %{_sysconfdir}/ldapaddressbook.dist
+%dir %{_sysconfdir}
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
+%attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
+%attr(644,daemon,daemon) %config %{_sysconfdir}/enablefiltering
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
+%attr(644,daemon,daemon) %config %{_sysconfdir}/smtpaccess/default
+%attr(644,daemon,daemon) %config %{_sysconfdir}/courierd.dist
+%attr(640,daemon,daemon) %config %{_sysconfdir}/aliases/system
+%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d-ssl.dist
+%attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
+%dir %{_prefix}
+%dir %{_bindir}
+%dir %{_sbindir}
+%dir %{_libdir}
+%dir %{_libdir}/courier
+%dir %{_datadir}
+%{_datadir}/rootcerts
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/removed
+%attr(755,root,root) %dir %{_datadir}/courierwebadmin
+%attr(755,root,root) %{_datadir}/courierwebadmin/webadmin.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/dumpenv.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-main.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-save.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-cancel.pl
+%{_datadir}/courierwebadmin/login.html
+%{_datadir}/courierwebadmin/admin-save.html
+%{_datadir}/courierwebadmin/admin-main.html
+%{_datadir}/courierwebadmin/unsecure.html
+%dir %{_libdir}/filters
+%attr(755,root,root) %{_libdir}/filters/*
+%attr(755,root,root) %{_datadir}/perlfilter-*.pl
+%dir %{_localstatedir}
+%attr(770,daemon,daemon) %dir %{_localstatedir}/tmp
+%attr(750,daemon,daemon) %dir %{_localstatedir}/msgs
+%attr(750,daemon,daemon) %dir %{_localstatedir}/msgq
+%attr(750,daemon,daemon) %dir %{_localstatedir}/filters
+%attr(750,daemon,daemon) %dir %{_localstatedir}/allfilters
+%attr(750,daemon,daemon) %dir %{_sysconfdir}/filters
+%attr(750,daemon,daemon) %dir %{_sysconfdir}/filters/active
+%attr(754,root,daemon) %{_datadir}/filterctl
+%attr(754,root,daemon) %{_sbindir}/filterctl
+%attr(754,root,daemon) %{_sbindir}/courierfilter
+%dir %{_datadir}/htmldoc
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-[0123]*.pl
+%{_datadir}/courierwebadmin/admin-[0123]*.html
+%{_datadir}/courierwebadmin/webadmin.pm
+%{_datadir}/courierwebadmin/notsupp.html
+%dir %{_libdir}/courier/modules
+%dir %{_libdir}/courier/modules/uucp
+%attr(644,daemon,daemon) %config %{_sysconfdir}/module.uucp
+%attr(755,root,root) %{_libdir}/courier/modules/uucp/courieruucp
+%attr(755,root,root) %{_sbindir}/makeuucpneighbors
+%attr(755,root,root) %{_datadir}/makeuucpneighbors
+%dir %{_libdir}/courier/modules/local
+%attr(644,daemon,daemon) %config %{_sysconfdir}/module.local
+%attr(644,daemon,daemon) %config %{_sysconfdir}/authmodulelist
+%attr(755,root,root) %{_libdir}/courier/modules/local/courierlocal
+%attr(755,root,root) %{_libdir}/courier/modules/local/courierdeliver
+%attr(755,root,root) %{_bindir}/preline
+%dir %{_libdir}/courier/modules/esmtp
+%attr(644,daemon,daemon) %config %{_sysconfdir}/module.esmtp
+%attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtp
+%attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtpd
+%attr(755,root,root) %{_libdir}/courier/modules/esmtp/addcr
+%attr(755,root,root) %{_sbindir}/courieresmtpd
+%attr(755,root,root) %{_bindir}/addcr
+%attr(755,root,root) %{_sbindir}/esmtpd
+%attr(755,root,root) %{_datadir}/esmtpd
+%attr(755,root,root) %{_sbindir}/makesmtpaccess
+%attr(755,root,root) %{_datadir}/makesmtpaccess
+%attr(755,root,root) %{_sbindir}/makeacceptmailfor
+%attr(755,root,root) %{_datadir}/makeacceptmailfor
+%attr(755,root,root) %{_sbindir}/makepercentrelay
+%attr(755,root,root) %{_datadir}/makepercentrelay
+%attr(755,root,root) %{_sbindir}/mkesmtpdcert
+%attr(755,root,root) %{_datadir}/mkesmtpdcert
+%attr(755,root,root) %{_sbindir}/esmtpd-msa
+%attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-msa.dist
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtp.authpam
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd.cnf
+%attr(600,daemon,daemon) %config %{_sysconfdir}/esmtpauthclient
+%dir %{_libdir}/courier/modules/dsn
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsndelayed.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsndelivered.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnfailed.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnrelayed.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnfooter.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnsubjectnotice.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnsubjectwarn.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/dsnheader.txt
+%attr(644,daemon,daemon) %config %{_sysconfdir}/module.dsn
+%attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
+%{_libdir}/courier/modules/modules.ctl
+%attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
+%attr(750,root,daemon) %{_libdir}/courier/courierd
+%attr(750,root,daemon) %{_libdir}/courier/aliasexp
+%attr(750,root,daemon) %{_libdir}/courier/aliascombine
+%attr(750,root,daemon) %{_libdir}/courier/aliascreate
+%attr(750,root,daemon) %{_libdir}/courier/submit
+%attr(755,root,root) %{_libdir}/courier/makedatprog
+%attr(755,root,root) %{_sbindir}/courier
+%attr(755,root,root) %{_sbindir}/showconfig
+%attr(750,root,daemon) %{_sbindir}/showmodules
+%attr(755,root,root) %{_sbindir}/userdbpw
+%attr(755,root,root) %{_sbindir}/couriertcpd
+%attr(755,root,root) %{_sbindir}/logger
+%attr(6555,daemon,daemon) %{_bindir}/cancelmsg
+%attr(755,root,root) %{_bindir}/courier-config
+%attr(2755,root,daemon) %{_bindir}/mailq
+%attr(755,root,root) %{_bindir}/maildirmake
+%attr(4755,root,root) %{_bindir}/sendmail
+%attr(4755,root,root) %{_bindir}/rmail
+%attr(755,root,root) %{_bindir}/dotlock
+%attr(755,root,root) %{_bindir}/deliverquota
+%attr(755,root,root) %{_bindir}/mailbot
+%attr(755,root,root) %{_bindir}/makemime
+%attr(755,root,root) %{_bindir}/mimegpg
+%attr(755,root,root) %{_bindir}/dotforward
+%attr(755,root,root) %{_datadir}/makedat
+%attr(755,root,root) %{_bindir}/makedat
+%attr(755,root,root) %{_bindir}/testmxlookup
+%attr(750,root,daemon) %{_datadir}/makealiases
+%attr(750,root,daemon) %{_sbindir}/makealiases
+%attr(755,root,root) %{_datadir}/makehosteddomains
+%attr(755,root,root) %{_sbindir}/makehosteddomains
+%attr(755,root,root) %{_datadir}/pop3d-ssl
+%attr(755,root,root) %{_sbindir}/pop3d-ssl
+%attr(755,root,root) %{_datadir}/makeuserdb
+%attr(755,root,root) %{_sbindir}/makeuserdb
+%attr(755,root,root) %{_datadir}/webgpg
+%attr(755,root,root) %{_sbindir}/webgpg
+%attr(755,root,root) %{_datadir}/userdb
+%attr(755,root,root) %{_sbindir}/userdb
+%attr(755,root,root) %{_datadir}/pw2userdb
+%attr(755,root,root) %{_sbindir}/pw2userdb
+%attr(755,root,root) %{_datadir}/vchkpw2userdb
+%attr(755,root,root) %{_sbindir}/vchkpw2userdb
+%attr(755,root,root) %{_datadir}/courierctl.start
+%attr(755,root,root) %{_bindir}/couriertls
+%attr(640,daemon,daemon) %config %{_sysconfdir}/ldapaliasrc.dist
+%attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authldaprc.dist
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authmysqlrc.dist
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authdaemonrc.dist
+%dir %{_libdir}/authlib
+%attr(755,root,root) %{_libdir}/authlib/authdaemon
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
+%attr(755,root,root) %{_libdir}/authlib/authdaemond
+%attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
+%attr(755,root,root) %dir %{_libdir}/authlib/changepwd
+%attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
+%attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
+%attr(755,root,root) %{_datadir}/authsystem.passwd
+%config(noreplace) /etc/pam.d/esmtp
+%attr(755,root,root) /etc/profile.d/courier.sh
+%attr(755,root,root) /etc/profile.d/courier.csh
+%attr(754,root,root) /etc/rc.d/init.d/courier
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
+%attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
+/usr/lib/sendmail
+/usr/sbin/sendmail
 
-%files sendmail-wrapper
+%files pop3d
 %defattr(644,root,root,755)
-%attr(-, bin, bin) /usr/sbin/sendmail
-%attr(-, bin, bin) /usr/bin/sendmail
-%attr(-, bin, bin) /usr/lib/sendmail
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
+%{_mandir}/man8/courierpop3login.8*
+%{_mandir}/man8/courierpop3d.8*
+%{_mandir}/man8/pop3d.8*
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
+%{_datadir}/courierwebadmin/admin-45pop3.html
+%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.authpam
+%attr(600,daemon,daemon) %config %{_sysconfdir}/pop3d.cnf
+%attr(755,root,root) %{_libdir}/courier/courierpop3d
+%attr(755,root,root) %{_libdir}/courier/courierpop3login
+%attr(755,root,root) %{_datadir}/pop3d
+%attr(755,root,root) %{_sbindir}/pop3d
+%attr(755,root,root) %{_datadir}/mkpop3dcert
+%attr(755,root,root) %{_sbindir}/mkpop3dcert
 
-%files maildrop-wrapper
+%files imapd
 %defattr(644,root,root,755)
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
+%{_mandir}/man8/imapd.8*
+%{_mandir}/man8/mkimapdcert.8*
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
+%attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
+%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd-ssl.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/imapd.authpam
+%attr(600,daemon,daemon) %config %{_sysconfdir}/imapd.cnf
+%attr(755,root,root) %{_libdir}/courier/imaplogin
+%attr(755,root,root) %{_sbindir}/imapd
+%attr(755,root,root) %{_sbindir}/imapd-ssl
+%attr(755,root,root) %{_datadir}/imapd
+%attr(755,root,root) %{_datadir}/imapd-ssl
+%attr(755,root,root) %{_bindir}/imapd
+%attr(755,root,root) %{_datadir}/mkimapdcert
+%attr(755,root,root) %{_sbindir}/mkimapdcert
 
-%attr(-, bin, bin) /usr/local/bin/*
-
-%files pop3d -f filelist.pop3
+%files webmail
 %defattr(644,root,root,755)
-%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
+%attr(4755,root,root) %{_cgibindir}/webmail
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
+%{_documentrootdir}/webmail
+%dir %{_datadir}/sqwebmail
+%dir %{_datadir}/sqwebmail/html
+%dir %{_datadir}/sqwebmail/html/en-us
+%{_datadir}/sqwebmail/html/en
+%config %{_datadir}/sqwebmail/html/en-us/[CIL]*
+%{_datadir}/sqwebmail/html/en-us/*.html
+%attr(755,root,root) %{_datadir}/sqwebmail/cleancache.pl
+%attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
+%attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
+%attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
+%attr(644,daemon,daemon) %config /etc/courier/webmail.authpam
+%attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 
-%files imapd -f filelist.imap
+%files maildrop
 %defattr(644,root,root,755)
-%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
+%{_mandir}/man1/maildrop.1*
+%{_mandir}/man1/refor*
+%{_mandir}/man5/maildrop*
+%attr(644,daemon,daemon) %config /etc/courier/maildrop
+%attr(755,root,root)  %{_bindir}/reformail
+%attr(755,root,root)  %{_bindir}/reformime
+%attr(4755,root,root) %{_bindir}/maildrop
 
-%files webmail -f filelist.webmail
+%files mlm
 %defattr(644,root,root,755)
-%attr(4511, root, wheel) %{_cgibindir}/webmail
-%attr(644, root, wheel) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
-%attr(755, bin, bin) %dir %{_documentrootdir}/webmail
-%attr(444, bin, bin) %{_documentrootdir}/webmail/*
+%{_mandir}/man1/couriermlm.1*
+%attr(755,root,root) %{_bindir}/couriermlm
+%{_datadir}/couriermlm
 
-%files maildrop -f filelist.maildrop
+%files smtpauth
 %defattr(644,root,root,755)
-
-%files mlm -f filelist.mlm
-%defattr(644,root,root,755)
-
-%files smtpauth -f filelist.auth
-%defattr(644,root,root,755)
+%attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
+%attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
