@@ -8,7 +8,6 @@ Group:		Networking/Daemons
 Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	autoconf
 BuildRequires:	db3-devel
 BuildRequires:	expect
@@ -21,11 +20,13 @@ BuildRequires:	openssl-tools-perl
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	zlib-devel
+Requires(post,preun):	/sbin/chkconfig
 Provides:	smtpdaemon
-Prereq:		/sbin/chkconfig
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		apachedir	/home/services/httpd
 %define		_prefix		/usr/lib/courier
+%define		_mandir		/usr/share/man
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		initdir		/etc/rc.d/init.d
