@@ -13,6 +13,7 @@ BuildRequires:	db3-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	mysql-devel
+BuildRequires:	mailcap
 BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	openssl-tools >= 0.9.7
