@@ -1,16 +1,21 @@
 #
+# TODO:
+#	- triggers
+#	- files, BR revision
+#
 # Conditional build:
 %bcond_with	fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
+%define		snap	20041129
 Version:	0.47
-Release:	3
+Release:	3.%{snap}.0.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	639bb3b236914e3b86f287ce3f55264e
+Source0:	http://www.courier-mta.org/beta/courier/%{name}-%{version}.%{snap}.tar.bz2
+# Source0-md5:	a2b33f46145c039f0e91c4f2240be7de
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -20,19 +25,20 @@ Patch5:		%{name}-certs.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	courier-authlib-devel
 BuildRequires:	db-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
-BuildRequires:	mysql-devel
-BuildRequires:	openldap-devel
+#BuildRequires:	mysql-devel
+#BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
-BuildRequires:	postgresql-devel
+#BuildRequires:	postgresql-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
@@ -264,44 +270,8 @@ SMTP AUTH pozwala zdalnym u¿ytkownikom na uwierzytelnianie i
 umo¿liwienie przekazania wychodz±cej poczty poprzez serwer poczty
 Courier.
 
-%package authldap
-Summary:	LDAP authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji LDAP do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authldap
-This package provides LDAP authentication for Courier.
-
-%description authldap -l pl
-Ten pakiet pozwala na korzystanie z autentykacji LDAP w Courierze.
-
-%package authmysql
-Summary:	MySQL authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji MySQL do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authmysql
-This package provides MySQL authentication for Courier.
-
-%description authmysql -l pl
-Ten pakiet pozwala na korzystanie z autentykacji MySQL w Courierze.
-
-%package authpgsql
-Summary:	PostgreSQL authentication daemon for Courier mail server
-Summary(pl):	Demon autentykacji PostgreSQL do Couriera
-Group:		Networking/Daemons
-PreReq:		%{name} = %{version}-%{release}
-
-%description authpgsql
-This package provides PostgreSQL authentication for Courier.
-
-%description authpgsql -l pl
-Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
-
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}.%{snap}
 %patch0 -p1
 %{!?with_fam:%patch1 -p1}
 %patch2 -p1
@@ -316,12 +286,6 @@ cp -f /usr/share/automake/config.sub webmail
 
 cd rootcerts
 %{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
-
-cd authlib
 %{__aclocal}
 %{__autoconf}
 %{__automake}
@@ -348,6 +312,7 @@ cd ../..
 cd imap
 %{__aclocal}
 %{__autoconf}
+ln -s ../ltmain.sh .
 %{__automake}
 cd ..
 
@@ -389,16 +354,6 @@ done
 # delete dead links
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1 \
 $RPM_BUILD_ROOT%{_mandir}/man1/rmail.1 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authcram.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authldap.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authpam.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7 \
-$RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7 \
 $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8 \
@@ -410,17 +365,6 @@ $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 # make man links
 echo '.so dot-forward.1' > $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1
 echo '.so sendmail.1' > $RPM_BUILD_ROOT%{_mandir}/man1/rmail.1
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authcram.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authldap.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpgsql.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpam.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7
-echo '.so authlib.7' > $RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7
 echo '.so esmtpd.8' > $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8
 echo '.so courierfilter.8' > $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8
 echo '.so makesmtpaccess.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8
@@ -695,48 +639,6 @@ if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
 		%{_sbindir}/esmtpd-ssl stop
 		%{_sbindir}/esmtpd-ssl start
-	fi
-fi
-
-%post authldap
-if ps -A |grep -q authdaemond.lda; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authldap
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.lda; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
-	fi
-fi
-
-%post authmysql
-if ps -A |grep -q authdaemond.mys; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authmysql
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.mys; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
-	fi
-fi
-
-%post authpgsql
-if ps -A |grep -q authdaemond.pgs; then
-	%{_libdir}/authlib/authdaemond stop
-	%{_libdir}/authlib/authdaemond start
-fi
-
-%postun authpgsql
-if [ -x %{_libdir}/authlib/authdaemond ]; then
-	if ps -A |grep -q authdaemond.pgs; then
-		%{_libdir}/authlib/authdaemond stop;
-		%{_libdir}/authlib/authdaemond start;
 	fi
 fi
 
@@ -1083,32 +985,3 @@ fi
 %defattr(644,root,root,755)
 %attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
-
-%files authldap
-%defattr(644,root,root,755)
-%doc authlib/README.ldap
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
-%{_mandir}/man7/authldap.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldap.pl
-%{_datadir}/courierwebadmin/admin-15ldap.html
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldapa.pl
-%{_datadir}/courierwebadmin/admin-15ldapa.html
-
-%files authmysql
-%defattr(644,root,root,755)
-%doc authlib/README.authmysql.html authlib/README.authmysql.myownquery
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
-%{_mandir}/man7/authmysql.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15mysql.pl
-%{_datadir}/courierwebadmin/admin-15mysql.html
-
-%files authpgsql
-%defattr(644,root,root,755)
-%doc authlib/README.authpostgres.html
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
-%attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
-%{_mandir}/man7/authpgsql.7*
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15pgsql.pl
-%{_datadir}/courierwebadmin/admin-15pgsql.html
