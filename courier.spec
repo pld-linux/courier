@@ -204,7 +204,7 @@ SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
 przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
 %prep
-%setup -q 
+%setup -q
 %patch -p1
 
 %build
