@@ -83,9 +83,9 @@ diff -Nur old/imap/pop3d.dist.in new/imap/pop3d.dist.in
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
 diff -Nur old/pcp/pcpd.c new/pcp/pcpd.c
---- old/pcp/pcpd.c	2003-04-27 17:49:43.000000000 +0000
-+++ new/pcp/pcpd.c	2004-04-15 10:59:18.000000000 +0000
-@@ -2199,10 +2199,10 @@
+--- old/pcp/pcpd.c	2004-05-02 14:59:42.000000000 +0000
++++ new/pcp/pcpd.c	2004-05-20 15:55:56.000000000 +0000
+@@ -2187,10 +2187,10 @@
  		exit(1);
  	}
  
@@ -93,36 +93,27 @@ diff -Nur old/pcp/pcpd.c new/pcp/pcpd.c
 +	if (chdir(a->maildir && *a->maildir ? a->maildir:"Mail/Maildir") < 0)
  	{
  		free(token);
--		syslog(LOG_NOTICE, "pcpd: chdir(Maildir) failed.");
-+		syslog(LOG_NOTICE, "pcpd: chdir(Mail/Maildir) failed.");
+-		fprintf(stderr, "NOTICE: chdir(Maildir) failed: %s\n",
++		fprintf(stderr, "NOTICE: chdir(Mail/Maildir) failed: %s\n",
+ 			strerror(errno));
  		maildir_cache_cancel();
  		exit(1);
- 	}
-@@ -2211,7 +2211,7 @@
- 	if (chdir("calendar") < 0)
- 	{
- 		free(token);
--		syslog(LOG_NOTICE, "pcpd: chdir(Maildir) failed.");
-+		syslog(LOG_NOTICE, "pcpd: chdir(Mail/Maildir) failed.");
- 		maildir_cache_cancel();
- 		exit(1);
- 	}
 diff -Nur old/webmail/auth.c new/webmail/auth.c
---- old/webmail/auth.c	2003-10-11 00:54:37.000000000 +0000
-+++ new/webmail/auth.c	2004-02-20 12:26:31.000000000 +0000
-@@ -79,7 +79,7 @@
- static int login_maildir(const char *maildir)
- {
+--- old/webmail/auth.c	2004-05-09 03:33:22.000000000 +0000
++++ new/webmail/auth.c	2004-05-20 15:54:25.000000000 +0000
+@@ -82,7 +82,7 @@
+ 	if (!maildir || !*maildir)
+ 		maildir=getenv("MAILDIRPATH");
  	if (!maildir || !*maildir)
 -		maildir="Maildir";
 +		maildir="Mail/Maildir";
  	if (chdir(maildir))	return (-1);
  	maildir_loginexec();
  	return (0);
-@@ -107,7 +107,7 @@
- char	*buf;
+@@ -111,7 +111,7 @@
  struct stat stat_buf;
  
+ 	if (!p || !*p)	p=getenv("MAILDIRPATH");
 -	if (!p || !*p)	p="Maildir";
 +	if (!p || !*p)	p="Mail/Maildir";
  
