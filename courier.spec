@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.5
-Release:	0.1
+Release:	0.5
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -17,6 +17,7 @@ Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-fix_build.patch
+Patch6:		%{name}-certs.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -62,6 +63,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_libexecdir	%{_libdir}
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
+%define		_certsdir	%{_sysconfdir}/certs
 %define		initdir		/etc/rc.d/init.d
 
 # Change the following if your DocumentRoot and cgibindir differ.  This is
@@ -305,6 +307,7 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 # we don't want fax module
@@ -334,6 +337,18 @@ cd courier
 %{__autoconf}
 ln -s ../ltmain.sh .
 %{__automake}
+
+cd module.esmtp
+%{__aclocal}
+%{__autoconf}
+ln -s ../ltmain.sh .
+%{__automake}
+cd ../..
+
+cd imap
+%{__aclocal}
+%{__autoconf}
+%{__automake}
 cd ..
 
 %configure \
@@ -341,6 +356,7 @@ cd ..
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
 	--enable-imageurl=%{_imageurl} \
+	--with-certsdir=%{_certsdir} \
 	--with-db=db \
 	--with-mailer=%{_sbindir}/sendmail
 
@@ -354,7 +370,7 @@ install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},%{_prefix}/lib} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/{userdb,hosteddomains,shared} \
 	$RPM_BUILD_ROOT%{_localstatedir}{/calendar/{private,public},/tmp/broken} \
-	$RPM_BUILD_ROOT/etc/cron.hourly
+	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -529,9 +545,15 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/courierwebadmin/*fax*
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%triggerin -- courier < 0.45.5
+echo
+echo Directory with certificates has changed to %{_certsdir}
+echo
+
 %post
-if [ "$1" = "1" ]; then
 /sbin/chkconfig --add courier
+
+if [ "$1" = "1" ]; then
 /bin/hostname -f >/etc/courier/me
 cat <<EOF
 
@@ -761,6 +783,7 @@ fi
 %{_mandir}/man8/pw2userdb.8*
 %{_mandir}/man8/vchkpw2userdb.8*
 %dir %{_sysconfdir}
+%attr(750,root,root) %dir %{_certsdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/me
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
@@ -801,7 +824,6 @@ fi
 %attr(755,root,root) %{_datadir}/makeuucpneighbors
 %dir %{_libdir}/courier/modules/local
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.local
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmodulelist
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierlocal
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierdeliver
 %attr(755,root,root) %{_bindir}/preline
