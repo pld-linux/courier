@@ -9,13 +9,12 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-%define		snap	20041129
-Version:	0.47
-Release:	3.%{snap}.0.1
+Version:	0.48
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://www.courier-mta.org/beta/courier/%{name}-%{version}.%{snap}.tar.bz2
-# Source0-md5:	a2b33f46145c039f0e91c4f2240be7de
+Source0:	http://www.courier-mta.org/beta/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	8f7a0929a8faa6f58dc250178aaf3f27
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -42,7 +41,7 @@ BuildRequires:	perl-devel
 #BuildRequires:	postgresql-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
-BuildRequires:	zlib-devel
+#BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7d
@@ -258,7 +257,7 @@ Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
 potrzebny do filtrowania przychodz±cej poczty.
 
 %prep
-%setup -q -n %{name}-%{version}.%{snap}
+%setup -q
 %patch0 -p1
 %{!?with_fam:%patch1 -p1}
 %patch2 -p1
