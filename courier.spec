@@ -4,18 +4,18 @@
 
 %define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; echo "$release")
 
-Summary: Courier 0.26.20000822 mail server
-Name: courier
-Version: 0.26.20000822
-Release: 1%{courier_release}
-Copyright: GPL
-Group: Applications/Mail
-Source: courier-0.26.20000822.tar.gz
-Packager: %{PACKAGER}
-BuildRoot: /var/tmp/courier-install
-Provides: smtpdaemon
-AutoProv: no
-Requires: /sbin/chkconfig
+Summary:	Courier %{version} mail server
+Name:		courier
+Version:	0.26.20000822
+Release:	1%{courier_release}
+Copyright:	GPL
+Group:		Applications/Mail
+Source:		courier-0.26.20000822.tar.gz
+Packager:	%{PACKAGER}
+BuildRoot:	/var/tmp/courier-install
+Provides:	smtpdaemon
+AutoProv:	no
+Requires:	/sbin/chkconfig
 
 #
 #  RH custom locations.
@@ -44,44 +44,44 @@ Requires: /sbin/chkconfig
 %define _imageurl			/webmail/
 
 %package sendmail-wrapper
-Summary: Courier 0.26.20000822 soft links for sendmail
+Summary: Courier %{version} soft links for sendmail
 Group: Applications/Mail
 
 %package pop3d
-Summary: Courier 0.26.20000822 Integrated POP3 server
+Summary: Courier %{version} Integrated POP3 server
 Group: Applications/Mail
-Requires: courier = 0.26.20000822
+Requires: courier = %{version}
 
 %package imapd
-Summary: Courier 0.26.20000822 Integrated IMAP server
+Summary: Courier %{version} Integrated IMAP server
 Group: Applications/Mail
-Requires: courier = 0.26.20000822
+Requires: courier = %{version}
 Obsoletes: courier-imap
 
 %package webmail
-Summary: Courier 0.26.20000822 Integrated HTTP (webmail) server
+Summary: Courier %{version} Integrated HTTP (webmail) server
 Group: Applications/Mail
-Requires: courier = 0.26.20000822 %{_cgibindir} %{_documentrootdir}
+Requires: courier = %{version} %{_cgibindir} %{_documentrootdir}
 
 %package mlm
-Summary: Courier 0.26.20000822 Integrated Mailing List Manager
+Summary: Courier %{version} Integrated Mailing List Manager
 Group: Applications/Mail
-Requires: courier = 0.26.20000822
+Requires: courier = %{version}
 
 %package maildrop
-Summary: Courier 0.26.20000822 Integrated mail filter
+Summary: Courier %{version} Integrated mail filter
 Group: Applications/Mail
-Requires: courier = 0.26.20000822
+Requires: courier = %{version}
 
 %package maildrop-wrapper
-Summary: Courier 0.26.20000822 soft links for maildrop
+Summary: Courier %{version} soft links for maildrop
 Group: Applications/Mail
-Requires: courier-maildrop = 0.26.20000822
+Requires: courier-maildrop = %{version}
 
 %package smtpauth
-Summary: Courier 0.26.20000822 mail server authenticated ESMTP module
+Summary: Courier %{version} mail server authenticated ESMTP module
 Group: Applications/Mail
-Requires: courier = 0.26.20000822
+Requires: courier = %{version}
 
 Summary: Courier
 %description
