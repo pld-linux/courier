@@ -367,7 +367,7 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
+	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},/usr/lib} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/{hosteddomains,userdb} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
