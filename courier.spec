@@ -471,6 +471,9 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/unsecureok
 # create file me to put localdomain
 touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 
+# create calendarmode
+touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
+
 install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 #
 # Red Hat /etc/profile.d scripts
@@ -609,6 +612,12 @@ echo
 fi
 
 %post webmail
+if [ "$1" = "1" ]; then
+echo
+echo If you want to have calendar starting by default then
+echo put word net to %{_sysconfdir}/calendarmode
+echo
+fi
 if ps -A |grep -q sqwebmaild; then
     %{_libdir}/courier/sqwebmaild stop
     %{_libdir}/courier/sqwebmaild start
@@ -992,6 +1001,7 @@ fi
 %attr(755,root,root) %{_libdir}/courier/sqwebmaild
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
 %attr(751,daemon,daemon) %dir %{_localstatedir}/calendar
 %attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/private
