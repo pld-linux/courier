@@ -144,7 +144,7 @@ SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 
 %package mlm
 Summary:	Courier Integrated Mailing List Manager
-Summary(pl):	Zintegrowany menad¿er list dyskusyjnych do Couriera
+Summary(pl):	Zintegrowany zarz±dca list dyskusyjnych do Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}
 
@@ -161,13 +161,13 @@ administrative oversight. couriermlm supports digests, write-only
 posting aliases, and moderated mailing lists.
 
 %description mlm -l pl
-Ten pakiet zawiera couriermlm - menad¿er list dyskusyjnych dla
-Couriera. couriermlm jest u¿ywany do skonfigurowania, zarz±dzania i
-prowadzenia pocztowej listy dyskusyjnej. Automatycznie obs³uguje
-¿±dania zapisywania i wypisywania i usuwa niedzia³aj±ce adresy z listy
-subskrybentów. Listy obs³ugiwane przez couriermlm nie wymagaj± pracy
-administratora. couriermlm obs³uguje digesty, aliasy pocztowe tylko do
-wysy³ania i listy moderowane.
+Ten pakiet zawiera couriermlm - program do zarz±dzania listami
+dyskusyjnymi dla Couriera. couriermlm jest u¿ywany do konfigurowania,
+zarz±dzania i prowadzenia pocztowej listy dyskusyjnej. Automatycznie
+obs³uguje ¿±dania zapisywania i wypisywania oraz usuwa z listy
+niedzia³aj±ce adresy subskrybentów. Listy obs³ugiwane przez couriermlm
+nie wymagaj± pracy administratora. couriermlm obs³uguje digesty,
+aliasy pocztowe tylko do wysy³ania i listy moderowane.
 
 %package maildrop
 Summary:	Courier Integrated mail filter
