@@ -458,17 +458,17 @@ do /usr/bin/perl ././sysconftool $RPM_BUILD_ROOT$confdist
 done
 
 # make locals, esmtpacceptmailfor.dir/default
-for X in locals esmtpacceptmailfor.dir/default
-do
-echo localhost >$RPM_BUILD_ROOT%{_sysconfdir}/$X
-done
-
-install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
+touch $RPM_BUILD_ROOT%{_sysconfdir}/esmtpacceptmailfor.dir/default
+touch $RPM_BUILD_ROOT%{_sysconfdir}/locals
 
 # Make password and unsecureok (files for webadmin)
 touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/password
 touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/unsecureok
 
+# create file me to put localdomain
+touch $RPM_BUILD_ROOT%{_sysconfdir}/me
+
+install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 #
 # Red Hat /etc/profile.d scripts
 #
@@ -513,9 +513,6 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
-
-# create file me to put localdomain
-touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
