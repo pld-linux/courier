@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.3
-Release:	0.9
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -43,6 +43,7 @@ Obsoletes:	exim
 Obsoletes:	masqmail
 Obsoletes:	nullmailer
 Obsoletes:	omta
+Obsoletes:	postfix
 Obsoletes:	qmail
 Obsoletes:	sendmail
 Obsoletes:	sendmail-cf
@@ -190,16 +191,16 @@ nie obs³uguje skrzynek w postaci pojedynczych plików.
 Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazw±
 SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 
-%package maildir
+%package maildir-tools
 Summary:	Tools for mail folders in Maildir format
 Summary(pl):	Narzêdzia do zarz±dzania skrzynkami Maildir
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
-%description maildir
+%description maildir-tools
 This package contains tools for mail folders in Maildir format.
 
-%description maildir -l pl
+%description maildir-tools -l pl
 Ten pakiet zawiera narzêdzia do zarz±dzania folderami w formacie Maildir.
 
 %package mlm
@@ -513,6 +514,9 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
+# create file me to put localdomain
+touch $RPM_BUILD_ROOT%{_sysconfdir}/me
+
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/rfcerr*.txt
@@ -525,7 +529,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 if [ "$1" = "1" ]; then
 /sbin/chkconfig --add courier
-
+/bin/hostname -f >/etc/courier/me
 cat <<EOF
 
 Now courier will refuse to accept SMTP messages except to localhost
@@ -749,6 +753,7 @@ fi
 %{_mandir}/man8/vchkpw2userdb.8*
 %dir %{_sysconfdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/me
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
 %attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
@@ -997,7 +1002,7 @@ fi
 %attr(755,root,root) %{_bindir}/reformail
 %attr(755,root,root) %{_bindir}/reformime
 
-%files maildir
+%files maildir-tools
 %defattr(644,root,root,755)
 %doc maildir/README.*.html htmldoc/maildir*
 %{_mandir}/man1/maildirmake.1*
