@@ -1,7 +1,4 @@
 #
-# TODO:
-#	- pam_stack.so - missing in PLD
-#
 # Conditional build:
 %bcond_with fam		# with fam support
 #
@@ -23,14 +20,15 @@ BuildRequires:	db-devel
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
-BuildRequires:	mysql-devel
 BuildRequires:	mailcap
+BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7c
 BuildRequires:	openssl-tools >= 0.9.7c
 BuildRequires:	openssl-tools-perl >= 0.9.7c
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
+BuildRequires:	postgresql-devel
 BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
@@ -293,10 +291,17 @@ install -d -p $RPM_BUILD_ROOT{%{_prefix},/etc/{cron.hourly,pam.d},%{initdir}} \
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-ln -sf %{_sysconfdir}/pop3d.authpam $RPM_BUILD_ROOT/etc/pam.d/pop3
-ln -sf %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
-ln -sf %{_sysconfdir}/imapd.authpam $RPM_BUILD_ROOT/etc/pam.d/imap
-ln -sf %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
+# fix pam problem
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
+for X in imap esmtp pop3 webmail calendar
+do
+cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
+#%PAM-1.0                                                                       
+auth       required     /lib/security/pam_unix.so shadow nullok
+account    required     /lib/security/pam_unix.so
+session    required     /lib/security/pam_unix.so
+EOF
+done
 
 # delete dead links
 rm -f $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1 \
@@ -389,6 +394,12 @@ for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissio
 do /usr/bin/perl ././sysconftool $RPM_BUILD_ROOT$confdist
 done
 
+# make locals, esmtpacceptmailfor.dir/esmtpacceptmailfor
+for X in locals esmtpacceptmailfor.dir/esmtpacceptmailfor
+do
+echo localhost >$RPM_BUILD_ROOT%{_sysconfdir}/$X
+done
+
 install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
 #
@@ -436,6 +447,10 @@ install -d $RPM_BUILD_ROOT/usr/lib
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
+# default folder in /etc/skel                                                   
+install -d $RPM_BUILD_ROOT/etc/skel/
+maildir/maildirmake $RPM_BUILD_ROOT/etc/skel/Maildir
+
 # This link by default is missing 
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
@@ -459,6 +474,13 @@ if [ ! -f %{_datadir}/esmtpd.pem ]; then
 	%{_sbindir}/mkesmtpdcert
 fi
 
+cat <<EOF
+Now courier will refuse to accept SMTP messages except to localhost
+add hosts to /etc/courier/esmtpacceptmailfor.dir/esmtpacceptmailfor
+run /usr/lib/courier/sbin/makeacceptmailfor
+Enter user, who should receive mail for root, mailer-daemon and postmaster
+into /etc/courier/aliases/system
+EOF
 
 %preun
 if [ "$1" = "0" ]; then
@@ -486,6 +508,11 @@ fi
 %{_sbindir}/pop3d stop
 %{_sbindir}/pop3d start
 
+cat <<EOF
+Add hosts to /etc/courier/locals you want to accept mail for
+run /usr/lib/courier/sbin/makealiases
+EOF
+
 %preun pop3d
 if [ "$1" = "0" ]; then
 	%{_sbindir}/pop3d stop
@@ -494,6 +521,8 @@ fi
 %post smtpauth
 %{_sbindir}/esmtpd stop
 %{_sbindir}/esmtpd start
+
+echo Remember to enable auth in esmtp config files
 
 %postun smtpauth
 if [ "$1" = "0" ]; then
@@ -606,6 +635,7 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/enablefiltering
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/esmtpacceptmailfor
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
 %attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
@@ -685,7 +715,6 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-ssl
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtp.authpam
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd.cnf
 %attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpauthclient
 %dir %{_libdir}/courier/modules/dsn
@@ -756,7 +785,7 @@ fi
 %attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
 %attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
 %attr(755,root,root) %{_datadir}/authsystem.passwd
-%config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
+%attr(644,root,root) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
@@ -766,9 +795,15 @@ fi
 /usr/lib/sendmail
 /usr/sbin/sendmail
 
+# default folder - Maildir/                                                     
+%attr(700,root,root) %dir /etc/skel/Maildir
+%attr(700,root,root) %dir /etc/skel/Maildir/cur
+%attr(700,root,root) %dir /etc/skel/Maildir/new
+%attr(700,root,root) %dir /etc/skel/Maildir/tmp
+
 %files pop3d
 %defattr(644,root,root,755)
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
+%attr(644,root,root) /etc/pam.d/pop3
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
@@ -776,9 +811,9 @@ fi
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.authpam
 %attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.cnf
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
 %attr(755,root,root) %{_libdir}/courier/courierpop3d
 %attr(755,root,root) %{_libdir}/courier/courierpop3login
 %attr(755,root,root) %{_datadir}/pop3d
@@ -790,14 +825,13 @@ fi
 
 %files imapd
 %defattr(644,root,root,755)
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
+%attr(644,root,root) /etc/pam.d/imap
 %{_mandir}/man8/imapd.8*
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
 %attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd-ssl
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd.authpam
 %attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd.cnf
 %attr(755,root,root) %{_libdir}/courier/imaplogin
 %attr(755,root,root) %{_sbindir}/imapd
@@ -811,7 +845,8 @@ fi
 %files webmail
 %defattr(644,root,root,755)
 %attr(4755,root,root) %{_cgibindir}/webmail
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
+%attr(644,root,root) /etc/pam.d/webmail
+%attr(644,root,root) /etc/pam.d/calendar
 %{_documentrootdir}/webmail
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
@@ -832,7 +867,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{name}/webmail/webadmin
 %attr(755,root,root) %{_libdir}/%{name}/webmail/webmail
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webmail.authpam
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 
 %files maildrop
