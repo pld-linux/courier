@@ -97,7 +97,7 @@ Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires(post):	openssl-tools >= 0.9.7c
+Requires(post):	openssl-tools >= 0.9.7d
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
@@ -118,7 +118,7 @@ Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires(post):	openssl-tools >= 0.9.7c
+Requires(post):	openssl-tools >= 0.9.7d
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
 
@@ -431,8 +431,8 @@ for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissio
 do /usr/bin/perl ././sysconftool $RPM_BUILD_ROOT$confdist
 done
 
-# make locals, esmtpacceptmailfor.dir/esmtpacceptmailfor
-for X in locals esmtpacceptmailfor.dir/esmtpacceptmailfor
+# make locals, esmtpacceptmailfor.dir/default
+for X in locals esmtpacceptmailfor.dir/default
 do
 echo localhost >$RPM_BUILD_ROOT%{_sysconfdir}/$X
 done
@@ -499,7 +499,7 @@ if [ "$1" = "1" ]; then
 cat <<EOF
 
 Now courier will refuse to accept SMTP messages except to localhost
-add hosts to /etc/courier/esmtpacceptmailfor.dir/esmtpacceptmailfor
+add hosts to /etc/courier/esmtpacceptmailfor.dir/default
 run makeacceptmailfor
 
 Add hosts to /etc/courier/locals you want to accept mail for
@@ -719,7 +719,7 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/enablefiltering
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/esmtpacceptmailfor
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/default
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
