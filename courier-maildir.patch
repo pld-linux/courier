@@ -1,0 +1,66 @@
+diff -Nur old/courier/courierd.dist.in new/courier/courierd.dist.in
+--- old/courier/courierd.dist.in	2002-03-15 19:17:18.000000000 +0000
++++ new/courier/courierd.dist.in	2004-02-17 12:47:18.000000000 +0000
+@@ -76,7 +76,7 @@
+ #  Yes, it's two lines long, with an embedded newline.  Of course, you can use
+ #  any default local mail delivery instruction in place of ./Maildir.
+ 
+-DEFAULTDELIVERY=./Maildir
++DEFAULTDELIVERY=./Mail/Maildir
+ 
+ ##NAME: MAILDROPDEFAULT:0
+ #
+@@ -84,7 +84,7 @@
+ #  the location of the default mailbox.  You should not change this setting
+ #  unless you REALLY know what you're doing.
+ 
+-MAILDROPDEFAULT=./Maildir
++MAILDROPDEFAULT=./Mail/Maildir
+ 
+ ##NAME: ESMTP_CORK:0
+ #
+diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
+--- old/courier/imapd.rc.in	2003-11-29 02:16:15.000000000 +0000
++++ new/courier/imapd.rc.in	2004-02-17 12:47:34.000000000 +0000
+@@ -49,7 +49,7 @@
+ 			-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+ 			-pid=$PIDFILE $TCPDOPTS \
+ 			$PORT @libexecdir@/courier/imaplogin $LIBAUTHMODULES \
+-				@bindir@/imapd Maildir"
++				@bindir@/imapd Mail/Maildir"
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$PIDFILE -stop
+diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
+--- old/courier/imapd-ssl.rc.in	2003-11-29 02:16:15.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2004-02-17 12:47:27.000000000 +0000
+@@ -50,7 +50,7 @@
+ 			-pid=$SSLPIDFILE $TCPDOPTS \
+ 			$SSLPORT $COURIERTLS -server -tcpd \
+ 				@libexecdir@/courier/imaplogin $LIBAUTHMODULES \
+-				@bindir@/imapd Maildir"
++				@bindir@/imapd Mail/Maildir"
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
+diff -Nur old/courier/pop3d.in new/courier/pop3d.in
+--- old/courier/pop3d.in	2003-11-28 01:04:59.000000000 +0000
++++ new/courier/pop3d.in	2004-02-17 12:47:47.000000000 +0000
+@@ -77,4 +77,4 @@
+ 		-maxprocs=$MAXDAEMONS -maxperip=$MAXPERIP \
+ 		-pid=$PIDFILE $TCPDOPTS -address=$ADDRESS $PORT \
+ 		@libexecdir@/courier/courierpop3login $AUTHMODULELIST \
+-			@libexecdir@/courier/courierpop3d Maildir"
++			@libexecdir@/courier/courierpop3d Mail/Maildir"
+diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
+--- old/courier/pop3d-ssl.in	2003-11-29 01:37:34.000000000 +0000
++++ new/courier/pop3d-ssl.in	2004-02-17 12:47:41.000000000 +0000
+@@ -54,7 +54,7 @@
+ 			-pid=$SSLPIDFILE $TCPDOPTS \
+ 			$SSLPORT $COURIERTLS -server -tcpd \
+ 				$libexecdir/courier/courierpop3login $LIBAUTHMODULES \
+-				$libexecdir/courier/courierpop3d Maildir"
++				$libexecdir/courier/courierpop3d Mail/Maildir"
+ 	;;
+ stop)
+ 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
