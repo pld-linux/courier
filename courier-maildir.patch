@@ -82,6 +82,31 @@ diff -Nur old/imap/pop3d.dist.in new/imap/pop3d.dist.in
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
+diff -Nur old/pcp/pcpd.c new/pcp/pcpd.c
+--- old/pcp/pcpd.c	2003-04-27 17:49:43.000000000 +0000
++++ new/pcp/pcpd.c	2004-04-15 10:59:18.000000000 +0000
+@@ -2199,10 +2199,10 @@
+ 		exit(1);
+ 	}
+ 
+-	if (chdir(a->maildir && *a->maildir ? a->maildir:"Maildir") < 0)
++	if (chdir(a->maildir && *a->maildir ? a->maildir:"Mail/Maildir") < 0)
+ 	{
+ 		free(token);
+-		syslog(LOG_NOTICE, "pcpd: chdir(Maildir) failed.");
++		syslog(LOG_NOTICE, "pcpd: chdir(Mail/Maildir) failed.");
+ 		maildir_cache_cancel();
+ 		exit(1);
+ 	}
+@@ -2211,7 +2211,7 @@
+ 	if (chdir("calendar") < 0)
+ 	{
+ 		free(token);
+-		syslog(LOG_NOTICE, "pcpd: chdir(Maildir) failed.");
++		syslog(LOG_NOTICE, "pcpd: chdir(Mail/Maildir) failed.");
+ 		maildir_cache_cancel();
+ 		exit(1);
+ 	}
 diff -Nur old/webmail/auth.c new/webmail/auth.c
 --- old/webmail/auth.c	2003-10-11 00:54:37.000000000 +0000
 +++ new/webmail/auth.c	2004-02-20 12:26:31.000000000 +0000
@@ -102,4 +127,16 @@ diff -Nur old/webmail/auth.c new/webmail/auth.c
 +	if (!p || !*p)	p="Mail/Maildir";
  
  	buf=malloc(strlen(h)+strlen(p)+sizeof(PASSFILE)+100);
+ 
+diff -Nur old/webmail/sqwebmail.h new/webmail/sqwebmail.h
+--- old/webmail/sqwebmail.h	2004-02-29 20:50:13.000000000 +0000
++++ new/webmail/sqwebmail.h	2004-04-15 10:58:47.000000000 +0000
+@@ -25,7 +25,7 @@
+ 
+ /* Location of the user's Maildir */
+ 
+-#define USER_DIR	"Maildir"
++#define USER_DIR	"Mail/Maildir"
+ 
+ /* For PAM-based authentication */
  
