@@ -1,0 +1,26 @@
+diff -Nur old/configure.in new/configure.in
+--- old/configure.in	2004-11-30 03:49:35.000000000 +0000
++++ new/configure.in	2004-12-10 10:22:24.324295384 +0000
+@@ -89,7 +89,8 @@
+ fi
+ 
+ $COURIERAUTHCONFIG --configfiles | sed 's/^/auth/' >configtmp
+-. configtmp
++chmod u+x configtmp
++./configtmp
+ AC_ARG_WITH(courierlogger, [], : ,
+ 			   [
+ 			   ac_configure_args="$ac_configure_args --with-courierlogger=$authsbindir/courierlogger"])
+diff -Nur old/webadmin/configure.in new/webadmin/configure.in
+--- old/webadmin/configure.in	2004-10-23 16:59:41.000000000 +0000
++++ new/webadmin/configure.in	2004-12-10 10:26:55.076134848 +0000
+@@ -24,7 +24,8 @@
+ fi
+ 
+ $COURIERAUTHCONFIG --configfiles | sed 's/^/auth/' >configtmp
+-. configtmp
++chmod u+x configtmp
++./configtmp
+ rm -f configtmp
+ 
+ authdaemond="$authsbindir/authdaemond"
