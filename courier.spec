@@ -39,15 +39,17 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7c
 %{?with_fam:Requires:	fam}
 Provides:	smtpdaemon
-Obsoletes:      smtpdaemon
 Obsoletes:	exim
 Obsoletes:	masqmail
+Obsoletes:	nullmailer
 Obsoletes:	omta
 Obsoletes:	qmail
 Obsoletes:	sendmail
 Obsoletes:	sendmail-cf
 Obsoletes:	sendmail-doc
 Obsoletes:	smail
+Obsoletes:      smtpdaemon
+Obsoletes:      ssmtp
 Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
