@@ -1,7 +1,7 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.26.20000822
+Version:	0.35.1
 Release:	1
 License:	GPL
 Group:		Applications/Mail
@@ -227,7 +227,7 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %prep
 %setup
 
-%configure \
+%configure2_13 \
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
