@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.3
-Release:	1
+Release:	0.9
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -85,7 +85,7 @@ management and spam filtering.
 Courier jest w pe³ni funkcjonalnym serwerem poczty, mo¿e ca³kowicie
 zast±piæ us³ugi pocztowe dawane przez sendmail, Qmaila i inne serwery.
 Wprawdzie Courier nie ma wszystkich mo¿liwo¶ci istniej±cych serwerów,
-ilo¶æ nie obs³ugiwanych funkcji jesgt bardzo ma³a, i s± dostêpne
+ilo¶æ nie obs³ugiwanych funkcji jest bardzo ma³a, i s± dostêpne
 lepsze alternatywy.
 
 Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME. Ma
@@ -146,6 +146,21 @@ Ten pakiet wymaga serwera Courier, to NIE jest samodzielna wersja
 serwera Courier-IMAP. Nie mo¿na te¿ instalowaæ jednocze¶nie tego
 pakietu i samodzielnej wersji Courier-IMAP. Zainstalowanie tego
 pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
+
+%package webadmin
+Summary:	Courier Integrated HTTP administraton panel
+Summary(pl):	Panel administracyjny przez HTTP dla Couriera
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}-%{release}
+Requires:	%{_cgibindir}
+Requires:	webserver
+
+%description webadmin
+This is a web-based administration tool. Webadmin is a web CGI
+application.
+
+%description webadmin -l pl
+Webadmin jest narzêdziem administracyjnym obs³ugiwanym przez WWW.
 
 %package webmail
 Summary:	Courier Integrated HTTP (webmail) server
@@ -322,7 +337,7 @@ rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{%{_prefix}/lib,/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}{/calendar,/tmp/broken}} \
+	$RPM_BUILD_ROOT{%{_sysconfdir}/{userdb,hosteddomains},%{_localstatedir}{/calendar,/tmp/broken}} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
 
 %{__make} install \
@@ -385,13 +400,11 @@ echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 
 %{__make} install-perms
 
-# Note that we delete all 'webmail's, but copy over only 'sqwebmail's.
-# This removes all webmail-related stuff from the main filelist,
-# and adds everything except the executable, webmail, to filelist.webmail.
-# Here's why:
-
-cp -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
+# Move webmail and webadmin to cgibindir
+mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
+mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
+	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
 
 # And here's why we delete all images from filelist.webmail:
 mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
@@ -438,6 +451,10 @@ echo localhost >$RPM_BUILD_ROOT%{_sysconfdir}/$X
 done
 
 install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
+
+# Make password and unsecureok (files for webadmin)
+touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/password
+touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/unsecureok
 
 #
 # Red Hat /etc/profile.d scripts
@@ -488,6 +505,7 @@ ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/rfcerr*.txt
 rm -rf $RPM_BUILD_ROOT%{_datadir}/faxmail
+rm -f $RPM_BUILD_ROOT%{_datadir}/courierwebadmin/*fax*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -565,6 +583,13 @@ if [ "$1" = "0" ]; then
     if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
 	%{_sbindir}/pop3d-ssl stop
     fi
+fi
+
+%post webadmin
+if [ "$1" = "1" ]; then
+echo
+echo Remember to put your webadmin password to %{_sysconfdir}/webadmin/password
+echo
 fi
 
 %post webmail
@@ -656,7 +681,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BENCHMARKS ChangeLog NEWS README TODO htmldoc/* maildir/README.*.html
+%doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/* maildir/README.*.html
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
 %{_mandir}/man1/maildirmake.1*
@@ -713,6 +738,7 @@ fi
 %{_mandir}/man8/pw2userdb.8*
 %{_mandir}/man8/vchkpw2userdb.8*
 %dir %{_sysconfdir}
+%attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
 %attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
@@ -728,19 +754,7 @@ fi
 %dir %{_libdir}/courier
 %dir %{_datadir}
 %{_datadir}/rootcerts
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/removed
 %attr(755,root,root) %dir %{_datadir}/courierwebadmin
-%attr(755,root,root) %{_datadir}/courierwebadmin/webadmin.pl
-%attr(755,root,root) %{_datadir}/courierwebadmin/dumpenv.pl
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-main.pl
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-save.pl
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-cancel.pl
-%{_datadir}/courierwebadmin/login.html
-%{_datadir}/courierwebadmin/admin-save.html
-%{_datadir}/courierwebadmin/admin-main.html
-%{_datadir}/courierwebadmin/unsecure.html
 %dir %{_libdir}/filters
 %attr(755,root,root) %{_libdir}/filters/*
 %attr(755,root,root) %{_datadir}/perlfilter-*.pl
@@ -755,10 +769,6 @@ fi
 %attr(754,root,daemon) %{_datadir}/filterctl
 %attr(754,root,daemon) %{_sbindir}/filterctl
 %attr(754,root,daemon) %{_sbindir}/courierfilter
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-[01235]*.pl
-%{_datadir}/courierwebadmin/admin-[01235]*.html
-%{_datadir}/courierwebadmin/webadmin.pm
-%{_datadir}/courierwebadmin/notsupp.html
 %dir %{_libdir}/courier/modules
 %dir %{_libdir}/courier/modules/uucp
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.uucp
@@ -919,6 +929,30 @@ fi
 %attr(755,root,root) %{_datadir}/mkimapdcert
 %attr(755,root,root) %{_sbindir}/mkimapdcert
 
+%files webadmin
+%defattr(644,root,root,755)
+%attr(4755,root,root) %{_cgibindir}/webadmin
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/removed
+%attr(400,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webadmin/password
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webadmin/unsecureok
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-main.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-save.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-cancel.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-[0235]*.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-10password.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/dumpenv.pl
+%attr(755,root,root) %{_datadir}/courierwebadmin/webadmin.pl
+%{_datadir}/courierwebadmin/admin-[0235]*.html
+%{_datadir}/courierwebadmin/admin-10password.html
+%{_datadir}/courierwebadmin/admin-main.html
+%{_datadir}/courierwebadmin/admin-save.html
+%{_datadir}/courierwebadmin/login.html
+%{_datadir}/courierwebadmin/notsupp.html
+%{_datadir}/courierwebadmin/unsecure.html
+%{_datadir}/courierwebadmin/webadmin.pm
+
 %files webmail
 %defattr(644,root,root,755)
 %attr(4755,root,root) %{_cgibindir}/webmail
@@ -932,18 +966,15 @@ fi
 %config %{_datadir}/sqwebmail/html/en-us/[CILT]*
 %{_datadir}/sqwebmail/html/en-us/*.html
 %{_datadir}/sqwebmail/html/en-us/*.txt
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-4*.pl
-%{_datadir}/courierwebadmin/admin-4*.html
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-47webmail.pl
+%{_datadir}/courierwebadmin/admin-47webmail.html
 %attr(755,root,root) %{_datadir}/sqwebmail/cleancache.pl
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/webgpg
 %attr(755,root,root) %{_sbindir}/webgpg
-%dir %{_libdir}/courier/webmail
 %attr(755,root,root) %{_libdir}/courier/pcpd
 %attr(755,root,root) %{_libdir}/courier/sqwebmaild
-%attr(755,root,root) %{_libdir}/courier/webmail/webadmin
-%attr(755,root,root) %{_libdir}/courier/webmail/webmail
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 
@@ -974,6 +1005,10 @@ fi
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
 %{_mandir}/man7/authldap.7*
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldap.pl
+%{_datadir}/courierwebadmin/admin-15ldap.html
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15ldapa.pl
+%{_datadir}/courierwebadmin/admin-15ldapa.html
 
 %files authmysql
 %defattr(644,root,root,755)
@@ -981,6 +1016,8 @@ fi
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
 %{_mandir}/man7/authmysql.7*
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15mysql.pl
+%{_datadir}/courierwebadmin/admin-15mysql.html
 
 %files authpgsql
 %defattr(644,root,root,755)
@@ -988,3 +1025,5 @@ fi
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
 %{_mandir}/man7/authpgsql.7*
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-15pgsql.pl
+%{_datadir}/courierwebadmin/admin-15pgsql.html
