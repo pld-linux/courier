@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -36,7 +36,7 @@ Requires(post,preun):	/sbin/chkconfig
 Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		apachedir	/home/services/httpd
+%define		apachedir	/srv/httpd
 %define		_prefix		/usr/lib/courier
 %define		_mandir		/usr/share/man
 %define		_localstatedir	/var/spool/courier
