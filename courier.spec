@@ -1,12 +1,14 @@
+%bcond_without	tests	# don't perform "make check"
+
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.44.0
+Version:	0.44.2
 Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	acf6721a56f94791adf4fd7f56ba3e38
+# Source0-md5:	8c607c70a692d8f8ccb769a3f96d2f28
 Patch0: 	%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
@@ -229,7 +231,7 @@ rm -f missing
 	--with-db=db
 
 %{__make}
-%{__make} check
+%{?with_tests:%{__make} check}
 
 %install
 rm -rf $RPM_BUILD_ROOT
