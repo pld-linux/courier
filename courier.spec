@@ -208,6 +208,9 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %patch -p1
 
 %build
+# we don't want fax module
+rm -rf courier/module.fax
+
 cd rootcerts
 rm -f missing
 %{__libtoolize}
@@ -236,7 +239,7 @@ rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{%{_prefix},/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken} \
+	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}{/calendar,/tmp/broken}} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
 
 %{__make} install \
@@ -383,9 +386,12 @@ ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 # This link by default is missing 
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
-#
-# The following directories are not created by default, but I want them here.
-#
+# remove unpackaged files
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/rfcerr*.txt
+rm -rf $RPM_BUILD_ROOT%{_datadir}/htmldoc
+rm -rf $RPM_BUILD_ROOT%{_datadir}/faxmail
+rm -f $RPM_BUILD_ROOT%{_mandir}/man5/maildir.5*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -544,9 +550,8 @@ fi
 %attr(754,root,daemon) %{_datadir}/filterctl
 %attr(754,root,daemon) %{_sbindir}/filterctl
 %attr(754,root,daemon) %{_sbindir}/courierfilter
-%dir %{_datadir}/htmldoc
-%attr(755,root,root) %{_datadir}/courierwebadmin/admin-[0123]*.pl
-%{_datadir}/courierwebadmin/admin-[0123]*.html
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-[01235]*.pl
+%{_datadir}/courierwebadmin/admin-[01235]*.html
 %{_datadir}/courierwebadmin/webadmin.pm
 %{_datadir}/courierwebadmin/notsupp.html
 %dir %{_libdir}/courier/modules
@@ -609,6 +614,7 @@ fi
 %attr(750,root,daemon) %{_libdir}/courier/aliascreate
 %attr(750,root,daemon) %{_libdir}/courier/submit
 %attr(755,root,root) %{_libdir}/courier/makedatprog
+%attr(755,root,root) %{_libdir}/%{name}/pcpd
 %attr(755,root,root) %{_sbindir}/courier
 %attr(755,root,root) %{_sbindir}/showconfig
 %attr(750,root,daemon) %{_sbindir}/showmodules
@@ -637,8 +643,6 @@ fi
 %attr(755,root,root) %{_sbindir}/makehosteddomains
 %attr(755,root,root) %{_datadir}/makeuserdb
 %attr(755,root,root) %{_sbindir}/makeuserdb
-%attr(755,root,root) %{_datadir}/sqwebmail/webgpg
-%attr(755,root,root) %{_sbindir}/webgpg
 %attr(755,root,root) %{_datadir}/userdb
 %attr(755,root,root) %{_sbindir}/userdb
 %attr(755,root,root) %{_datadir}/pw2userdb
@@ -668,6 +672,7 @@ fi
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
+%attr(755,daemon,daemon) %dir %{_localstatedir}/calendar
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
 /usr/lib/sendmail
 /usr/sbin/sendmail
@@ -726,9 +731,17 @@ fi
 %config %{_datadir}/sqwebmail/html/en-us/[CILT]*
 %{_datadir}/sqwebmail/html/en-us/*.html
 %{_datadir}/sqwebmail/html/en-us/*.txt
+%attr(755,root,root) %{_datadir}/courierwebadmin/admin-4*.pl
+%{_datadir}/courierwebadmin/admin-4*.html
+%attr(755,root,root) %{_datadir}/sqwebmail/webgpg
+%attr(755,root,root) %{_sbindir}/webgpg
 %attr(755,root,root) %{_datadir}/sqwebmail/cleancache.pl
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
+%attr(755,root,root) %{_libdir}/%{name}/sqwebmaild
+%dir %{_libdir}/%{name}/webmail/
+%attr(755,root,root) %{_libdir}/%{name}/webmail/webadmin
+%attr(755,root,root) %{_libdir}/%{name}/webmail/webmail
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webmail.authpam
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
