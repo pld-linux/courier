@@ -11,6 +11,29 @@ diff -Nur old/configure.in new/configure.in
  AC_ARG_WITH(courierlogger, [], : ,
  			   [
  			   ac_configure_args="$ac_configure_args --with-courierlogger=$authsbindir/courierlogger"])
+diff -Nur old/maildir/Makefile.am new/maildir/Makefile.am
+--- old/maildir/Makefile.am	2004-10-23 16:18:28.000000000 +0000
++++ new/maildir/Makefile.am	2004-12-10 11:11:12.000220992 +0000
+@@ -55,15 +55,15 @@
+ deliverquota_SOURCES=deliverquota.c
+ deliverquota_DEPENDENCIES=libmaildir.a ../rfc822/librfc822.la \
+ 				../numlib/libnumlib.la
+-deliverquota_LDADD=libmaildir.a ../rfc822/librfc822.la ../numlib/libnumlibs.la
+-deliverquota_LDFLAGS=-static
++deliverquota_LDADD=libmaildir.a ../rfc822/.libs/librfc822.a ../numlib/libnumlibs.la
++deliverquota_LDFLAGS=
+ 
+ maildirmake_SOURCES=maildirmake.c
+ maildirmake_DEPENDENCIES=libmaildir.a ../numlib/libnumlibs.la \
+ 			../rfc822/librfc822.la
+ maildirmake_LDADD=libmaildir.a ../numlib/libnumlibs.la \
+-			../rfc822/librfc822.la
+-maildirmake_LDFLAGS=-static
++			../rfc822/.libs/librfc822.a
++maildirmake_LDFLAGS=
+ 
+ testmaildirfilter_SOURCES=maildirfiltertypelist.h testmaildirfilter.c
+ testmaildirfilter_DEPENDENCIES=libmaildir.a ../numlib/libnumlibs.la
 diff -Nur old/webadmin/configure.in new/webadmin/configure.in
 --- old/webadmin/configure.in	2004-10-23 16:59:41.000000000 +0000
 +++ new/webadmin/configure.in	2004-12-10 10:26:55.076134848 +0000
