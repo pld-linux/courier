@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	4
+Release:	5
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -617,7 +617,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS BENCHMARKS NEWS README TODO htmldoc/*
+%doc AUTHORS BENCHMARKS ChangeLog NEWS README TODO htmldoc/*
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
 %{_mandir}/man1/maildirmake.1*
@@ -924,16 +924,19 @@ fi
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
 
 %files authldap
+%doc authlib/README.ldap
 %{_mandir}/man7/authldap.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authldaprc
 
 %files authmysql
+%doc authlib/README.authmysql.html authlib/README.authmysql.myownquery
 %{_mandir}/man7/authmysql.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authmysqlrc
 
 %files authpgsql
+%doc authlib/README.authpostgres.html
 %{_mandir}/man7/authpgsql.7*
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
 %attr(660,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/authpgsqlrc
