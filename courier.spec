@@ -24,7 +24,7 @@ URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel
-BuildRequires:	db-devel
+BuildRequires:	db-static
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
