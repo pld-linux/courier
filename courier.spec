@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with fam		# with fam support
+%bcond_with	fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
@@ -48,8 +48,8 @@ Obsoletes:	sendmail
 Obsoletes:	sendmail-cf
 Obsoletes:	sendmail-doc
 Obsoletes:	smail
-Obsoletes:      smtpdaemon
-Obsoletes:      ssmtp
+Obsoletes:	smtpdaemon
+Obsoletes:	ssmtp
 Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -233,10 +233,10 @@ umo¿liwienie przekazania wychodz±cej poczty poprzez serwer poczty
 Courier.
 
 %package authldap
-Summary:        LDAP authentication daemon for Courier mail server
-Summary(pl):    Demon autentykacji LDAP do Couriera
-Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{release}
+Summary:	LDAP authentication daemon for Courier mail server
+Summary(pl):	Demon autentykacji LDAP do Couriera
+Group:		Networking/Daemons
+PreReq:		%{name} = %{version}-%{release}
 
 %description authldap
 This package provides LDAP authentication for Courier.
@@ -245,10 +245,10 @@ This package provides LDAP authentication for Courier.
 Ten pakiet pozwala na korzystanie z autentykacji LDAP w Courierze.
 
 %package authmysql
-Summary:        MySQL authentication daemon for Courier mail server
-Summary(pl):    Demon autentykacji MySQL do Couriera
-Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{release}
+Summary:	MySQL authentication daemon for Courier mail server
+Summary(pl):	Demon autentykacji MySQL do Couriera
+Group:		Networking/Daemons
+PreReq:		%{name} = %{version}-%{release}
 
 %description authmysql
 This package provides MySQL authentication for Courier.
@@ -257,10 +257,10 @@ This package provides MySQL authentication for Courier.
 Ten pakiet pozwala na korzystanie z autentykacji MySQL w Courierze.
 
 %package authpgsql
-Summary:        PostgreSQL authentication daemon for Courier mail server
-Summary(pl):    Demon autentykacji PostgreSQL do Couriera
-Group:          Networking/Daemons
-PreReq:         %{name} = %{version}-%{release}
+Summary:	PostgreSQL authentication daemon for Courier mail server
+Summary(pl):	Demon autentykacji PostgreSQL do Couriera
+Group:		Networking/Daemons
+PreReq:		%{name} = %{version}-%{release}
 
 %description authpgsql
 This package provides PostgreSQL authentication for Courier.
@@ -334,9 +334,9 @@ for X in imap esmtp pop3 webmail calendar
 do
 cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
 #%PAM-1.0
-auth       required     pam_unix.so shadow nullok
-account    required     pam_unix.so
-session    required     pam_unix.so
+auth	required	pam_unix.so shadow nullok
+account	required	pam_unix.so
+session	required	pam_unix.so
 EOF
 done
 
@@ -551,12 +551,12 @@ fi
 
 %post webmail
 if ps -A |grep -q authdaemond; then
-    %{_libdir}/courier/sqwebmaild start
+	%{_libdir}/courier/sqwebmaild start
 fi
 
 %preun webmail
 if ps -A |grep -q sqwebmaild; then
-    %{_libdir}/courier/sqwebmaild stop
+	%{_libdir}/courier/sqwebmaild stop
 fi
 
 %post smtpauth
@@ -575,44 +575,44 @@ fi
 
 %post authldap
 if ps -A |grep -q authdaemond; then
-    %{_libdir}/authlib/authdaemond stop
-    %{_libdir}/authlib/authdaemond start
+	%{_libdir}/authlib/authdaemond stop
+	%{_libdir}/authlib/authdaemond start
 fi
 
 %postun authldap
 if [ -x %{_libdir}/authlib/authdaemond ]; then
-    if ps -A |grep -q authdaemond; then
-	%{_libdir}/authlib/authdaemond stop;
-	%{_libdir}/authlib/authdaemond start;
-    fi
+	if ps -A |grep -q authdaemond; then
+		%{_libdir}/authlib/authdaemond stop;
+		%{_libdir}/authlib/authdaemond start;
+	fi
 fi
 
 %post authmysql
 if ps -A |grep -q authdaemond; then
-    %{_libdir}/authlib/authdaemond stop
-    %{_libdir}/authlib/authdaemond start
+	%{_libdir}/authlib/authdaemond stop
+	%{_libdir}/authlib/authdaemond start
 fi
 
 %postun authmysql
 if [ -x %{_libdir}/authlib/authdaemond ]; then
-    if ps -A |grep -q authdaemond; then
-	%{_libdir}/authlib/authdaemond stop;
-	%{_libdir}/authlib/authdaemond start;
-    fi
+	if ps -A |grep -q authdaemond; then
+		%{_libdir}/authlib/authdaemond stop;
+		%{_libdir}/authlib/authdaemond start;
+	fi
 fi
 
 %post authpgsql
 if ps -A |grep -q authdaemond; then
-    %{_libdir}/authlib/authdaemond stop
-    %{_libdir}/authlib/authdaemond start
+	%{_libdir}/authlib/authdaemond stop
+	%{_libdir}/authlib/authdaemond start
 fi
 
 %postun authpgsql
 if [ -x %{_libdir}/authlib/authdaemond ]; then
-    if ps -A |grep -q authdaemond; then
-	%{_libdir}/authlib/authdaemond stop;
-	%{_libdir}/authlib/authdaemond start;
-    fi
+	if ps -A |grep -q authdaemond; then
+		%{_libdir}/authlib/authdaemond stop;
+		%{_libdir}/authlib/authdaemond start;
+	fi
 fi
 
 %files
@@ -908,9 +908,9 @@ fi
 %{_mandir}/man1/refor*
 %{_mandir}/man5/maildrop*
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/maildrop
-%attr(755,root,root)  %{_bindir}/reformail
-%attr(755,root,root)  %{_bindir}/reformime
 %attr(4755,root,root) %{_bindir}/maildrop
+%attr(755,root,root) %{_bindir}/reformail
+%attr(755,root,root) %{_bindir}/reformime
 
 %files mlm
 %defattr(644,root,root,755)
