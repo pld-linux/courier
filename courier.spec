@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.6
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -479,6 +479,12 @@ done
 touch $RPM_BUILD_ROOT%{_sysconfdir}/esmtpacceptmailfor.dir/default
 touch $RPM_BUILD_ROOT%{_sysconfdir}/locals
 
+# file with important options
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/bofh <<EOF
+# enable this option if you want to pass bad converted mails
+# opt BOFHBADMIME=accept
+EOF
+
 # Make password and unsecureok (files for webadmin)
 touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/password
 touch $RPM_BUILD_ROOT%{_sysconfdir}/webadmin/unsecureok
@@ -518,7 +524,6 @@ if ( \$? ) then
 else
 	test -w /etc
 	if ( \$? ) then
-	then
 		setenv PATH "%{_sbindir}:\$PATH"
 	endif
 	setenv PATH "%{_bindir}:\$PATH"
@@ -684,7 +689,8 @@ fi
 
 if [ "$1" = "1" ]; then
 	echo
-	echo Remember to enable auth in esmtp config files
+	echo To enable smtpauth look for ESMTPAUTH option
+	echo in esmtpd config files
 	echo
 fi
 
@@ -799,8 +805,8 @@ fi
 %{_mandir}/man8/makeuucpneighbors.8*
 %{_mandir}/man8/pw2userdb.8*
 %{_mandir}/man8/vchkpw2userdb.8*
-%dir %{_sysconfdir}
-%attr(750,daemon,root) %dir %{_certsdir}
+%attr(755,daemon,daemon) %dir %{_sysconfdir}
+%attr(750,daemon,daemon) %dir %{_certsdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/me
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
@@ -810,6 +816,7 @@ fi
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/default
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/bofh
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
