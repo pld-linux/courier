@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -284,6 +284,14 @@ cd ..
 %{__aclocal}
 %{__autoconf}
 %{__automake}
+
+cd courier
+%{__aclocal}
+%{__autoconf}
+ln -s ../ltmain.sh .
+%{__automake}
+cd ..
+
 %configure \
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
@@ -811,7 +819,7 @@ fi
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
 %attr(755,daemon,daemon) %dir %{_localstatedir}/calendar
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
-%attr(755,root,root) %{_bindir}/sendmail
+%attr(4755,root,root) %{_bindir}/sendmail
 %attr(755,root,root) /usr/lib/sendmail
 
 %files pop3d
