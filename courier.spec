@@ -537,7 +537,6 @@ ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/rfcerr*.txt
 rm -rf $RPM_BUILD_ROOT%{_datadir}/faxmail
 rm -f $RPM_BUILD_ROOT%{_datadir}/courierwebadmin/*fax*
 
@@ -884,6 +883,7 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnsubjectwarn.txt
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnheader.txt
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.dsn
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/rfcerr*.txt
 %dir %{_libdir}/courier/modules/dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
 %{_libdir}/courier/modules/modules.ctl
