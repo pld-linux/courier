@@ -1,7 +1,25 @@
 diff -Nur old/courier/courierd.dist.in new/courier/courierd.dist.in
 --- old/courier/courierd.dist.in	2002-03-15 19:17:18.000000000 +0000
-+++ new/courier/courierd.dist.in	2004-02-20 12:25:45.000000000 +0000
-@@ -76,7 +76,7 @@
++++ new/courier/courierd.dist.in	2004-08-02 16:55:29.000000000 +0000
+@@ -55,9 +55,9 @@
+ #  One of the following definitions of DEFAULTDELIVERY should be
+ #  uncommented.
+ #
+-#  Default deliveries to $HOME/Maildir
++#  Default deliveries to $HOME/Mail/Maildir
+ #
+-#  DEFAULTDELIVERY=./Maildir
++#  DEFAULTDELIVERY=./Mail/Maildir
+ #
+ #  Alternatively, use procmail to deliver mail to local mailboxes.
+ #
+@@ -71,12 +71,12 @@
+ #  use something like this:
+ #
+ #  DEFAULTDELIVERY="|| dotforward
+-#  ./Maildir"
++#  ./Mail/Maildir"
+ #
  #  Yes, it's two lines long, with an embedded newline.  Of course, you can use
  #  any default local mail delivery instruction in place of ./Maildir.
  
