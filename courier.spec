@@ -510,7 +510,7 @@ if [ -e /var/lock/subsys/courier ]; then
 	%{initdir}/courier restart
 else
 	echo
-	echo Type "%{initdir}/courier start" to start courier
+	echo 'Type "%{initdir}/courier start" to start courier'
 	echo
 fi
 
@@ -528,7 +528,7 @@ if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
 	%{_sbindir}/imapd start
 else
 	echo
-	echo Type "%{_sbindir}/imapd start" to start imapd server
+	echo 'Type "%{_sbindir}/imapd start" to start imapd server'
 	echo
 fi
 if [ -e %{_localstatedir}/tmp/imapd-ssl.pid ]; then
@@ -556,7 +556,7 @@ if [ -e %{_localstatedir}/tmp/pop3d.pid ]; then
 	%{_sbindir}/pop3d start
 else
 	echo
-	echo Type "%{_sbindir}/pop3d start" to start pop3d server
+	echo 'Type "%{_sbindir}/pop3d start" to start pop3d server'
 	echo
 fi
 if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
@@ -564,7 +564,7 @@ if [ -e %{_localstatedir}/tmp/pop3d-ssl.pid ]; then
 	%{_sbindir}/pop3d-ssl start
 else
 	echo
-	echo Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server
+	echo 'Type "%{_sbindir}/pop3d-ssl start" to start pop3d-ssl server'
 	echo
 fi
 
@@ -597,7 +597,7 @@ if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 	%{_sbindir}/webmaild start
 else
 	echo
-	echo Type "%{_sbindir}/webmaild start" to start webmail server
+	echo 'Type "%{_sbindir}/webmaild start" to start webmail server'
 	echo
 fi
 
