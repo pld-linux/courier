@@ -13,6 +13,7 @@ Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	8c607c70a692d8f8ccb769a3f96d2f28
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
+Patch2:		%{name}-maildir.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -33,6 +34,7 @@ BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
+Requires(post):	openssl-tools >= 0.9.7c
 %{?with_fam:Requires:	fam}
 Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -79,6 +81,7 @@ Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
+Requires(post):	openssl-tools >= 0.9.7c
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
@@ -99,6 +102,7 @@ Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}
+Requires(post):	openssl-tools >= 0.9.7c
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
 
@@ -252,6 +256,7 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %setup -q
 %patch0 -p1
 %{!?with_fam:%patch1 -p1}
+%patch2 -p1
 
 %build
 # we don't want fax module
@@ -296,7 +301,7 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 for X in imap esmtp pop3 webmail calendar
 do
 cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
-#%PAM-1.0                                                                       
+#%PAM-1.0
 auth       required     /lib/security/pam_unix.so shadow nullok
 account    required     /lib/security/pam_unix.so
 session    required     /lib/security/pam_unix.so
@@ -447,11 +452,10 @@ install -d $RPM_BUILD_ROOT/usr/lib
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
-# default folder in /etc/skel                                                   
-install -d $RPM_BUILD_ROOT/etc/skel/
-maildir/maildirmake $RPM_BUILD_ROOT/etc/skel/Maildir
+# default maildir folder in /etc/skel
+install -d $RPM_BUILD_ROOT/etc/skel/Mail/Maildir/{new,cur,tmp}
 
-# This link by default is missing 
+# This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
 # remove unpackaged files
@@ -505,6 +509,10 @@ if [ "$1" = "0" ]; then
 fi
 
 %post pop3d
+# If we do not have a certificate, make one up.
+if [ ! -f %{_datadir}/pop3d.pem ]; then
+	%{_sbindir}/mkpop3dcert
+fi
 %{_sbindir}/pop3d stop
 %{_sbindir}/pop3d start
 
@@ -785,7 +793,7 @@ fi
 %attr(4755,root,root) %{_libdir}/authlib/changepwd/authdaemon.passwd
 %attr(755,root,root) %{_libdir}/authlib/changepwd/authsystem.passwd
 %attr(755,root,root) %{_datadir}/authsystem.passwd
-%attr(644,root,root) /etc/pam.d/esmtp
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
@@ -796,14 +804,15 @@ fi
 /usr/sbin/sendmail
 
 # default folder - Maildir/                                                     
-%attr(700,root,root) %dir /etc/skel/Maildir
-%attr(700,root,root) %dir /etc/skel/Maildir/cur
-%attr(700,root,root) %dir /etc/skel/Maildir/new
-%attr(700,root,root) %dir /etc/skel/Maildir/tmp
+%attr(700,root,root) %dir /etc/skel/Mail
+%attr(700,root,root) %dir /etc/skel/Mail/Maildir
+%attr(700,root,root) %dir /etc/skel/Mail/Maildir/cur
+%attr(700,root,root) %dir /etc/skel/Mail/Maildir/new
+%attr(700,root,root) %dir /etc/skel/Mail/Maildir/tmp
 
 %files pop3d
 %defattr(644,root,root,755)
-%attr(644,root,root) /etc/pam.d/pop3
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
@@ -825,7 +834,7 @@ fi
 
 %files imapd
 %defattr(644,root,root,755)
-%attr(644,root,root) /etc/pam.d/imap
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
 %{_mandir}/man8/imapd.8*
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
@@ -845,8 +854,8 @@ fi
 %files webmail
 %defattr(644,root,root,755)
 %attr(4755,root,root) %{_cgibindir}/webmail
-%attr(644,root,root) /etc/pam.d/webmail
-%attr(644,root,root) /etc/pam.d/calendar
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
+%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
 %{_documentrootdir}/webmail
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
