@@ -350,9 +350,10 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d -p $RPM_BUILD_ROOT{%{_prefix}/lib,/etc/{cron.hourly,pam.d},%{initdir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/{userdb,hosteddomains},%{_localstatedir}{/calendar,/tmp/broken}} \
+install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
+	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},%{_prefix}/lib} \
+	$RPM_BUILD_ROOT{%{_sysconfdir}/{userdb,hosteddomains,shared} \
+	$RPM_BUILD_ROOT%{_localstatedir}{/calendar/{private,public},/tmp/broken}} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
 
 %{__make} install \
@@ -816,6 +817,8 @@ fi
 %attr(755,root,root) %{_datadir}/mkesmtpdcert
 %attr(755,root,root) %{_sbindir}/esmtpd-msa
 %attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
+%attr(755,root,root) %{_sbindir}/sharedindexinstall
+%attr(755,root,root) %{_sbindir}/sharedindexsplit
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-msa
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-ssl
@@ -894,7 +897,7 @@ fi
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
-%attr(755,daemon,daemon) %dir %{_localstatedir}/calendar
+%attr(750,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
 %attr(755,root,root) /usr/lib/sendmail
 
@@ -966,7 +969,7 @@ fi
 
 %files webmail
 %defattr(644,root,root,755)
-%doc htmldoc/pcp*
+%doc htmldoc/pcp* gpglib/README.html
 %attr(4755,root,root) %{_cgibindir}/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
@@ -989,6 +992,10 @@ fi
 %attr(755,root,root) %{_libdir}/courier/sqwebmaild
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
+%attr(751,daemon,daemon) %dir %{_localstatedir}/calendar
+%attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/localcache
+%attr(750,daemon,daemon) %dir %{_localstatedir}/calendar/private
+%attr(755,daemon,daemon) %dir %{_localstatedir}/calendar/public
 
 %files maildrop
 %defattr(644,root,root,755)
@@ -1012,8 +1019,6 @@ fi
 %attr(755,root,root) %{_bindir}/maildirmake
 %attr(755,root,root) %{_bindir}/maildirkw
 %attr(755,root,root) %{_bindir}/maildiracl
-%attr(755,root,root) %{_sbindir}/sharedindexinstall
-%attr(755,root,root) %{_sbindir}/sharedindexsplit
 
 %files mlm
 %defattr(644,root,root,755)
