@@ -1,16 +1,16 @@
 #
 # TODO:
-#	- triggers
-#	- files, BR revision
+#	- files
+#	- tests
 #
 # Conditional build:
-%bcond_with	fam		# with fam support
+%bcond_without	fam		# with fam support
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.48
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://www.courier-mta.org/beta/courier/%{name}-%{version}.tar.bz2
@@ -31,17 +31,13 @@ BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
-#BuildRequires:	mysql-devel
-#BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
-#BuildRequires:	postgresql-devel
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
-#BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	openssl-tools >= 0.9.7d
@@ -337,7 +333,7 @@ rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir},/usr/lib} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/{hosteddomains,userdb} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/hosteddomains \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -362,8 +358,6 @@ $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8 \
-$RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8 \
-$RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8 \
 $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 
 # make man links
@@ -373,8 +367,6 @@ echo '.so esmtpd.8' > $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8
 echo '.so courierfilter.8' > $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8
 echo '.so makesmtpaccess.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8
 echo '.so courieruucp.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8
-echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8
-echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8
 echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 
 %{__make} install-perms
@@ -491,6 +483,15 @@ rm -rf $RPM_BUILD_ROOT
 %triggerin -- courier < 0.45.5
 echo
 echo Directory with certificates has changed to %{_certsdir}
+echo
+
+%triggerin -- courier < 0.48
+echo
+echo !!! WARNING !!!
+echo Userdb has been moved to courier-authlib-userdb.
+echo Please install this package, move files
+echo from /etc/courier/userdb to /etc/authlib/userdb
+echo and run makeuserdb.
 echo
 
 %post
@@ -659,8 +660,6 @@ fi
 %{_mandir}/man8/filterctl.8*
 %{_mandir}/man8/makesmtpaccess-msa.8*
 %{_mandir}/man8/makeuucpneighbors.8*
-%{_mandir}/man8/pw2userdb.8*
-%{_mandir}/man8/vchkpw2userdb.8*
 %attr(755,daemon,daemon) %dir %{_sysconfdir}
 %attr(750,daemon,daemon) %dir %{_certsdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
@@ -787,7 +786,6 @@ fi
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
