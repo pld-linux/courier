@@ -2,19 +2,21 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.38.1
-Release:	1
+Release:	1.1
 License:	GPL
-Group:		Applications/Mail
+Group:		Networking/Daemons
 Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BuildRequires:	autoconf
 BuildRequires:	db3-devel
+BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel
+BuildRequires:	openssl-tools
 BuildRequires:	openssl-tools-perl
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
@@ -62,7 +64,7 @@ filtrowania spamu.
 %package pop3d
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
-Group:		Applications/Mail
+Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 
 %description pop3d
@@ -82,7 +84,7 @@ obs³uguje skrzynek w postaci pojedynczych plików.
 %package imapd
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
-Group:		Applications/Mail
+Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
@@ -115,7 +117,7 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 %package webmail
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
-Group:		Applications/Mail
+Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 Requires:	%{_cgibindir}
 Requires:	%{_documentrootdir}
@@ -185,7 +187,7 @@ potrzebny do filtrowania przychodz±cej poczty.
 %package smtpauth
 Summary:	Courier mail server authenticated ESMTP module
 Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
-Group:		Applications/Mail
+Group:		Networking/Daemons
 Requires:	%{name} = %{version}
 
 %description smtpauth
@@ -215,9 +217,10 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d $RPM_BUILD_ROOT{%{_prefix},/etc/{crn.hourly,pam.d},%{initdir}}
+install -d $RPM_BUILD_ROOT{%{_prefix},/etc/{crn.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
-	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken}
+	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken} \
+	$RPM_BUILD_ROOT/etc/cron.hourly
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
