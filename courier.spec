@@ -479,6 +479,10 @@ EOF
 # sendmail soft links
 ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
+# fix rmail link
+rm -f $RPM_BUILD_ROOT%{_bindir}/rmail
+ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
+
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
