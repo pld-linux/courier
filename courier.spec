@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.5
-Release:	0.5
+Release:	0.6
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -743,6 +743,7 @@ fi
 %{_mandir}/man1/testmxlookup.1*
 %{_mandir}/man1/dot-forward.1*
 %{_mandir}/man1/couriertls.1*
+%{_mandir}/man1/courierlogger.1*
 %{_mandir}/man1/mailq*
 %{_mandir}/man1/couriertcpd*
 %{_mandir}/man1/dotforward.1*
@@ -1005,6 +1006,8 @@ fi
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
 %{_documentrootdir}/webmail
+%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sqwebmaild
+%attr(755,root,root) %{_sbindir}/webmaild
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
 %dir %{_datadir}/sqwebmail/html/en-us
