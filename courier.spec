@@ -655,7 +655,7 @@ fi
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
-%attr(644,daemon,daemon) %config /etc/courier/webmail.authpam
+%attr(644,daemon,daemon) %config %{_sysconfdir}/webmail.authpam
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 
 %files maildrop
@@ -663,7 +663,7 @@ fi
 %{_mandir}/man1/maildrop.1*
 %{_mandir}/man1/refor*
 %{_mandir}/man5/maildrop*
-%attr(644,daemon,daemon) %config /etc/courier/maildrop
+%attr(644,daemon,daemon) %config %{_sysconfdir}/maildrop
 %attr(755,root,root)  %{_bindir}/reformail
 %attr(755,root,root)  %{_bindir}/reformime
 %attr(4755,root,root) %{_bindir}/maildrop
