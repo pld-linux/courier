@@ -69,8 +69,8 @@ diff -Nur old/courier/webmaild.in new/courier/webmaild.in
 +++ new/courier/webmaild.in	2004-05-28 11:50:57.000000000 +0000
 @@ -42,5 +42,7 @@
  stop)
- 	${sbindir}/courierlogger -pid=${PIDFILE} -stop
- 	${sbindir}/courierlogger -pid=${PIDFILE}.pcp -stop
+ 	@courierlogger@ -pid=${PIDFILE} -stop
+ 	@courierlogger@ -pid=${PIDFILE}.pcp -stop
 +	rm -f ${PIDFILE}
 +	rm -f ${PIDFILE}.pcp
  	;;
