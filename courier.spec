@@ -5,19 +5,18 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.45.6
-Release:	4
+Version:	0.46
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	da08b5f7d2fc9f4a871a5584914011c6
+Source0:	http://aleron.dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	f49eb33ee9853541471cdff2cba0f9a7
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
-Patch5:		%{name}-fix_build.patch
-Patch6:		%{name}-certs.patch
+Patch5:		%{name}-certs.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -34,6 +33,7 @@ BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-devel
+BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 BuildRequires:	zlib-devel
 %{?with_fam:BuildRequires:	fam-devel}
@@ -307,7 +307,6 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %build
 # we don't want fax module
@@ -454,21 +453,13 @@ chmod a-w htmldoc/*
 # Manually set POP3DSTART and IMAPDSTART to yes, they'll go into a separate
 # package, so after it's installed they should be runnable.
 
-sed 's/^POP3DSTART.*/POP3DSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist
-
-sed 's/^POP3DSSLSTART.*/POP3DSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist
-
-sed 's/^IMAPDSTART.*/IMAPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist
-
-sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
+sed -i 's/^POP3DSTART.*/POP3DSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.dist
+sed -i 's/^POP3DSSLSTART.*/POP3DSSLSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/pop3d-ssl.dist
+sed -i 's/^IMAPDSTART.*/IMAPDSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/imapd.dist
+sed -i 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl.dist
 
 # Want to have esmtpd running by default
-sed 's/^ESMTPDSTART.*/ESMTPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.dist >$RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.new
-mv -f $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.new $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.dist
+sed -i 's/^ESMTPDSTART.*/ESMTPDSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.dist
 
 # run script from install-configure (make config files)
 for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissions.dat`
@@ -1062,7 +1053,7 @@ fi
 %doc htmldoc/r* htmldoc/maildrop* htmldoc/lockmail*
 %{_mandir}/man1/maildrop.1*
 %{_mandir}/man1/refor*
-%{_mandir}/man5/maildrop*
+%{_mandir}/man7/maildrop*
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/maildrop
 %attr(4755,root,root) %{_bindir}/maildrop
 %attr(755,root,root) %{_bindir}/reformail
