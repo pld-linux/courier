@@ -16,6 +16,7 @@ Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
+Patch5:		%{name}-fix_build.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -303,6 +304,7 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 # we don't want fax module
