@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.45.2
-Release:	0.9
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -513,6 +513,10 @@ fi
 
 if [ -e /var/lock/subsys/courier ]; then
     %{initdir}/courier restart
+else
+echo
+echo Type "%{initdir}/courier start" to start courier
+echo
 fi
 
 %preun
@@ -564,13 +568,20 @@ if [ "$1" = "0" ]; then
 fi
 
 %post webmail
-if ps -A |grep -q authdaemond; then
-	%{_libdir}/courier/sqwebmaild start
+if ps -A |grep -q sqwebmaild; then
+    %{_libdir}/courier/sqwebmaild stop
+    %{_libdir}/courier/sqwebmaild start
+else
+echo
+echo Type "%{_libdir}/courier/sqwebmaild start" to start webmail server
+echo
 fi
 
 %preun webmail
-if ps -A |grep -q sqwebmaild; then
+if [ "$1" = "0" ]; then
+    if ps -A |grep -q sqwebmaild; then
 	%{_libdir}/courier/sqwebmaild stop
+    fi
 fi
 
 %post smtpauth
