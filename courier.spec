@@ -49,6 +49,7 @@ Requires(post):	openssl-tools >= 0.9.7d
 %{?with_fam:Requires:	fam}
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
+Obsoletes:	courier-smtpauth
 Obsoletes:	exim
 Obsoletes:	masqmail
 Obsoletes:	nullmailer
@@ -255,21 +256,6 @@ incoming mail.
 %description maildrop -l pl
 Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
 potrzebny do filtrowania przychodz±cej poczty.
-
-%package smtpauth
-Summary:	Courier mail server authenticated ESMTP module
-Summary(pl):	Modu³ uwierzytelniania ESMTP (SMTP AUTH) do Couriera
-Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
-
-%description smtpauth
-Authenticated ESMTP allows remote users to authenticate themselves and
-be able to relay outbound mail through the Courier mail server.
-
-%description smtpauth -l pl
-SMTP AUTH pozwala zdalnym u¿ytkownikom na uwierzytelnianie i
-umo¿liwienie przekazania wychodz±cej poczty poprzez serwer poczty
-Courier.
 
 %prep
 %setup -q -n %{name}-%{version}.%{snap}
@@ -632,35 +618,6 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
-%post smtpauth
-if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-	%{_sbindir}/esmtpd stop
-	%{_sbindir}/esmtpd start
-fi
-if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-	%{_sbindir}/esmtpd-ssl stop
-	%{_sbindir}/esmtpd-ssl start
-fi
-
-if [ "$1" = "1" ]; then
-	echo
-	echo To enable smtpauth look for ESMTPAUTH option
-	echo in esmtpd config files
-	echo
-fi
-
-%postun smtpauth
-if [ "$1" = "0" ]; then
-	if [ -e %{_localstatedir}/tmp/esmtpd.pid ]; then
-		%{_sbindir}/esmtpd stop
-		%{_sbindir}/esmtpd start
-	fi
-	if [ -e %{_localstatedir}/tmp/esmtpd-ssl.pid ]; then
-		%{_sbindir}/esmtpd-ssl stop
-		%{_sbindir}/esmtpd-ssl start
-	fi
-fi
-
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS BENCHMARKS ChangeLog INSTALL NEWS README TODO htmldoc/[adehqstu]*
@@ -726,6 +683,7 @@ fi
 %dir %{_datadir}
 %{_datadir}/rootcerts
 %attr(755,root,root) %dir %{_datadir}/courierwebadmin
+%{_datadir}/courierwebadmin/admin-15*
 %dir %{_libdir}/filters
 %attr(755,daemon,daemon) %{_libdir}/filters/*
 %attr(755,daemon,daemon) %{_datadir}/perlfilter-*.pl
@@ -826,7 +784,6 @@ fi
 %attr(755,root,root) %{_bindir}/testmxlookup
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
 %attr(755,root,root) /etc/profile.d/courier.sh
 %attr(755,root,root) /etc/profile.d/courier.csh
@@ -928,6 +885,7 @@ fi
 %attr(755,root,root) %{_sbindir}/webgpg
 %attr(755,root,root) %{_libdir}/courier/pcpd
 %attr(755,root,root) %{_libdir}/courier/sqwebmaild
+%attr(755,root,root) %{_libdir}/courier/sqwebpasswd
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
@@ -965,9 +923,3 @@ fi
 %{_mandir}/man1/couriermlm.1*
 %attr(755,root,root) %{_bindir}/couriermlm
 %{_datadir}/couriermlm
-
-%files smtpauth
-%defattr(644,root,root,755)
-# ???
-#%attr(4750,root,daemon) %{_libdir}/courier/modules/esmtp/authstart
-#%attr(755,root,root) %{_libdir}/courier/modules/esmtp/authend
