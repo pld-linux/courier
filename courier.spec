@@ -9,8 +9,13 @@ Group(de):	Applikationen/Post
 Group(pl):	Aplikacje/Poczta
 Group(pt):	Aplicações/Correio Eletrônico
 Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
+Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildRequires:	autoconf
+BuildRequires:	db3-devel
+BuildRequires:	libstdc++-devel
+BuildRequires:	openssl-tools-perl
 Provides:	smtpdaemon
 #AutoProv:	no
 Prereq:		/sbin/chkconfig
@@ -254,28 +259,15 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
 %prep
 %setup -q
+%patch -p1
 
+(cd rootcerts ; autoconf)
 %configure2_13 \
 	--localstatedir=%{_localstatedir} \
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
-	--enable-imageurl=%{_imageurl}
-
-cat >README.REDHAT <<EOF
-
-This installation of Courier is configured as follows:
-
-Installation directory:          %{_prefix}
-Binary installation directory:   %{_exec_prefix}
-Binaries:                        %{_bindir}
-Superuser binaries:              %{_sbindir}
-Program executables:             %{_libexecdir}
-Configuration files:             %{_sysconfdir}
-Scripts, other non-binaries:     %{_datadir}
-Mail queue, temporary files:     %{_localstatedir}
-Manual pages:                    %{_mandir}
-
-EOF
+	--enable-imageurl=%{_imageurl} \
+	--with-db=db
 
 %build
 %{__make}
@@ -501,6 +493,8 @@ mailgroup=daemon
 echo "%attr(700, $mailuser, $mailgroup) %dir %{_sysconfdir}/userdb" >>filelist
 echo "%attr(755, $mailuser, $mailgroup) %dir %{_localstatedir}/tmp/broken" >>filelist
 
+gzip -9nf AUTHORS BENCHMARKS NEWS README TODO
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -547,9 +541,7 @@ fi
 
 %files -f filelist
 %defattr(644,root,root,755)
-
-%attr(555, bin, bin) %doc README.REDHAT AUTHORS COPYING
-%attr(555, bin, bin) %doc htmldoc/*
+%doc *.gz htmldoc/*
 
 %files sendmail-wrapper
 %defattr(644,root,root,755)
