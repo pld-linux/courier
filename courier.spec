@@ -423,7 +423,8 @@ echo "%attr(700, $mailuser, $mailgroup) %dir %{_sysconfdir}/userdb" >>filelist
 echo "%attr(755, $mailuser, $mailgroup) %dir %{_localstatedir}/tmp/broken" >>filelist
 
 %post
-%chkconfig_add
+/sbin/chkconfig --del courier
+/sbin/chkconfig --add courier
 %{_sbindir}/makealiases 2>/dev/null || true
 %{_sbindir}/makesmtpaccess 2>/dev/null || true
 
@@ -436,7 +437,10 @@ fi
 
 %preun
 %{initdir}/courier stop
-%chkconfig_del
+if test "$1" = "0"
+then
+        /sbin/chkconfig --del courier
+fi
 
 %post imapd
 # If we do not have a certificate, make one up.
