@@ -1,13 +1,13 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.42.0
+Version:	0.44.0
 Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	553258a369f941a99661fec5edc66861
-Patch0:		%{name}-openssl-path.patch
+# Source0-md5:	acf6721a56f94791adf4fd7f56ba3e38
+Patch0: 	%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -333,6 +333,9 @@ install -d $RPM_BUILD_ROOT/usr/lib
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
 ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
+# This link by default is missing 
+ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
+
 #
 # The following directories are not created by default, but I want them here.
 #
@@ -350,11 +353,43 @@ if [ ! -f %{_datadir}/esmtpd.pem ]; then
 	%{_sbindir}/mkesmtpdcert
 fi
 
+# make man links
+ln -sf /usr/share/man/man1/dot-forward.1.gz /usr/share/man/man1/dotforward.1.gz
+ln -sf /usr/share/man/man1/sendmail.1.gz /usr/share/man/man1/rmail.1.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authcram.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authdaemon.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authdaemond.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authldap.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authmysql.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authpam.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authpwd.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authshadow.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authuserdb.7.gz
+ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authvchkpw.7.gz
+ln -sf /usr/share/man/man8/esmtpd.8.gz /usr/share/man/man8/esmtpd-msa.8.gz
+ln -sf /usr/share/man/man8/courierfilter.8.gz /usr/share/man/man8/filterctl.8.gz
+ln -sf /usr/share/man/man8/makesmtpaccess.8.gz /usr/share/man/man8/makesmtpaccess-msa.8.gz
+ln -sf /usr/share/man/man8/courieruucp.8.gz /usr/share/man/man8/makeuucpneighbours.8.gz
+ln -sf /usr/share/man/man8/makeuserdb.8.gz /usr/share/man/man8/pw2userdb.8.gz
+ln -sf /usr/share/man/man8/makeuserdb.8.gz /usr/share/man/man8/vchkpw2userdb.8.gz
+
 %preun
 if [ "$1" = "0" ]; then
 	%{initdir}/courier stop
         /sbin/chkconfig --del courier
 fi
+
+# delete man links
+rm /usr/share/man/man1/dotforward.1.gz /usr/share/man/man1/rmail.1.gz \
+   /usr/share/man/man7/authcram.7.gz /usr/share/man/man7/authdaemon.7.gz \
+   /usr/share/man/man7/authdaemond.7.gz /usr/share/man/man7/authldap.7.gz \
+   /usr/share/man/man7/authmysql.7.gz /usr/share/man/man7/authpam.7.gz \
+   /usr/share/man/man7/authpwd.7.gz /usr/share/man/man7/authshadow.7.gz \
+   /usr/share/man/man7/authuserdb.7.gz /usr/share/man/man7/authvchkpw.7.gz \
+   /usr/share/man/man8/esmtpd-msa.8.gz /usr/share/man/man8/filterctl.8.gz \
+   /usr/share/man/man8/makesmtpaccess-msa.8.gz \
+   /usr/share/man/man8/makeuucpneighbours.8.gz \
+   /usr/share/man/man8/pw2userdb.8.gz /usr/share/man/man8/vchkpw2userdb.8.gz
 
 %post imapd
 # If we do not have a certificate, make one up.
@@ -376,10 +411,16 @@ fi
 %{_sbindir}/pop3d stop
 %{_sbindir}/pop3d start
 
+# make man link
+ln -sf /usr/share/man/man8/courierpop3d.8.gz /usr/share/man/man8/courierpop3login.8
+
 %preun pop3d
 if [ "$1" = "0" ]; then
 	%{_sbindir}/pop3d stop
 fi
+
+# delete man link
+rm /usr/share/man/man8/courierpop3login.8.gz
 
 %post smtpauth
 %{_sbindir}/esmtpd stop
@@ -397,8 +438,9 @@ fi
 %{_mandir}/man1/sendmail.1*
 %{_mandir}/man1/preline.1*
 %{_mandir}/man1/maildirmake.1*
+%{_mandir}/man1/maildirkw.1*
 %{_mandir}/man1/cancelmsg.1*
-%{_mandir}/man1/dotlock.1*
+%{_mandir}/man1/lockmail.1*
 %{_mandir}/man1/mailbot.1*
 %{_mandir}/man1/makemime.1*
 %{_mandir}/man1/mimegpg.1*
@@ -406,18 +448,15 @@ fi
 %{_mandir}/man1/testmxlookup.1*
 %{_mandir}/man1/dot-forward.1*
 %{_mandir}/man1/couriertls.1*
-%{_mandir}/man1/rmail.1*
 %{_mandir}/man1/mailq*
-%{_mandir}/man1/dotforward.1*
 %{_mandir}/man1/couriertcpd*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
 %{_mandir}/man7/maildirquota.7*
-%{_mandir}/man7/auth*
+%{_mandir}/man7/authlib.7*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
-%{_mandir}/man8/filterctl.8*
 %{_mandir}/man8/courier.8*
 %{_mandir}/man8/courierldapaliasd.8*
 %{_mandir}/man8/deliverquota.8*
@@ -432,12 +471,7 @@ fi
 %{_mandir}/man8/submit.8*
 %{_mandir}/man8/userdb.8*
 %{_mandir}/man8/userdbpw.8*
-%{_mandir}/man8/pw2userdb.8*
-%{_mandir}/man8/vchkpw2userdb.8*
-%{_mandir}/man8/makesmtpaccess-msa.8*
-%{_mandir}/man8/esmtpd-msa.8*
 %{_mandir}/man8/courieruucp.8*
-%{_mandir}/man8/makeuucpneighbors.8*
 %config %{_sysconfdir}/ldapaddressbook.dist
 %dir %{_sysconfdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
@@ -509,6 +543,8 @@ fi
 %attr(755,root,root) %{_bindir}/addcr
 %attr(755,root,root) %{_sbindir}/esmtpd
 %attr(755,root,root) %{_datadir}/esmtpd
+%attr(755,root,root) %{_sbindir}/esmtpd-ssl
+%attr(755,root,root) %{_datadir}/esmtpd-ssl
 %attr(755,root,root) %{_sbindir}/makesmtpaccess
 %attr(755,root,root) %{_datadir}/makesmtpaccess
 %attr(755,root,root) %{_sbindir}/makeacceptmailfor
@@ -521,6 +557,7 @@ fi
 %attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
 %attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd.dist
 %attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-msa.dist
+%attr(644,daemon,daemon) %config %{_sysconfdir}/esmtpd-ssl.dist
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
 %attr(644,daemon,daemon) %config %{_sysconfdir}/esmtp.authpam
@@ -550,14 +587,15 @@ fi
 %attr(750,root,daemon) %{_sbindir}/showmodules
 %attr(755,root,root) %{_sbindir}/userdbpw
 %attr(755,root,root) %{_sbindir}/couriertcpd
-%attr(755,root,root) %{_sbindir}/logger
+%attr(755,root,root) %{_sbindir}/courierlogger
 %attr(6555,daemon,daemon) %{_bindir}/cancelmsg
 %attr(755,root,root) %{_bindir}/courier-config
 %attr(2755,root,daemon) %{_bindir}/mailq
 %attr(755,root,root) %{_bindir}/maildirmake
+%attr(755,root,root) %{_bindir}/maildirkw
 %attr(4755,root,root) %{_bindir}/sendmail
 %attr(4755,root,root) %{_bindir}/rmail
-%attr(755,root,root) %{_bindir}/dotlock
+%attr(755,root,root) %{_bindir}/lockmail
 %attr(755,root,root) %{_bindir}/deliverquota
 %attr(755,root,root) %{_bindir}/mailbot
 %attr(755,root,root) %{_bindir}/makemime
@@ -574,7 +612,7 @@ fi
 %attr(755,root,root) %{_sbindir}/pop3d-ssl
 %attr(755,root,root) %{_datadir}/makeuserdb
 %attr(755,root,root) %{_sbindir}/makeuserdb
-%attr(755,root,root) %{_datadir}/webgpg
+%attr(755,root,root) %{_datadir}/sqwebmail/webgpg
 %attr(755,root,root) %{_sbindir}/webgpg
 %attr(755,root,root) %{_datadir}/userdb
 %attr(755,root,root) %{_sbindir}/userdb
@@ -587,13 +625,13 @@ fi
 %attr(640,daemon,daemon) %config %{_sysconfdir}/ldapaliasrc.dist
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
 %attr(660,daemon,daemon) %config %{_sysconfdir}/authldaprc.dist
-%attr(660,daemon,daemon) %config %{_sysconfdir}/authmysqlrc.dist
+%attr(660,daemon,daemon) %config %{_sysconfdir}/authpgsqlrc.dist
 %attr(660,daemon,daemon) %config %{_sysconfdir}/authdaemonrc.dist
 %dir %{_libdir}/authlib
 %attr(755,root,root) %{_libdir}/authlib/authdaemon
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.plain
 %attr(755,root,root) %{_libdir}/authlib/authdaemond.ldap
-%attr(755,root,root) %{_libdir}/authlib/authdaemond.mysql
+%attr(755,root,root) %{_libdir}/authlib/authdaemond.pgsql
 %attr(755,root,root) %{_libdir}/authlib/authdaemond
 %attr(770,daemon,daemon) %dir %{_localstatedir}/authdaemon
 %attr(755,root,root) %dir %{_libdir}/authlib/changepwd
@@ -612,8 +650,8 @@ fi
 %files pop3d
 %defattr(644,root,root,755)
 %attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
-%{_mandir}/man8/courierpop3login.8*
 %{_mandir}/man8/courierpop3d.8*
+%{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
@@ -657,7 +695,7 @@ fi
 %dir %{_datadir}/sqwebmail/html/en-us
 %{_datadir}/sqwebmail/html/en
 %config %{_datadir}/sqwebmail/html/en-us/[CIL]*
-%{_datadir}/sqwebmail/html/en-us/*.html
+%{_datadir}/sqwebmail/html/en-us/*
 %attr(755,root,root) %{_datadir}/sqwebmail/cleancache.pl
 %attr(755,root,root) %{_datadir}/sqwebmail/sendit.sh
 %attr(755,root,root) %{_datadir}/sqwebmail/ldapsearch
