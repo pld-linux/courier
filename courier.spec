@@ -1,8 +1,8 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.35.1
-Release:	2
+Version:	0.38.1
+Release:	1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
@@ -400,21 +400,21 @@ fi
 %{_mandir}/man1/dot-forward.1*
 %{_mandir}/man1/couriertls.1*
 %{_mandir}/man1/rmail.1*
+%{_mandir}/man1/mailq*
 %{_mandir}/man1/dotforward.1*
+%{_mandir}/man1/couriertcpd*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
 %{_mandir}/man7/maildirquota.7*
-%{_mandir}/man8/auth*
+%{_mandir}/man7/auth*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
 %{_mandir}/man8/filterctl.8*
 %{_mandir}/man8/courier.8*
 %{_mandir}/man8/courierldapaliasd.8*
-%{_mandir}/man8/couriertcpd.8*
 %{_mandir}/man8/deliverquota.8*
 %{_mandir}/man8/esmtpd.8*
-%{_mandir}/man8/mailq.8*
 %{_mandir}/man8/makeacceptmailfor.8*
 %{_mandir}/man8/makehosteddomains.8*
 %{_mandir}/man8/mkesmtpdcert.8*
