@@ -217,7 +217,7 @@ przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d $RPM_BUILD_ROOT{%{_prefix},/etc/{crn.hourly,pam.d},%{initdir}} \
+install -d -p $RPM_BUILD_ROOT{%{_prefix},/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
 	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}/tmp/broken} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
