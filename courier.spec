@@ -15,6 +15,7 @@ Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-no_res_query.patch
+Patch4:		%{name}-sendmail_dir.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -271,6 +272,7 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %{!?with_fam:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 # we don't want fax module
@@ -307,7 +309,8 @@ cd ..
 	--sysconfdir=%{_sysconfdir} \
 	--mandir=%{_mandir} \
 	--enable-imageurl=%{_imageurl} \
-	--with-db=db
+	--with-db=db \
+	--with-mailer=%{_sbindir}/sendmail
 
 %{__make}
 %{__make} check
@@ -315,7 +318,7 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d -p $RPM_BUILD_ROOT{%{_prefix},/etc/{cron.hourly,pam.d},%{initdir}} \
+install -d -p $RPM_BUILD_ROOT{%{_prefix}/lib,/etc/{cron.hourly,pam.d},%{initdir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},%{_documentrootdir}} \
 	$RPM_BUILD_ROOT{%{_sysconfdir}/userdb,%{_localstatedir}{/calendar,/tmp/broken}} \
 	$RPM_BUILD_ROOT/etc/cron.hourly
@@ -470,8 +473,7 @@ endif
 EOF
 
 # sendmail soft links
-
-ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
+ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
@@ -785,7 +787,7 @@ fi
 %attr(2755,root,daemon) %{_bindir}/mailq
 %attr(755,root,root) %{_bindir}/maildirmake
 %attr(755,root,root) %{_bindir}/maildirkw
-%attr(4755,root,root) %{_bindir}/sendmail
+%attr(4755,root,root) %{_sbindir}/sendmail
 %attr(4755,root,root) %{_bindir}/rmail
 %attr(755,root,root) %{_bindir}/lockmail
 %attr(755,root,root) %{_bindir}/deliverquota
@@ -829,7 +831,6 @@ fi
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
 %attr(755,daemon,daemon) %dir %{_localstatedir}/calendar
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
-%attr(4755,root,root) %{_bindir}/sendmail
 %attr(755,root,root) /usr/lib/sendmail
 
 %files pop3d
