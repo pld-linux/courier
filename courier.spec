@@ -5,7 +5,10 @@ Version:	0.35.1
 Release:	1
 License:	GPL
 Group:		Applications/Mail
-Source:		http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
+Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
 URL:		http://www.courier-mta.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	smtpdaemon
@@ -28,7 +31,7 @@ Prereq:		/sbin/chkconfig
 %description
 Courier is a fully functional mail server, that can completely take
 over the mail services normally provided by sendmail, Qmail, or any
-other mail server.  Although Courier does not support all legacy
+other mail server. Although Courier does not support all legacy
 features of existing mail servers, the number of obsoleted functions
 is very small, and there are better, and more robust, alternatives
 available.
@@ -44,74 +47,83 @@ Wprawdzie Courier nie ma wszystkich mo¿liwo¶ci istniej±cych serwerów,
 ilo¶æ nie obs³ugiwanych funkcji jesgt bardzo ma³a, i s± dostêpne
 lepsze alternatywy.
 
-Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME.
-Ma tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
+Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME. Ma
+tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
 filtrowania spamu.
 
 %package sendmail-wrapper
 Summary:	Courier soft links for sendmail
 Summary(pl):	Wrapper sendmail do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description sendmail-wrapper
 This package contains two soft links from /usr/sbin/sendmail and
-/usr/lib/sendmail to %{_bindir}/sendmail.  This allows application
-that use sendmail to transparently use Courier for sending mail.
+/usr/lib/sendmail to %{_bindir}/sendmail. This allows application that
+use sendmail to transparently use Courier for sending mail.
 
 %description sendmail-wrapper -l pl
+# acc. FHS these symlinks should be in main package...
 Ten pakiet zawiera symlinki z /usr/sbin/sendmail i /usr/lib/sendmail
 do %{_bindir}/sendmail. Pozwala to aplikacjom u¿ywaj±cym sendmaila
 korzystaæ z Couriera.
-# acc. FHS these symlinks should be in main package...
 
 %package pop3d
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
 which allows you to download mail from your mailbox using any POP3
-client.  Courier's POP3 server can only be used to download mail
-from maildir mailboxes.  This server does not support mailbox files.
-If you do not need the ability to download your mail using a POP3
-client, you do not need to install this package.
+client. Courier's POP3 server can only be used to download mail from
+maildir mailboxes. This server does not support mailbox files. If you
+do not need the ability to download your mail using a POP3 client, you
+do not need to install this package.
 
 %description pop3d -l pl
 Ten pakiet zawiera zintegrowany serwer POP3 do Couriera, pozwalaj±cy
 na ¶ci±ganie poczty ze skrzynki przy pomocy dowolnego klienta POP3.
-Serwer POP3 Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir,
-nie obs³uguje skrzynek w postaci pojedynczych plików.
+Serwer POP3 Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir, nie
+obs³uguje skrzynek w postaci pojedynczych plików.
 
 %package imapd
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
 
 %description imapd
-This package installs Courier mail server's integrated IMAP server.
-If you do not need the ability to download your mail using an IMAP
-mail client, you do not need to install this package.  Courier's
-IMAP server can only be used to download mail from maildir
-mailboxes.  This server does not support mailbox files.
+This package installs Courier mail server's integrated IMAP server. If
+you do not need the ability to download your mail using an IMAP mail
+client, you do not need to install this package. Courier's IMAP server
+can only be used to download mail from maildir mailboxes. This server
+does not support mailbox files.
 
-This package requires that Courier must be already installed, this
-is NOT the standalone version of the Courier-IMAP server, and you
-cannot install both this package, and the standalone version of
-Courier-IMAP.  If you have the standalone version of the
-Courier-IMAP server already installed, installing this package
-will automatically remove the standalone version.
+This package requires that Courier must be already installed, this is
+NOT the standalone version of the Courier-IMAP server, and you cannot
+install both this package, and the standalone version of Courier-IMAP.
+If you have the standalone version of the Courier-IMAP server already
+installed, installing this package will automatically remove the
+standalone version.
 
 %description imapd -l pl
 Ten pakiet zawiera zintegrowany serwer IMAP do Couriera. Pozwala
-¶ci±gaæ pocztê przy pomocy klienta IMAP. Serwer IMAP Couriera mo¿e
-byæ u¿ywany tylko ze skrzynami Maildir, nie obs³uguje skrzynek
-w postaci pojedynczych plików.
+¶ci±gaæ pocztê przy pomocy klienta IMAP. Serwer IMAP Couriera mo¿e byæ
+u¿ywany tylko ze skrzynami Maildir, nie obs³uguje skrzynek w postaci
+pojedynczych plików.
 
 Ten pakiet wymaga serwera Courier, to NIE jest samodzielna wersja
 serwera Courier-IMAP. Nie mo¿na te¿ instalowaæ jednocze¶nie tego
@@ -122,20 +134,23 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 Requires:	%{_cgibindir}
 Requires:	%{_documentrootdir}
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
-server.  If you do not need the ability to access your mail using a
-web browser, you do not need to install this package.  Courier's
-webmail server can only be used to download mail from maildir
-mailboxes.  This server does not support mailbox files.
+server. If you do not need the ability to access your mail using a web
+browser, you do not need to install this package. Courier's webmail
+server can only be used to download mail from maildir mailboxes. This
+server does not support mailbox files.
 
-This is the same server that's distributed separately under the
-name of SqWebMail, however its configuration is customized for the
-Courier mail server.
+This is the same server that's distributed separately under the name
+of SqWebMail, however its configuration is customized for the Courier
+mail server.
 
 %description webmail -l pl
 Ten pakiet zawiera zintegrowany serwer poczty przez HTTP (webmail) dla
@@ -150,17 +165,20 @@ SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 Summary:	Courier Integrated Mailing List Manager
 Summary(pl):	Zintegrowany menad¿er list dyskusyjnych do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description mlm
 This package installs couriermlm - a mailing list manager for the
-Courier mail server.  If you do not need the ability to manage
-mailing lists, you do not need to install this package.
+Courier mail server. If you do not need the ability to manage mailing
+lists, you do not need to install this package.
 
 couriermlm is used to set up, maintain, and run a mailing list.
 couriermlm automatically processes subscription and unsubscription
 requests, and removes undeliverable addresses from the subscription
-rolls.  Mailing lists managed by couriermlm require zero human
+rolls. Mailing lists managed by couriermlm require zero human
 administrative oversight. couriermlm supports digests, write-only
 posting aliases, and moderated mailing lists.
 
@@ -168,21 +186,24 @@ posting aliases, and moderated mailing lists.
 Ten pakiet zawiera couriermlm - menad¿er list dyskusyjnych dla
 Couriera. couriermlm jest u¿ywany do skonfigurowania, zarz±dzania i
 prowadzenia pocztowej listy dyskusyjnej. Automatycznie obs³uguje
-¿±dania zapisywania i wypisywania i usuwa niedzia³aj±ce adresy
-z listy subskrybentów. Listy obs³ugiwane przez couriermlm nie wymagaj±
-pracy administratora. couriermlm obs³uguje digesty, aliasy pocztowe
-tylko do wysy³ania i listy moderowane.
+¿±dania zapisywania i wypisywania i usuwa niedzia³aj±ce adresy z listy
+subskrybentów. Listy obs³ugiwane przez couriermlm nie wymagaj± pracy
+administratora. couriermlm obs³uguje digesty, aliasy pocztowe tylko do
+wysy³ania i listy moderowane.
 
 %package maildrop
 Summary:	Courier Integrated mail filter
 Summary(pl):	Zintegrowany filtr poczty do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description maildrop
 This package installs Courier mail server's integrated mail filter.
-You need to install this package if you want to be able to filter
-your incoming mail.
+You need to install this package if you want to be able to filter your
+incoming mail.
 
 %description maildrop -l pl
 Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
@@ -192,40 +213,47 @@ potrzebny do filtrowania przychodz±cej poczty.
 Summary:	Courier soft links for maildrop
 Summary(pl):	Wrapper maildrop do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name}-maildrop = %{version}
 
 %description maildrop-wrapper
 This package installs several soft links from the /usr/local/bin
-directory to Courier's integrated maildrop mail filter.  Maildrop is
-available as a standalone package, which installs in %{_bindir}.
-If you have applications that expect to find maildrop in /usr/local/bin
+directory to Courier's integrated maildrop mail filter. Maildrop is
+available as a standalone package, which installs in %{_bindir}. If
+you have applications that expect to find maildrop in /usr/local/bin
 you can install this package to create soft links that point to
-Courier's integrated maildrop version instead, in order to continue
-to use those applications, without needing to reconfigure them.
+Courier's integrated maildrop version instead, in order to continue to
+use those applications, without needing to reconfigure them.
 
 %description maildrop-wrapper -l pl
-Ten pakiet zawiera symlinki z katalogu /usr/local/bin do filtru maildrop
-Couriera. maildrop jest dostêpnym w oddzielnym pakiecie, instaluj±cym
-siê w %{_bindir}. Przydaje siê aplikacjom szukaj±cym maildropa
-w /usr/local/bin do u¿ywania z Courierem bez rekonfigurowania.
 # hmmm ??? to be removed...
+Ten pakiet zawiera symlinki z katalogu /usr/local/bin do filtru
+maildrop Couriera. maildrop jest dostêpnym w oddzielnym pakiecie,
+instaluj±cym siê w %{_bindir}. Przydaje siê aplikacjom szukaj±cym
+maildropa w /usr/local/bin do u¿ywania z Courierem bez
+rekonfigurowania.
 
 %package smtpauth
 Summary:	Courier mail server authenticated ESMTP module
 Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
 Group:		Applications/Mail
+Group(de):	Applikationen/Post
+Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description smtpauth
-Authenticated ESMTP allows remote users to authenticate themselves
-and be able to relay outbound mail through the Courier mail server.
+Authenticated ESMTP allows remote users to authenticate themselves and
+be able to relay outbound mail through the Courier mail server.
 
 %description smtpauth -l pl
 SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
 przekazania wychodz±cej poczty poprzez serwer poczty Courier.
 
 %prep
-%setup
+%setup -q
 
 %configure2_13 \
 	--localstatedir=%{_localstatedir} \
@@ -518,33 +546,42 @@ fi
 %{_sbindir}/esmtpd start
 
 %files -f filelist
+%defattr(644,root,root,755)
 
 %attr(555, bin, bin) %doc README.REDHAT AUTHORS COPYING
 %attr(555, bin, bin) %doc htmldoc/*
 
 %files sendmail-wrapper
+%defattr(644,root,root,755)
 %attr(-, bin, bin) /usr/sbin/sendmail
 %attr(-, bin, bin) /usr/bin/sendmail
 %attr(-, bin, bin) /usr/lib/sendmail
 
 %files maildrop-wrapper
+%defattr(644,root,root,755)
 
 %attr(-, bin, bin) /usr/local/bin/*
 
 %files pop3d -f filelist.pop3
+%defattr(644,root,root,755)
 %attr(644, root, wheel) /etc/pam.d/pop3
 
 %files imapd -f filelist.imap
+%defattr(644,root,root,755)
 %attr(644, root, wheel) /etc/pam.d/imap
 
 %files webmail -f filelist.webmail
+%defattr(644,root,root,755)
 %attr(4511, root, wheel) %{_cgibindir}/webmail
 %attr(644, root, wheel) /etc/pam.d/webmail
 %attr(755, bin, bin) %dir %{_documentrootdir}/webmail
 %attr(444, bin, bin) %{_documentrootdir}/webmail/*
 
 %files maildrop -f filelist.maildrop
+%defattr(644,root,root,755)
 
 %files mlm -f filelist.mlm
+%defattr(644,root,root,755)
 
 %files smtpauth -f filelist.auth
+%defattr(644,root,root,755)
