@@ -5,9 +5,6 @@ Version:	0.35.1
 Release:	2
 License:	GPL
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Source0:	http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
 Patch0:		%{name}-openssl-path.patch
 URL:		http://www.courier-mta.org/
@@ -66,9 +63,6 @@ filtrowania spamu.
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description pop3d
@@ -89,9 +83,6 @@ obs³uguje skrzynek w postaci pojedynczych plików.
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
@@ -125,9 +116,6 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 Requires:	%{_cgibindir}
 Requires:	%{_documentrootdir}
@@ -156,9 +144,6 @@ SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 Summary:	Courier Integrated Mailing List Manager
 Summary(pl):	Zintegrowany menad¿er list dyskusyjnych do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description mlm
@@ -186,9 +171,6 @@ wysy³ania i listy moderowane.
 Summary:	Courier Integrated mail filter
 Summary(pl):	Zintegrowany filtr poczty do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description maildrop
@@ -204,9 +186,6 @@ potrzebny do filtrowania przychodz±cej poczty.
 Summary:	Courier mail server authenticated ESMTP module
 Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Requires:	%{name} = %{version}
 
 %description smtpauth
