@@ -67,7 +67,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		_certsdir	%{_sysconfdir}/certs
-%define		initdir		/etc/rc.d/init.d
+%define		_initrddir		/etc/rc.d/init.d
 
 %define		_httpdir	/home/services/httpd
 %define		_cgibindir	%{_httpdir}/cgi-bin
@@ -329,7 +329,7 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{initdir}} \
+install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
 	$RPM_BUILD_ROOT{%{_cgibindir},/usr/lib,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
@@ -421,7 +421,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 # create calendarmode
 touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
 
-install courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
+install courier.sysvinit $RPM_BUILD_ROOT%{_initrddir}/courier
 #
 # Red Hat /etc/profile.d scripts
 #
@@ -506,17 +506,17 @@ EOF
 fi
 
 if [ -e /var/lock/subsys/courier ]; then
-	%{initdir}/courier restart
+	%{_initrddir}/courier restart
 else
 	echo
-	echo 'Type "%{initdir}/courier start" to start courier'
+	echo 'Type "%{_initrddir}/courier start" to start courier'
 	echo
 fi
 
 %preun
 if [ "$1" = "0" ]; then
 	if [ -e /var/lock/subsys/courier ]; then
-		%{initdir}/courier stop
+		%{_initrddir}/courier stop
 	fi
 	/sbin/chkconfig --del courier
 fi
@@ -604,14 +604,14 @@ fi
 if [ -d %{_apache1dir}/conf.d ]; then
 	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache1dir}/conf.d/99_%{name}.conf
 	if [ -f /var/lock/subsys/apache ]; then
-    		/etc/rc.d/init.d/apache restart 1>&2
+		/etc/rc.d/init.d/apache restart 1>&2
 	fi
 fi
 # apache2
 if [ -d %{_apache2dir}/httpd.conf ]; then
 	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
 	if [ -f /var/lock/subsys/httpd ]; then
-    		/etc/rc.d/init.d/httpd restart 1>&2
+		/etc/rc.d/init.d/httpd restart 1>&2
 	fi
 fi
 
@@ -622,18 +622,18 @@ if [ "$1" = "0" ]; then
 	fi
 	# apache1
 	if [ -d %{_apache1dir}/conf.d ]; then
-    		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
-        	if [ -f /var/lock/subsys/apache ]; then
-                        /etc/rc.d/init.d/apache restart 1>&2
-                fi
-        fi
-        # apache2
+		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
+		if [ -f /var/lock/subsys/apache ]; then
+			/etc/rc.d/init.d/apache restart 1>&2
+		fi
+	fi
+	# apache2
 	if [ -d %{_apache2dir}/httpd.conf ]; then
-                rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
-                if [ -f /var/lock/subsys/httpd ]; then
-                        /etc/rc.d/init.d/httpd restart 1>&2
-	        fi
-        fi
+		rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
+		if [ -f /var/lock/subsys/httpd ]; then
+			/etc/rc.d/init.d/httpd restart 1>&2
+		fi
+	fi
 fi
 
 %files
