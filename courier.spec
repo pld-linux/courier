@@ -22,6 +22,7 @@ Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
+Patch6:		%{name}-build.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -278,6 +279,7 @@ Courier.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 # we don't want fax module
@@ -310,6 +312,19 @@ ln -s ../ltmain.sh .
 cd ../..
 
 cd imap
+%{__aclocal}
+%{__autoconf}
+ln -s ../ltmain.sh .
+%{__automake}
+cd ..
+
+cd webadmin
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+cd ..
+
+cd maildir
 %{__aclocal}
 %{__autoconf}
 ln -s ../ltmain.sh .
