@@ -247,6 +247,48 @@ ln -sf %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
 ln -sf %{_sysconfdir}/imapd.authpam $RPM_BUILD_ROOT/etc/pam.d/imap
 ln -sf %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 
+# delete dead links
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1 \
+$RPM_BUILD_ROOT%{_mandir}/man1/rmail.1 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authcram.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authldap.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authpam.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7 \
+$RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7 \
+$RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8 \
+$RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
+
+# make man links
+echo '.so dot-forward.1' > $RPM_BUILD_ROOT%{_mandir}/man1/dotforward.1
+echo '.so sendmail.1' > $RPM_BUILD_ROOT%{_mandir}/man1/rmail.1
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authcram.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemon.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authdaemond.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authldap.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authmysql.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authpam.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authpwd.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authshadow.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authuserdb.7
+echo '.so authlib.1' > $RPM_BUILD_ROOT%{_mandir}/man7/authvchkpw.7
+echo '.so esmtpd.8' > $RPM_BUILD_ROOT%{_mandir}/man8/esmtpd-msa.8
+echo '.so courierfilter.8' > $RPM_BUILD_ROOT%{_mandir}/man8/filterctl.8
+echo '.so makesmtpaccess.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makesmtpaccess-msa.8
+echo '.so courieruucp.8' > $RPM_BUILD_ROOT%{_mandir}/man8/makeuucpneighbors.8
+echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/pw2userdb.8
+echo '.so makeuserdb.8' > $RPM_BUILD_ROOT%{_mandir}/man8/vchkpw2userdb.8
+echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
+
 %{__make} install-perms
 
 # Note that we delete all 'webmail's, but copy over only 'sqwebmail's.
@@ -353,43 +395,12 @@ if [ ! -f %{_datadir}/esmtpd.pem ]; then
 	%{_sbindir}/mkesmtpdcert
 fi
 
-# make man links
-ln -sf /usr/share/man/man1/dot-forward.1.gz /usr/share/man/man1/dotforward.1.gz
-ln -sf /usr/share/man/man1/sendmail.1.gz /usr/share/man/man1/rmail.1.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authcram.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authdaemon.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authdaemond.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authldap.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authmysql.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authpam.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authpwd.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authshadow.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authuserdb.7.gz
-ln -sf /usr/share/man/man7/authlib.7.gz /usr/share/man/man7/authvchkpw.7.gz
-ln -sf /usr/share/man/man8/esmtpd.8.gz /usr/share/man/man8/esmtpd-msa.8.gz
-ln -sf /usr/share/man/man8/courierfilter.8.gz /usr/share/man/man8/filterctl.8.gz
-ln -sf /usr/share/man/man8/makesmtpaccess.8.gz /usr/share/man/man8/makesmtpaccess-msa.8.gz
-ln -sf /usr/share/man/man8/courieruucp.8.gz /usr/share/man/man8/makeuucpneighbours.8.gz
-ln -sf /usr/share/man/man8/makeuserdb.8.gz /usr/share/man/man8/pw2userdb.8.gz
-ln -sf /usr/share/man/man8/makeuserdb.8.gz /usr/share/man/man8/vchkpw2userdb.8.gz
 
 %preun
 if [ "$1" = "0" ]; then
 	%{initdir}/courier stop
         /sbin/chkconfig --del courier
 fi
-
-# delete man links
-rm /usr/share/man/man1/dotforward.1.gz /usr/share/man/man1/rmail.1.gz \
-   /usr/share/man/man7/authcram.7.gz /usr/share/man/man7/authdaemon.7.gz \
-   /usr/share/man/man7/authdaemond.7.gz /usr/share/man/man7/authldap.7.gz \
-   /usr/share/man/man7/authmysql.7.gz /usr/share/man/man7/authpam.7.gz \
-   /usr/share/man/man7/authpwd.7.gz /usr/share/man/man7/authshadow.7.gz \
-   /usr/share/man/man7/authuserdb.7.gz /usr/share/man/man7/authvchkpw.7.gz \
-   /usr/share/man/man8/esmtpd-msa.8.gz /usr/share/man/man8/filterctl.8.gz \
-   /usr/share/man/man8/makesmtpaccess-msa.8.gz \
-   /usr/share/man/man8/makeuucpneighbours.8.gz \
-   /usr/share/man/man8/pw2userdb.8.gz /usr/share/man/man8/vchkpw2userdb.8.gz
 
 %post imapd
 # If we do not have a certificate, make one up.
@@ -411,16 +422,10 @@ fi
 %{_sbindir}/pop3d stop
 %{_sbindir}/pop3d start
 
-# make man link
-ln -sf /usr/share/man/man8/courierpop3d.8.gz /usr/share/man/man8/courierpop3login.8
-
 %preun pop3d
 if [ "$1" = "0" ]; then
 	%{_sbindir}/pop3d stop
 fi
-
-# delete man link
-rm /usr/share/man/man8/courierpop3login.8.gz
 
 %post smtpauth
 %{_sbindir}/esmtpd stop
@@ -450,10 +455,22 @@ fi
 %{_mandir}/man1/couriertls.1*
 %{_mandir}/man1/mailq*
 %{_mandir}/man1/couriertcpd*
+%{_mandir}/man1/dotforward.1*
+%{_mandir}/man1/rmail.1*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
 %{_mandir}/man7/maildirquota.7*
 %{_mandir}/man7/authlib.7*
+%{_mandir}/man7/authcram.7*
+%{_mandir}/man7/authdaemon.7*
+%{_mandir}/man7/authdaemond.7*
+%{_mandir}/man7/authldap.7*
+%{_mandir}/man7/authmysql.7*
+%{_mandir}/man7/authpam.7*
+%{_mandir}/man7/authpwd.7*
+%{_mandir}/man7/authshadow.7*
+%{_mandir}/man7/authuserdb.7*
+%{_mandir}/man7/authvchkpw.7*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
@@ -472,6 +489,12 @@ fi
 %{_mandir}/man8/userdb.8*
 %{_mandir}/man8/userdbpw.8*
 %{_mandir}/man8/courieruucp.8*
+%{_mandir}/man8/esmtpd-msa.8*
+%{_mandir}/man8/filterctl.8*
+%{_mandir}/man8/makesmtpaccess-msa.8*
+%{_mandir}/man8/makeuucpneighbors.8*
+%{_mandir}/man8/pw2userdb.8*
+%{_mandir}/man8/vchkpw2userdb.8*
 %config %{_sysconfdir}/ldapaddressbook.dist
 %dir %{_sysconfdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
@@ -653,6 +676,7 @@ fi
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
+%{_mandir}/man8/courierpop3login.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
 %attr(644,daemon,daemon) %config %{_sysconfdir}/pop3d.dist
