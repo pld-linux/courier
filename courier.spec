@@ -6,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.44.2
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -14,6 +14,7 @@ Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
+Patch3:		%{name}-no_res_query.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -40,8 +41,10 @@ Provides:	smtpdaemon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		apachedir	/home/services/httpd
-%define		_prefix		/usr/lib/courier
+%define		_datadir	%{_prefix}/share/courier
 %define		_mandir		/usr/share/man
+%define		_libdir		%{_prefix}/%{_lib}/courier
+%define		_libexecdir	%{_libdir}
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		initdir		/etc/rc.d/init.d
@@ -257,14 +260,22 @@ Ten pakiet pozwala na korzystanie z autentykacji PostgreSQL w Courierze.
 %patch0 -p1
 %{!?with_fam:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %build
 # we don't want fax module
 rm -rf courier/module.fax
+cp -f /usr/share/automake/config.sub webmail
 
 cd rootcerts
 rm -f missing
 %{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__automake}
+cd ..
+
+cd authlib
 %{__aclocal}
 %{__autoconf}
 %{__automake}
@@ -442,15 +453,9 @@ else
 endif
 EOF
 
-#
 # sendmail soft links
-#
 
-install -d $RPM_BUILD_ROOT/usr/sbin
-install -d $RPM_BUILD_ROOT/usr/lib
-
-ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
-ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
+ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT%{_prefix}/%{_lib}/sendmail
 
 # This link by default is missing
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
@@ -479,10 +484,10 @@ cat <<EOF
 
 Now courier will refuse to accept SMTP messages except to localhost
 add hosts to /etc/courier/esmtpacceptmailfor.dir/esmtpacceptmailfor
-run /usr/lib/courier/sbin/makeacceptmailfor
+run makeacceptmailfor
 
 Add hosts to /etc/courier/locals you want to accept mail for
-run /usr/lib/courier/sbin/makealiases
+run makealiases
 
 Enter user, who should receive mail for root, mailer-daemon and postmaster
 into /etc/courier/aliases/system
@@ -526,12 +531,12 @@ fi
 
 %post webmail
 if ps -A |grep -q authdaemond; then
-    %{_prefix}/lib/courier/sqwebmaild start
+    %{_libdir}/courier/sqwebmaild start
 fi
 
 %preun webmail
 if ps -A |grep -q sqwebmaild; then
-    %{_prefix}/lib/courier/sqwebmaild stop
+    %{_libdir}/courier/sqwebmaild stop
 fi
 
 %post smtpauth
@@ -658,9 +663,6 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
 %attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
-%dir %{_prefix}
-%dir %{_bindir}
-%dir %{_sbindir}
 %dir %{_libdir}
 %dir %{_libdir}/courier
 %dir %{_datadir}
@@ -811,8 +813,8 @@ fi
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/userdb
 %attr(755,daemon,daemon) %dir %{_localstatedir}/calendar
 %attr(755,daemon,daemon) %dir %{_localstatedir}/tmp/broken
-/usr/lib/sendmail
-/usr/sbin/sendmail
+%attr(755,root,root) %{_bindir}/sendmail
+%attr(755,root,root) %{_prefix}/%{_lib}/sendmail
 
 %files pop3d
 %defattr(644,root,root,755)
