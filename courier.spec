@@ -1,93 +1,30 @@
-#
-#  Need to version-upgrade RH builds due to different directory locations.
-#
-
-#%define courier_release %(release="`rpm -q --queryformat='.%{VERSION}' redhat-release 2>/dev/null`" ; echo "$release")
-# we aren't RH we are PLD
-%define courier_release 0
-
-Summary:	Courier %{version} mail server
+Summary:	Courier mail server
+Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.26.20000822
-Release:	1%{courier_release}
-Copyright:	GPL
+Release:	1
+License:	GPL
 Group:		Applications/Mail
-Source:		courier-0.26.20000822.tar.gz
-#Packager:	%{PACKAGER}
-#BuildRoot:	/var/tmp/courier-install
+Source:		http://ftp1.sourceforge.net/courier/%{name}-%{version}.tar.gz
+URL:		http://www.courier-mta.org/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Provides:	smtpdaemon
-AutoProv:	no
-Requires:	/sbin/chkconfig
+#AutoProv:	no
+Prereq:		/sbin/chkconfig
 
-#
-#  RH custom locations.
-#
-#                <7.X               7.x
-#  manpages      /usr/man           /usr/share/man
-#  httpd         /home/httpd        /var/www
-#  initscripts   /etc/rc.d/init.d   /etc/init.d
-
-#%{expand:%%define manpagedir %(if test -d %{_prefix}/share/man ; then echo %{_prefix}/share/man ; else echo %{_prefix}/man ; fi)}
-
-%define apachedir %(if test -d /var/www ; then echo /var/www ; else echo /home/httpd ; fi)
-
-%define	_prefix				/usr/lib/courier
-%define _localstatedir			/var/spool/courier
-%define	_sysconfdir			/etc/courier
-# silly wabbit
-#%define	_mandir				%{manpagedir}
-
-%define initdir %(if test -d /etc/init.d/. ; then echo /etc/init.d ; else echo /etc/rc.d/init.d ; fi)
+%define		apachedir	/home/httpd
+%define		_prefix		/usr/lib/courier
+%define		_localstatedir	/var/spool/courier
+%define		_sysconfdir	/etc/courier
+%define		initdir		/etc/rc.d/init.d
 
 # Change the following if your DocumentRoot and cgibindir differ.  This is
 # the default redhat build:
 
-%define	_cgibindir			%{apachedir}/cgi-bin
-%define _documentrootdir		%{apachedir}/html
-%define _imageurl			/webmail/
+%define		_cgibindir		%{apachedir}/cgi-bin
+%define		_documentrootdir	%{apachedir}/html
+%define		_imageurl		/webmail/
 
-%package sendmail-wrapper
-Summary: Courier %{version} soft links for sendmail
-Group: Applications/Mail
-
-%package pop3d
-Summary: Courier %{version} Integrated POP3 server
-Group: Applications/Mail
-Requires: courier = %{version}
-
-%package imapd
-Summary: Courier %{version} Integrated IMAP server
-Group: Applications/Mail
-Requires: courier = %{version}
-Obsoletes: courier-imap
-
-%package webmail
-Summary: Courier %{version} Integrated HTTP (webmail) server
-Group: Applications/Mail
-Requires: courier = %{version} %{_cgibindir} %{_documentrootdir}
-
-%package mlm
-Summary: Courier %{version} Integrated Mailing List Manager
-Group: Applications/Mail
-Requires: courier = %{version}
-
-%package maildrop
-Summary: Courier %{version} Integrated mail filter
-Group: Applications/Mail
-Requires: courier = %{version}
-
-%package maildrop-wrapper
-Summary: Courier %{version} soft links for maildrop
-Group: Applications/Mail
-Requires: courier-maildrop = %{version}
-
-%package smtpauth
-Summary: Courier %{version} mail server authenticated ESMTP module
-Group: Applications/Mail
-Requires: courier = %{version}
-
-Summary: Courier
 %description
 Courier is a fully functional mail server, that can completely take
 over the mail services normally provided by sendmail, Qmail, or any
@@ -100,10 +37,39 @@ Courier implements many SMTP extensions: DSN, PIPELINING, 8BITMIME.
 Courier also implements several new SMTP extensions for mailing list
 management and spam filtering.
 
+%description -l pl
+Courier jest w pe³ni funkcjonalnym serwerem poczty, mo¿e ca³kowicie
+zast±piæ us³ugi pocztowe dawane przez sendmail, Qmaila i inne serwery.
+Wprawdzie Courier nie ma wszystkich mo¿liwo¶ci istniej±cych serwerów,
+ilo¶æ nie obs³ugiwanych funkcji jesgt bardzo ma³a, i s± dostêpne
+lepsze alternatywy.
+
+Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME.
+Ma tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
+filtrowania spamu.
+
+%package sendmail-wrapper
+Summary:	Courier soft links for sendmail
+Summary(pl):	Wrapper sendmail do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
+
 %description sendmail-wrapper
 This package contains two soft links from /usr/sbin/sendmail and
 /usr/lib/sendmail to %{_bindir}/sendmail.  This allows application
 that use sendmail to transparently use Courier for sending mail.
+
+%description sendmail-wrapper -l pl
+Ten pakiet zawiera symlinki z /usr/sbin/sendmail i /usr/lib/sendmail
+do %{_bindir}/sendmail. Pozwala to aplikacjom u¿ywaj±cym sendmaila
+korzystaæ z Couriera.
+# acc. FHS these symlinks should be in main package...
+
+%package pop3d
+Summary:	Courier Integrated POP3 server
+Summary(pl):	Zintegrowany serwer POP3 do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
@@ -112,6 +78,20 @@ client.  Courier's POP3 server can only be used to download mail
 from maildir mailboxes.  This server does not support mailbox files.
 If you do not need the ability to download your mail using a POP3
 client, you do not need to install this package.
+
+%description pop3d -l pl
+Ten pakiet zawiera zintegrowany serwer POP3 do Couriera, pozwalaj±cy
+na ¶ci±ganie poczty ze skrzynki przy pomocy dowolnego klienta POP3.
+Serwer POP3 Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir,
+nie obs³uguje skrzynek w postaci pojedynczych plików.
+
+%package imapd
+Summary:	Courier Integrated IMAP server
+Summary(pl):	Zintegrowany serwer IMAP do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
+Obsoletes:	courier-imap
+Obsoletes:	courier-imap-common
 
 %description imapd
 This package installs Courier mail server's integrated IMAP server.
@@ -127,6 +107,25 @@ Courier-IMAP.  If you have the standalone version of the
 Courier-IMAP server already installed, installing this package
 will automatically remove the standalone version.
 
+%description imapd -l pl
+Ten pakiet zawiera zintegrowany serwer IMAP do Couriera. Pozwala
+¶ci±gaæ pocztê przy pomocy klienta IMAP. Serwer IMAP Couriera mo¿e
+byæ u¿ywany tylko ze skrzynami Maildir, nie obs³uguje skrzynek
+w postaci pojedynczych plików.
+
+Ten pakiet wymaga serwera Courier, to NIE jest samodzielna wersja
+serwera Courier-IMAP. Nie mo¿na te¿ instalowaæ jednocze¶nie tego
+pakietu i samodzielnej wersji Courier-IMAP. Zainstalowanie tego
+pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
+
+%package webmail
+Summary:	Courier Integrated HTTP (webmail) server
+Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
+Requires:	%{_cgibindir}
+Requires:	%{_documentrootdir}
+
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
 server.  If you do not need the ability to access your mail using a
@@ -138,10 +137,20 @@ This is the same server that's distributed separately under the
 name of SqWebMail, however its configuration is customized for the
 Courier mail server.
 
-%description maildrop
-This package installs Courier mail server's integrated mail filter.
-You need to install this package if you want to be able to filter
-your incoming mail.
+%description webmail -l pl
+Ten pakiet zawiera zintegrowany serwer poczty przez HTTP (webmail) dla
+Couriera, pozwalaj±cy na dostêp do poczty za pomoc± przegl±darki WWW.
+Serwer webmail Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir,
+nie obs³uguje skrzynek w postaci pojedynczych plików.
+
+Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazw±
+SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
+
+%package mlm
+Summary:	Courier Integrated Mailing List Manager
+Summary(pl):	Zintegrowany menad¿er list dyskusyjnych do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
 
 %description mlm
 This package installs couriermlm - a mailing list manager for the
@@ -155,27 +164,74 @@ rolls.  Mailing lists managed by couriermlm require zero human
 administrative oversight. couriermlm supports digests, write-only
 posting aliases, and moderated mailing lists.
 
+%description mlm -l pl
+Ten pakiet zawiera couriermlm - menad¿er list dyskusyjnych dla
+Couriera. couriermlm jest u¿ywany do skonfigurowania, zarz±dzania i
+prowadzenia pocztowej listy dyskusyjnej. Automatycznie obs³uguje
+¿±dania zapisywania i wypisywania i usuwa niedzia³aj±ce adresy
+z listy subskrybentów. Listy obs³ugiwane przez couriermlm nie wymagaj±
+pracy administratora. couriermlm obs³uguje digesty, aliasy pocztowe
+tylko do wysy³ania i listy moderowane.
+
+%package maildrop
+Summary:	Courier Integrated mail filter
+Summary(pl):	Zintegrowany filtr poczty do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
+
+%description maildrop
+This package installs Courier mail server's integrated mail filter.
+You need to install this package if you want to be able to filter
+your incoming mail.
+
+%description maildrop -l pl
+Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
+potrzebny do filtrowania przychodz±cej poczty.
+
+%package maildrop-wrapper
+Summary:	Courier soft links for maildrop
+Summary(pl):	Wrapper maildrop do Couriera
+Group:		Applications/Mail
+Requires:	%{name}-maildrop = %{version}
+
 %description maildrop-wrapper
 This package installs several soft links from the /usr/local/bin
 directory to Courier's integrated maildrop mail filter.  Maildrop is
-available as a standalone package, which installs in /usr/local/bin.
+available as a standalone package, which installs in %{_bindir}.
 If you have applications that expect to find maildrop in /usr/local/bin
 you can install this package to create soft links that point to
 Courier's integrated maildrop version instead, in order to continue
 to use those applications, without needing to reconfigure them.
 
+%description maildrop-wrapper -l pl
+Ten pakiet zawiera symlinki z katalogu /usr/local/bin do filtru maildrop
+Couriera. maildrop jest dostêpnym w oddzielnym pakiecie, instaluj±cym
+siê w %{_bindir}. Przydaje siê aplikacjom szukaj±cym maildropa
+w /usr/local/bin do u¿ywania z Courierem bez rekonfigurowania.
+# hmmm ??? to be removed...
+
+%package smtpauth
+Summary:	Courier mail server authenticated ESMTP module
+Summary(pl):	Modu³ autentykacji ESMTP (SMTP AUTH) do Couriera
+Group:		Applications/Mail
+Requires:	%{name} = %{version}
+
 %description smtpauth
 Authenticated ESMTP allows remote users to authenticate themselves
 and be able to relay outbound mail through the Courier mail server.
 
+%description smtpauth -l pl
+SMTP AUTH pozwala zdalnym u¿ytkownikom na autentykacjê i umo¿liwienie
+przekazania wychodz±cej poczty poprzez serwer poczty Courier.
+
 %prep
 %setup
 
-%{configure} \
- --localstatedir=%{_localstatedir} \
- --sysconfdir=%{_sysconfdir} \
- --mandir=%{_mandir} \
- --enable-imageurl=%{_imageurl}
+%configure \
+	--localstatedir=%{_localstatedir} \
+	--sysconfdir=%{_sysconfdir} \
+	--mandir=%{_mandir} \
+	--enable-imageurl=%{_imageurl}
 
 cat >README.REDHAT <<EOF
 
@@ -196,24 +252,19 @@ EOF
 %build
 %{__make}
 %{__make} check
-%install
 
+%install
+rm -rf $RPM_BUILD_ROOT
 umask 022
-test "$RPM_BUILD_ROOT" != "" && rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_prefix}
 install -d $RPM_BUILD_ROOT/etc/pam.d
 
-if test "%{_package_maintainer}" = "1"
-then
-	make install DESTDIR=$RPM_BUILD_ROOT
-else
-	make install-strip DESTDIR=$RPM_BUILD_ROOT
-fi
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-ln -s %{_sysconfdir}/pop3d.authpam $RPM_BUILD_ROOT/etc/pam.d/pop3
-ln -s %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
-ln -s %{_sysconfdir}/imapd.authpam $RPM_BUILD_ROOT/etc/pam.d/imap
-ln -s %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
+ln -sf %{_sysconfdir}/pop3d.authpam $RPM_BUILD_ROOT/etc/pam.d/pop3
+ln -sf %{_sysconfdir}/esmtp.authpam $RPM_BUILD_ROOT/etc/pam.d/esmtp
+ln -sf %{_sysconfdir}/imapd.authpam $RPM_BUILD_ROOT/etc/pam.d/imap
+ln -sf %{_sysconfdir}/webmail.authpam $RPM_BUILD_ROOT/etc/pam.d/webmail
 
 %{__make} install-perms
 
@@ -297,13 +348,13 @@ sed -n '/sqwebmail/p;/webmail.authpam/p;/webmail-logincache/p;/ldapaddressbook$/
 # Here's why:
 
 install -d $RPM_BUILD_ROOT%{_cgibindir}
-cp $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
+cp -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
 
 # And here's why we delete all images from filelist.webmail:
 
 install -d $RPM_BUILD_ROOT%{_documentrootdir}
-mv $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
+mv -f $RPM_BUILD_ROOT%{_datadir}/sqwebmail/images $RPM_BUILD_ROOT%{_documentrootdir}/webmail
 
 # Do we need to install a cron job to clean out webmail's cache?
 
@@ -321,20 +372,20 @@ fi
 
 rm -rf htmldoc
 mkdir htmldoc
-cp $RPM_BUILD_ROOT%{_datadir}/htmldoc/* htmldoc
+cp -f $RPM_BUILD_ROOT%{_datadir}/htmldoc/* htmldoc
 chmod a-w htmldoc/*
 
 # Manually set POP3DSTART and IMAPDSTART to yes, they'll go into a separate
 # package, so after it's installed they should be runnable.
 
 sed 's/^POP3DSTART.*/POP3DSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/pop3d >$RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new
-mv $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/pop3d.new $RPM_BUILD_ROOT%{_sysconfdir}/pop3d
 
 sed 's/^IMAPDSTART.*/IMAPDSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new
-mv $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imapd
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new $RPM_BUILD_ROOT%{_sysconfdir}/imapd
 
 sed 's/^IMAPDSSLSTART.*/IMAPDSSLSTART=YES/' <$RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl >$RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl
-mv $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl
+mv -f $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/imapd-ssl
 
 #
 # Red Hat init.d file
@@ -342,7 +393,7 @@ mv $RPM_BUILD_ROOT%{_sysconfdir}/imapd.new-ssl $RPM_BUILD_ROOT%{_sysconfdir}/ima
 
 install -d $RPM_BUILD_ROOT%{initdir}
 
-cp courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
+cp -f courier.sysvinit $RPM_BUILD_ROOT%{initdir}/courier
 
 #
 # Red Hat /etc/profile.d scripts
@@ -387,9 +438,9 @@ install -d $RPM_BUILD_ROOT/usr/sbin
 install -d $RPM_BUILD_ROOT/usr/lib
 install -d $RPM_BUILD_ROOT/usr/bin
 
-ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
-ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
-ln -s %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
+ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/sbin/sendmail
+ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
+ln -sf %{_bindir}/sendmail $RPM_BUILD_ROOT/usr/bin/sendmail
 
 #
 # maildrop wrapper soft links
@@ -422,8 +473,10 @@ mailgroup=daemon
 echo "%attr(700, $mailuser, $mailgroup) %dir %{_sysconfdir}/userdb" >>filelist
 echo "%attr(755, $mailuser, $mailgroup) %dir %{_localstatedir}/tmp/broken" >>filelist
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post
-/sbin/chkconfig --del courier
 /sbin/chkconfig --add courier
 %{_sbindir}/makealiases 2>/dev/null || true
 %{_sbindir}/makesmtpaccess 2>/dev/null || true
@@ -495,6 +548,3 @@ fi
 %files mlm -f filelist.mlm
 
 %files smtpauth -f filelist.auth
-
-%clean
-rm -rf $RPM_BUILD_ROOT
