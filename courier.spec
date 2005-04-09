@@ -1,7 +1,4 @@
 #
-# TODO:
-#	- tests
-#
 # Conditional build:
 %bcond_without	fam		# with fam support
 #
@@ -9,7 +6,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.49.0
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
