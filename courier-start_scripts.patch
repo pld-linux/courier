@@ -1,7 +1,7 @@
 diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
---- old/courier/imapd.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd.rc.in	2004-05-24 21:23:33.000000000 +0000
-@@ -53,6 +53,7 @@
+--- old/courier/imapd.rc.in	2005-04-03 16:22:06.000000000 +0000
++++ new/courier/imapd.rc.in	2005-07-03 22:14:25.431864352 +0000
+@@ -49,6 +49,7 @@
  	;;
  stop)
  	@sbindir@/couriertcpd -pid=$PIDFILE -stop
@@ -10,9 +10,9 @@ diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
  restart)
  	@sbindir@/couriertcpd -pid=$PIDFILE -restart
 diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
---- old/courier/imapd-ssl.rc.in	2003-11-29 02:16:15.000000000 +0000
-+++ new/courier/imapd-ssl.rc.in	2004-05-24 21:25:19.000000000 +0000
-@@ -54,6 +54,7 @@
+--- old/courier/imapd-ssl.rc.in	2005-04-03 16:22:06.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2005-07-03 22:14:09.644264432 +0000
+@@ -50,6 +50,7 @@
  	;;
  stop)
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
@@ -21,8 +21,8 @@ diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
  esac
  exit 0
 diff -Nur old/courier/module.esmtp/esmtpd.in new/courier/module.esmtp/esmtpd.in
---- old/courier/module.esmtp/esmtpd.in	2004-05-11 00:48:14.000000000 +0000
-+++ new/courier/module.esmtp/esmtpd.in	2004-05-24 21:23:33.000000000 +0000
+--- old/courier/module.esmtp/esmtpd.in	2005-02-16 23:42:13.000000000 +0000
++++ new/courier/module.esmtp/esmtpd.in	2005-07-03 22:13:30.440224352 +0000
 @@ -38,6 +38,7 @@
  	;;
  stop)
@@ -32,8 +32,8 @@ diff -Nur old/courier/module.esmtp/esmtpd.in new/courier/module.esmtp/esmtpd.in
  	;;
  restart)
 diff -Nur old/courier/module.esmtp/esmtpd-ssl.in new/courier/module.esmtp/esmtpd-ssl.in
---- old/courier/module.esmtp/esmtpd-ssl.in	2004-05-11 00:48:14.000000000 +0000
-+++ new/courier/module.esmtp/esmtpd-ssl.in	2004-05-24 21:24:41.000000000 +0000
+--- old/courier/module.esmtp/esmtpd-ssl.in	2005-02-16 23:42:13.000000000 +0000
++++ new/courier/module.esmtp/esmtpd-ssl.in	2005-07-03 22:13:01.767583256 +0000
 @@ -28,6 +28,7 @@
  	;;
  stop)
@@ -43,8 +43,8 @@ diff -Nur old/courier/module.esmtp/esmtpd-ssl.in new/courier/module.esmtp/esmtpd
  	;;
  restart)
 diff -Nur old/courier/pop3d.in new/courier/pop3d.in
---- old/courier/pop3d.in	2003-11-28 01:04:59.000000000 +0000
-+++ new/courier/pop3d.in	2004-05-24 21:23:33.000000000 +0000
+--- old/courier/pop3d.in	2005-04-03 16:22:06.000000000 +0000
++++ new/courier/pop3d.in	2005-07-03 22:14:57.855935144 +0000
 @@ -42,6 +42,7 @@
  	;;
  stop)
@@ -54,9 +54,9 @@ diff -Nur old/courier/pop3d.in new/courier/pop3d.in
  	;;
  restart)
 diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
---- old/courier/pop3d-ssl.in	2003-11-29 01:37:34.000000000 +0000
-+++ new/courier/pop3d-ssl.in	2004-05-24 21:25:31.000000000 +0000
-@@ -58,6 +58,7 @@
+--- old/courier/pop3d-ssl.in	2005-04-03 16:22:06.000000000 +0000
++++ new/courier/pop3d-ssl.in	2005-07-03 22:14:41.899360912 +0000
+@@ -53,6 +53,7 @@
  	;;
  stop)
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
@@ -65,19 +65,20 @@ diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
  restart)
  	@sbindir@/couriertcpd -pid=$SSLPIDFILE -restart
 diff -Nur old/courier/webmaild.in new/courier/webmaild.in
---- old/courier/webmaild.in	2004-05-04 02:27:47.000000000 +0000
-+++ new/courier/webmaild.in	2004-05-28 11:50:57.000000000 +0000
-@@ -42,5 +42,7 @@
+--- old/courier/webmaild.in	2005-02-16 23:42:13.000000000 +0000
++++ new/courier/webmaild.in	2005-07-03 22:15:29.401139544 +0000
+@@ -42,6 +42,8 @@
  stop)
  	@courierlogger@ -pid=${PIDFILE} -stop
  	@courierlogger@ -pid=${PIDFILE}.pcp -stop
 +	rm -f ${PIDFILE}
 +	rm -f ${PIDFILE}.pcp
  	;;
- esac
+ reload)
+ 	@courierlogger@ -pid=${PIDFILE} -restart
 diff -Nur old/courier.sysvinit.in new/courier.sysvinit.in
---- old/courier.sysvinit.in	2004-05-02 14:24:06.000000000 +0000
-+++ new/courier.sysvinit.in	2004-05-24 21:23:33.000000000 +0000
+--- old/courier.sysvinit.in	2005-05-12 15:21:52.000000000 +0000
++++ new/courier.sysvinit.in	2005-07-03 22:12:14.255806144 +0000
 @@ -8,6 +8,9 @@
  #
  #
@@ -100,24 +101,24 @@ diff -Nur old/courier.sysvinit.in new/courier.sysvinit.in
          cd /
          # Start daemons.
          touch /var/lock/subsys/courier
-@@ -196,6 +204,9 @@
+@@ -190,6 +198,8 @@
  	echo ""
          ;;
  stop)
 +    if [ -e /var/lock/subsys/courier ]; then
 +
-+        rm -f /var/lock/subsys/courier
          echo -n "Stopping Courier mail server:"
  
  	if test -x ${sbindir}/imapd
-@@ -254,6 +265,10 @@
- 	fi
+@@ -244,6 +254,11 @@
  	${sbindir}/courierfilter stop
  	echo " courierfilter"
+         rm -f /var/lock/subsys/courier
 +
 +    else
-+	    msg_not_running Courier
++	msg_not_running Courier
 +    fi
++
  	;;
  restart)
  	$0 stop
