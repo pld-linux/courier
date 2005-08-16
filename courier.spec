@@ -5,13 +5,12 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.50.1
+Version:	0.51.0
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
-#Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-Source0:	http://citkit.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	6fb2b188bba8fbf244f2feb80ad99a70
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	9c6c9decb33b9515978f0b1062d38923
 Patch0: 	%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -263,52 +262,23 @@ potrzebny do filtrowania przychodz±cej poczty.
 rm -rf courier/module.fax
 cp -f /usr/share/automake/config.sub webmail
 
-cd rootcerts
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
+# Change Makefile.am files and force recreate Makefile.in's.
+OLDDIR=`pwd`
+find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE; do
+	cd "`dirname "$FILE"`"
 
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
+	if [ -f Makefile.am ]; then
+		sed -i -e '/_LDFLAGS=-static/d' Makefile.am
+	fi
 
-cd courier
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
+	%{__libtoolize}
+	%{__aclocal}
+	%{__autoconf}
+	%{__autoheader}
+	%{__automake}
 
-cd module.esmtp
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ../..
-
-cd imap
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
-
-cd webadmin
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
-
-cd maildir
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
-
-cd maildrop
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
+	cd "$OLDDIR"
+done
 
 %configure \
 	--localstatedir=%{_localstatedir} \
