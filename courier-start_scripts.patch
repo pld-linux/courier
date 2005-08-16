@@ -1,21 +1,21 @@
 diff -Nur old/courier/imapd.rc.in new/courier/imapd.rc.in
---- old/courier/imapd.rc.in	2005-04-03 16:22:06.000000000 +0000
-+++ new/courier/imapd.rc.in	2005-07-03 22:14:25.431864352 +0000
-@@ -49,6 +49,7 @@
+--- old/courier/imapd.rc.in	2005-07-02 02:11:16.000000000 +0000
++++ new/courier/imapd.rc.in	2005-08-16 20:48:40.869430152 +0000
+@@ -48,6 +48,7 @@
  	;;
  stop)
- 	@sbindir@/couriertcpd -pid=$PIDFILE -stop
+ 	@courierlogger@ -pid=$PIDFILE -stop
 +	rm -f $PIDFILE
  	;;
  restart)
- 	@sbindir@/couriertcpd -pid=$PIDFILE -restart
+ 	@courierlogger@ -pid=$PIDFILE -restart
 diff -Nur old/courier/imapd-ssl.rc.in new/courier/imapd-ssl.rc.in
---- old/courier/imapd-ssl.rc.in	2005-04-03 16:22:06.000000000 +0000
-+++ new/courier/imapd-ssl.rc.in	2005-07-03 22:14:09.644264432 +0000
-@@ -50,6 +50,7 @@
+--- old/courier/imapd-ssl.rc.in	2005-07-02 23:51:38.000000000 +0000
++++ new/courier/imapd-ssl.rc.in	2005-08-16 20:49:03.195036144 +0000
+@@ -49,6 +49,7 @@
  	;;
  stop)
- 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
+ 	@courierlogger@ -pid=$SSLPIDFILE -stop
 +	rm -f $SSLPIDFILE
  	;;
  esac
@@ -43,27 +43,27 @@ diff -Nur old/courier/module.esmtp/esmtpd-ssl.in new/courier/module.esmtp/esmtpd
  	;;
  restart)
 diff -Nur old/courier/pop3d.in new/courier/pop3d.in
---- old/courier/pop3d.in	2005-04-03 16:22:06.000000000 +0000
-+++ new/courier/pop3d.in	2005-07-03 22:14:57.855935144 +0000
+--- old/courier/pop3d.in	2005-07-02 02:11:16.000000000 +0000
++++ new/courier/pop3d.in	2005-08-16 20:49:27.358362760 +0000
 @@ -42,6 +42,7 @@
  	;;
  stop)
- 	${sbindir}/couriertcpd -pid=$PIDFILE -stop
+ 	@courierlogger@ -pid=$PIDFILE -stop
 +	rm -f $PIDFILE
  	exit 0
  	;;
  restart)
 diff -Nur old/courier/pop3d-ssl.in new/courier/pop3d-ssl.in
---- old/courier/pop3d-ssl.in	2005-04-03 16:22:06.000000000 +0000
-+++ new/courier/pop3d-ssl.in	2005-07-03 22:14:41.899360912 +0000
-@@ -53,6 +53,7 @@
+--- old/courier/pop3d-ssl.in	2005-07-02 23:51:38.000000000 +0000
++++ new/courier/pop3d-ssl.in	2005-08-16 20:49:16.509012112 +0000
+@@ -52,6 +52,7 @@
  	;;
  stop)
- 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -stop
+ 	@courierlogger@ -pid=$SSLPIDFILE -stop
 +	rm -f $SSLPIDFILE
  	;;
  restart)
- 	@sbindir@/couriertcpd -pid=$SSLPIDFILE -restart
+ 	@courierlogger@ -pid=$SSLPIDFILE -restart
 diff -Nur old/courier/webmaild.in new/courier/webmaild.in
 --- old/courier/webmaild.in	2005-02-16 23:42:13.000000000 +0000
 +++ new/courier/webmaild.in	2005-07-03 22:15:29.401139544 +0000
