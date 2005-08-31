@@ -18,6 +18,7 @@ Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
 Patch6:		%{name}-db.patch
+Patch7:		%{name}-webmail-sec_fix.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -256,6 +257,7 @@ potrzebny do filtrowania przychodz±cej poczty.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 # we don't want fax module
