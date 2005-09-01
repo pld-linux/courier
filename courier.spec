@@ -22,7 +22,7 @@ Patch7:		%{name}-webmail-sec_fix.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	courier-authlib-devel
+BuildRequires:	courier-authlib-devel >= 0.57
 BuildRequires:	expect
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
