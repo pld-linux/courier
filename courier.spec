@@ -269,7 +269,7 @@ find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE
 	cd "`dirname "$FILE"`"
 
 	if [ -f Makefile.am ]; then
-		sed -i -e '/_LDFLAGS=%{rpmldflags} tatic/d' Makefile.am"
+		sed -i -e '/_LDFLAGS=-static/d' Makefile.am
 	fi
 
 	%{__libtoolize}
