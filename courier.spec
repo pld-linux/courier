@@ -1,16 +1,18 @@
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
+%bcond_with	tests		# without tests
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.52.0
+Version:	0.52.1
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	6046be4fb3392bd0f9da3a71628a14ef
+#Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+Source0:	http://heanet.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	98005b9bacd44fa9e1a2b2100907522a
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -23,12 +25,15 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel >= 0.57
 BuildRequires:	expect
+BuildRequires:	gettext-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
+BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
+BuildRequires:	pcre-devel
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	sed >= 4.0
@@ -296,7 +301,7 @@ done
 	--with-mailgid=2
 
 %{__make}
-%{__make} check
+%{!?with_tests:%{__make} check}
 
 %install
 rm -rf $RPM_BUILD_ROOT
