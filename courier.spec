@@ -11,7 +11,7 @@ Release:	1
 License:	GPL
 Group:		Networking/Daemons
 #Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-Source0:	http://heanet.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	98005b9bacd44fa9e1a2b2100907522a
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
