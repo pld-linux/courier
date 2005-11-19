@@ -1,0 +1,5 @@
+- removed whole file lists generation, added lists to %files fixing many
+  ownership stupidities (NFY - need to check files with uid||gid daemon)
+- added more BuildRequires
+- TODO: proper daemons starting/restarting/stopping in post/preun, check
+  permissions etc.
