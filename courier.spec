@@ -817,6 +817,7 @@ fi
 
 %files webadmin
 %defattr(644,root,root,755)
+# suid root to cgi-bin??? and it's not secured by apache config!
 %attr(4755,root,root) %{_cgibindir}/webadmin
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
