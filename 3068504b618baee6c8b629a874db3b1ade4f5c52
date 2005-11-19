@@ -1,0 +1,2 @@
+- updated to 0.44.2
+- new bcond (without_tests), that skips "make check" in %build
