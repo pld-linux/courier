@@ -1,3 +1,6 @@
+# TODO
+# - move stuff out of /home/services/httpd (because that ain't right!)
+# - use %{_prefix}/lib/cgi-bin
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -7,7 +10,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.52.1
-Release:	1
+Release:	1.1
 License:	GPL
 Group:		Networking/Daemons
 #Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -25,6 +28,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel >= 0.57
 BuildRequires:	expect
+%{?with_fam:BuildRequires:	fam-devel}
 BuildRequires:	gettext-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
@@ -33,12 +37,12 @@ BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
-BuildRequires:	pcre-devel
 BuildRequires:	pam-devel
+BuildRequires:	pcre-devel
 BuildRequires:	perl-devel
+BuildRequires:	rpmbuild(macros) >= 1.226
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
-%{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
 # only for light upgrade from old version < 0.47
 # remove it after some time
@@ -105,8 +109,8 @@ filtrowania spamu.
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7d
+Requires:	%{name} = %{version}-%{release}
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
@@ -126,8 +130,8 @@ obs³uguje skrzynek w postaci pojedynczych plików.
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7d
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
 
@@ -160,8 +164,8 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires:	%{_cgibindir}
+Requires:	%{name} = %{version}-%{release}
 Requires:	webserver
 
 %description webadmin
@@ -175,8 +179,8 @@ Webadmin jest narzêdziem administracyjnym obs³ugiwanym przez WWW.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires:	%{_cgibindir}
+Requires:	%{name} = %{version}-%{release}
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
@@ -577,41 +581,24 @@ else
 	echo
 fi
 
-# apache1
-if [ -d %{_apache1dir}/conf.d ]; then
-	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache1dir}/conf.d/99_%{name}.conf
-	if [ -f /var/lock/subsys/apache ]; then
-		/etc/rc.d/init.d/apache restart 1>&2
-	fi
-fi
-# apache2
-if [ -d %{_apache2dir}/httpd.conf ]; then
-	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	fi
-fi
-
 %preun webmail
 if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 		%{_sbindir}/webmaild stop
 	fi
-	# apache1
-	if [ -d %{_apache1dir}/conf.d ]; then
-		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
-		if [ -f /var/lock/subsys/apache ]; then
-			/etc/rc.d/init.d/apache restart 1>&2
-		fi
-	fi
-	# apache2
-	if [ -d %{_apache2dir}/httpd.conf ]; then
-		rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
-		if [ -f /var/lock/subsys/httpd ]; then
-			/etc/rc.d/init.d/httpd restart 1>&2
-		fi
-	fi
 fi
+
+%triggerin webmail -- apache1 >= 1.3.33-2
+%apache_config_install -v 1 -c %{_sysconfdir}/apache-%{name}.conf
+
+%triggerun webmail -- apache1 >= 1.3.33-2
+%apache_config_uninstall -v 1
+
+%triggerin webmail -- apache >= 2.0.0
+%apache_config_install -v 2 -c %{_sysconfdir}/apache-%{name}.conf
+
+%triggerun webmail -- apache >= 2.0.0
+%apache_config_uninstall -v 2
 
 %files
 %defattr(644,root,root,755)
