@@ -164,7 +164,8 @@ Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
-Requires:	webserver
+Requires:	webserver = apache
+Conflicts:	apache < 1.3.33-2
 
 %description webadmin
 This is a web-based administration tool. Webadmin is a web CGI
@@ -179,6 +180,8 @@ Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
+Requires:	webserver = apache
+Conflicts:	apache < 1.3.33-2
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
