@@ -1,0 +1,4 @@
+- package INSTALL to doc (lot of configuration tips)
+- webadmin goes to separate package
+- %files fixes
+- rel 0.9 working in progress
