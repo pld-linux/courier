@@ -79,8 +79,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_cgibindir	%{_httpdir}/cgi-bin
 %define		_imagedir	%{_datadir}/sqwebmail/images
 %define		_imageurl	/webmail
-%define		_apache1dir	/etc/apache
-%define		_apache2dir	/etc/httpd
 
 %description
 Courier is a fully functional mail server, that can completely take
