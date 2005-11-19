@@ -1,0 +1,3 @@
+- add bofh config file with badmime option
+- perm fixes; updated %post smtpauth
+- fix csh script; rel. 4
