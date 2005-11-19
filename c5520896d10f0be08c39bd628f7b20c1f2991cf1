@@ -1,0 +1,3 @@
+- add courier-certs.patch (--with-certsdir option)
+- move certs to %certsdir; trigger for new certs directory
+- remove authmodulelist; rel 0.5
