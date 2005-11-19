@@ -1,0 +1,2 @@
+- %files fixes
+- added some configure options (mailuser,group,uid,gid)
