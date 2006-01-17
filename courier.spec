@@ -1,6 +1,5 @@
 # TODO
-# - move stuff out of /home/services/httpd (because that ain't right!)
-# - use %{_prefix}/lib/cgi-bin
+# - test and bump rel. to 1
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -9,13 +8,13 @@
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.52.1
-Release:	1.1
+Version:	0.52.2
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
-#Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	98005b9bacd44fa9e1a2b2100907522a
+# !!! Don't change it !!!
+Source0:	http://heanet.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	73cda41adc5425ade94e1f9005b2218b
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -75,8 +74,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_certsdir	%{_sysconfdir}/certs
 %define		_initrddir	/etc/rc.d/init.d
 
-%define		_httpdir	/home/services/httpd
-%define		_cgibindir	%{_httpdir}/cgi-bin
+%define		_cgibindir	%{_prefix}/lib/cgi-bin
 %define		_imagedir	%{_datadir}/sqwebmail/images
 %define		_imageurl	/webmail
 
@@ -162,10 +160,13 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
+Requires:	FHS >= 2.3-12
 Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
 Requires:	webserver = apache
 Conflicts:	apache < 1.3.33-2
+Conflicts:	apache-base < 2.2.0-8
+Conflicts:	apache1 < 1.3.34-5.11
 
 %description webadmin
 This is a web-based administration tool. Webadmin is a web CGI
@@ -178,10 +179,13 @@ Webadmin jest narzêdziem administracyjnym obs³ugiwanym przez WWW.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
+Requires:	FHS >= 2.3-12
 Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
 Requires:	webserver = apache
 Conflicts:	apache < 1.3.33-2
+Conflicts:	apache-base < 2.2.0-8
+Conflicts:	apache1 < 1.3.34-5.11
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
@@ -312,7 +316,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
-$RPM_BUILD_ROOT{%{_cgibindir},%{_prefix}/lib,%{_sysconfdir}/hosteddomains} \
+$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
