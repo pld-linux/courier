@@ -1,5 +1,6 @@
 # TODO
 # - test and bump rel. to 1
+# - doesn't -webadmin need webserver integration?
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -9,7 +10,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.52.2
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 # !!! Don't change it !!!
@@ -39,7 +40,7 @@ BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	pcre-devel
 BuildRequires:	perl-devel
-BuildRequires:	rpmbuild(macros) >= 1.226
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
@@ -74,6 +75,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_certsdir	%{_sysconfdir}/certs
 %define		_initrddir	/etc/rc.d/init.d
 
+%define		_webapps	/etc/webapps
 %define		_cgibindir	%{_prefix}/lib/cgi-bin
 %define		_imagedir	%{_datadir}/sqwebmail/images
 %define		_imageurl	/webmail
@@ -160,11 +162,10 @@ pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
 Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
-Requires:	FHS >= 2.3-12
-Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
+Requires:	FHS >= 2.3-12
 Requires:	webserver = apache
-Conflicts:	apache < 1.3.33-2
+Requires:	webapps
 Conflicts:	apache-base < 2.2.0-8
 Conflicts:	apache1 < 1.3.34-5.11
 
@@ -179,11 +180,10 @@ Webadmin jest narzêdziem administracyjnym obs³ugiwanym przez WWW.
 Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
-Requires:	FHS >= 2.3-12
-Requires:	%{_cgibindir}
 Requires:	%{name} = %{version}-%{release}
+Requires:	FHS >= 2.3-12
 Requires:	webserver = apache
-Conflicts:	apache < 1.3.33-2
+Requires:	webapps
 Conflicts:	apache-base < 2.2.0-8
 Conflicts:	apache1 < 1.3.34-5.11
 
@@ -272,6 +272,16 @@ potrzebny do filtrowania przychodz±cej poczty.
 %patch5 -p1
 %patch6 -p1
 
+echo "
+Alias /webmail %{_imagedir}
+<Directory %{_imagedir}>
+	AllowOverride None
+	Options None
+	# FIXME: is allow from all the most safest way?
+	Allow from all
+</Directory>
+" > apache.conf
+
 %build
 # we don't want fax module
 rm -rf courier/module.fax
@@ -316,7 +326,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
-$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_sysconfdir}/hosteddomains} \
+	$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -413,32 +423,31 @@ install courier.sysvinit $RPM_BUILD_ROOT%{_initrddir}/courier
 #
 
 install -d $RPM_BUILD_ROOT/etc/profile.d
-cat >$RPM_BUILD_ROOT/etc/profile.d/courier.sh <<EOF
-if echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
-then
+# kill this shit: %{_bindir} is standard $PATH
+cat > $RPM_BUILD_ROOT/etc/profile.d/courier.sh <<'EOF'
+if echo "$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}; then
 	:
 else
-	if test -w /etc
-	then
-		PATH="%{_sbindir}:\$PATH"
+	if test -w /etc; then
+		PATH="%{_sbindir}:$PATH"
 	fi
-	PATH="%{_bindir}:\$PATH"
+	PATH="%{_bindir}:$PATH"
 	export PATH
 fi
 EOF
 
-cat >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<EOF
+cat >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<'EOF'
 
-echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
+echo "$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
 
-if ( \$? ) then
+if ( $? ) then
 	true
 else
 	test -w /etc
-	if ( \$? ) then
-		setenv PATH "%{_sbindir}:\$PATH"
+	if ( $? ) then
+		setenv PATH "%{_sbindir}:$PATH"
 	endif
-	setenv PATH "%{_bindir}:\$PATH"
+	setenv PATH "%{_bindir}:$PATH"
 endif
 EOF
 
@@ -453,8 +462,8 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
 # for apache
-echo "Alias /webmail %{_imagedir}" >apache-%{name}.conf
-install apache-%{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache-%{name}.conf
+install apache.conf $RPM_BUILD_ROOT%{_webapps}/courier-webmail/apache.conf
+install apache.conf $RPM_BUILD_ROOT%{_webapps}/courier-webmail/httpd.conf
 
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
@@ -473,7 +482,8 @@ echo
 /sbin/chkconfig --add courier
 
 if [ "$1" = "1" ]; then
-	/bin/hostname -f >/etc/courier/me
+	/bin/hostname -f > /etc/courier/me
+	# TODO: use %banner
 	cat <<EOF
 
 Now courier will refuse to accept SMTP messages except to localhost
@@ -593,17 +603,44 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
-%triggerin webmail -- apache1 >= 1.3.33-2
-%apache_config_install -v 1 -c %{_sysconfdir}/apache-%{name}.conf
+%triggerin webmail -- apache1
+%webapp_register apache courier-webmail
 
-%triggerun webmail -- apache1 >= 1.3.33-2
-%apache_config_uninstall -v 1
+%triggerun webmail -- apache1
+%webapp_unregister apache courier-webmail
 
 %triggerin webmail -- apache >= 2.0.0
-%apache_config_install -v 2 -c %{_sysconfdir}/apache-%{name}.conf
+%webapp_register httpd courier-webmail
 
 %triggerun webmail -- apache >= 2.0.0
-%apache_config_uninstall -v 2
+%webapp_unregister httpd courier-webmail
+
+%triggerpostun webmail -- courier-webmail < 0.52.2-0.2
+# migrate from apache-config macros
+if [ -f /etc/courier/apache-courier.conf.rpmsave ]; then
+	if [ -d /etc/apache/webapps.d ]; then
+		cp -f %{_webapps}/courier-webmail/apache.conf{,.rpmnew}
+		cp -f /etc/courier/apache-courier.conf.rpmsave %{_webapps}/courier-webmail/apache.conf
+	fi
+
+	if [ -d /etc/httpd/webapps.d ]; then
+		cp -f %{_webapps}/courier-webmail/httpd.conf{,.rpmnew}
+		cp -f /etc/courier/apache-courier.conf.rpmsave %{_webapps}/courier-webmail/httpd.conf
+	fi
+	rm -f /etc/courier/apache-courier.conf.rpmsave
+fi
+
+# migrating apache-config symlinks
+if [ -L /etc/apache/conf.d/99_courier.conf ]; then
+	rm -f /etc/apache/conf.d/99_courier.conf
+	/usr/sbin/webapp register apache courier-webmail
+	%service -q apache reload
+fi
+if [ -L /etc/httpd/httpd.conf/99_courier.conf ]; then
+	rm -f /etc/httpd/httpd.conf/99_courier.conf
+	/usr/sbin/webapp register httpd courier-webmail
+	%service -q httpd reload
+fi
 
 %files
 %defattr(644,root,root,755)
@@ -878,7 +915,9 @@ fi
 %attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/apache-%{name}.conf
+%dir %attr(750,root,http) %{_webapps}/courier-webmail
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/apache.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/httpd.conf
 
 %files maildrop
 %defattr(644,root,root,755)
