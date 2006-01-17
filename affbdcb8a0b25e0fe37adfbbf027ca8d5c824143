@@ -1,0 +1,2 @@
+- doesn't work with other webservers than apache2 due apache2 specific
+  documentroot and cgi-bin dirs
