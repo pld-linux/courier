@@ -10,7 +10,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.52.2
-Release:	0.2
+Release:	0.3
 License:	GPL
 Group:		Networking/Daemons
 # !!! Don't change it !!!
@@ -67,8 +67,7 @@ Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_datadir	%{_prefix}/share/courier
-%define		_mandir		/usr/share/man
-%define		_libdir		%{_prefix}/%{_lib}/courier
+%define		_libdir		%{_prefix}/%{_lib}/%{name}
 %define		_libexecdir	%{_libdir}
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
@@ -365,9 +364,9 @@ echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 %{__make} install-perms
 
 # Move webmail and webadmin to cgibindir
-mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
+mv -f $RPM_BUILD_ROOT%{_libdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
-mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
+mv -f $RPM_BUILD_ROOT%{_libdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
 
 # install a cron job to clean out webmail's cache
@@ -418,38 +417,6 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
 
 install courier.sysvinit $RPM_BUILD_ROOT%{_initrddir}/courier
-#
-# Red Hat /etc/profile.d scripts
-#
-
-install -d $RPM_BUILD_ROOT/etc/profile.d
-# kill this shit: %{_bindir} is standard $PATH
-cat > $RPM_BUILD_ROOT/etc/profile.d/courier.sh <<'EOF'
-if echo "$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}; then
-	:
-else
-	if test -w /etc; then
-		PATH="%{_sbindir}:$PATH"
-	fi
-	PATH="%{_bindir}:$PATH"
-	export PATH
-fi
-EOF
-
-cat >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<'EOF'
-
-echo "$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
-
-if ( $? ) then
-	true
-else
-	test -w /etc
-	if ( $? ) then
-		setenv PATH "%{_sbindir}:$PATH"
-	endif
-	setenv PATH "%{_bindir}:$PATH"
-endif
-EOF
 
 # sendmail soft links
 ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_prefix}/lib/sendmail
@@ -807,8 +774,6 @@ fi
 %attr(640,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
 %attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/esmtp
-%attr(755,root,root) /etc/profile.d/courier.sh
-%attr(755,root,root) /etc/profile.d/courier.csh
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
