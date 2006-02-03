@@ -576,10 +576,10 @@ fi
 %triggerun webmail -- apache1
 %webapp_unregister apache courier-webmail
 
-%triggerin webmail -- apache >= 2.0.0
+%triggerin webmail -- apache < 2.2.0, apache-base
 %webapp_register httpd courier-webmail
 
-%triggerun webmail -- apache >= 2.0.0
+%triggerun webmail -- apache < 2.2.0, apache-base
 %webapp_unregister httpd courier-webmail
 
 %triggerpostun webmail -- courier-webmail < 0.52.2-0.2
