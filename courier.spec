@@ -10,7 +10,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.52.2
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 # !!! Don't change it !!!
