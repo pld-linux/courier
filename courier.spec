@@ -14,8 +14,7 @@ Version:	0.52.2
 Release:	2
 License:	GPL
 Group:		Networking/Daemons
-# !!! Don't change it !!!
-Source0:	http://heanet.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	73cda41adc5425ade94e1f9005b2218b
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
@@ -164,8 +163,8 @@ Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	FHS >= 2.3-12
-Requires:	webserver = apache
 Requires:	webapps
+Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
 Conflicts:	apache1 < 1.3.34-5.11
 
@@ -182,8 +181,8 @@ Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	FHS >= 2.3-12
-Requires:	webserver = apache
 Requires:	webapps
+Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
 Conflicts:	apache1 < 1.3.34-5.11
 
@@ -336,7 +335,7 @@ install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 for X in imap esmtp pop3 webmail calendar
 do
-	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
+	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<'EOF'
 #%PAM-1.0
 auth	required	pam_unix.so shadow nullok
 account	required	pam_unix.so
@@ -448,18 +447,18 @@ echo
 
 %post
 if [ "$1" = "1" ]; then
-	[ -s /etc/courier/me ] || /bin/hostname -f > /etc/courier/me
+	[ -s %{_sysconfdir}/me ] || /bin/hostname -f > %{_sysconfdir}/me
 	%banner -e %{name} <<'EOF'
 
 Now courier will refuse to accept SMTP messages except to localhost
-add hosts to /etc/courier/esmtpacceptmailfor.dir/default
+add hosts to %{_sysconfdir}/esmtpacceptmailfor.dir/default
 run makeacceptmailfor
 
-Add hosts to /etc/courier/locals you want to accept mail for
+Add hosts to %{_sysconfdir}/locals you want to accept mail for
 run makealiases
 
 Enter user, who should receive mail for root, mailer-daemon and postmaster
-into /etc/courier/aliases/system
+into %{_sysconfdir}/aliases/system
 
 Default maildir is in ~/Mail/Maildir
 
