@@ -1,6 +1,7 @@
 # TODO
 # - test and bump rel. to 1
 # - doesn't -webadmin need webserver integration?
+# - use rc-scripts here in %%post scriptlets
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -446,12 +447,9 @@ echo Directory with certificates has changed to %{_certsdir}
 echo
 
 %post
-/sbin/chkconfig --add courier
-
 if [ "$1" = "1" ]; then
-	/bin/hostname -f > /etc/courier/me
-	# TODO: use %banner
-	cat <<EOF
+	[ -s /etc/courier/me ] || /bin/hostname -f > /etc/courier/me
+	%banner -e %{name} <<'EOF'
 
 Now courier will refuse to accept SMTP messages except to localhost
 add hosts to /etc/courier/esmtpacceptmailfor.dir/default
@@ -468,23 +466,17 @@ Default maildir is in ~/Mail/Maildir
 EOF
 fi
 
-if [ -e /var/lock/subsys/courier ]; then
-	%{_initrddir}/courier restart
-else
-	echo
-	echo 'Type "%{_initrddir}/courier start" to start courier'
-	echo
-fi
+/sbin/chkconfig --add courier
+%service courier restart
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -e /var/lock/subsys/courier ]; then
-		%{_initrddir}/courier stop
-	fi
+	%service courier stop
 	/sbin/chkconfig --del courier
 fi
 
 %post imapd
+# TODO: use rc-scripts here
 if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
 	%{_sbindir}/imapd stop
 	%{_sbindir}/imapd start
