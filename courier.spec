@@ -44,6 +44,7 @@ BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
+Requires(post,preun):	rc-scripts
 # only for light upgrade from old version < 0.47
 # remove it after some time
 Requires(post):	courier-authlib-userdb
