@@ -658,7 +658,7 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/locals
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/courierd
 %attr(640,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/aliases/system
-%attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
+%{_sysconfdir}/quotawarnmsg.example
 %dir %{_libdir}
 %dir %{_libdir}/courier
 %dir %{_datadir}
@@ -765,7 +765,7 @@ fi
 %attr(755,root,root) %{_bindir}/testmxlookup
 %attr(640,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/esmtp
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/esmtp
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
@@ -775,7 +775,7 @@ fi
 %files pop3d
 %defattr(644,root,root,755)
 %doc htmldoc/*pop3d*
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/pop3
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/pop3
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/courierpop3login.8*
 %{_mandir}/man8/mkpop3dcert.8*
@@ -797,11 +797,11 @@ fi
 %files imapd
 %defattr(644,root,root,755)
 %doc htmldoc/*imapd*
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/imap
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/imap
 %{_mandir}/man8/imapd.8*
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
-%attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
+%{_datadir}/courierwebadmin/admin-40imap.html
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd-ssl
 %attr(600,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd.cnf
@@ -843,8 +843,8 @@ fi
 %defattr(644,root,root,755)
 %doc htmldoc/pcp* gpglib/README.html
 %attr(755,root,root) %{_cgibindir}/webmail
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/webmail
-%attr(644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/calendar
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/webmail
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/calendar
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sqwebmaild
 %attr(755,root,root) %{_sbindir}/webmaild
 %dir %{_datadir}/sqwebmail
