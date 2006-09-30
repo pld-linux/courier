@@ -1,7 +1,6 @@
 # TODO
-# - test and bump rel. to 1
 # - doesn't -webadmin need webserver integration?
-# - use rc-scripts here in %%post scriptlets
+# - use rc-scripts in %%post scriptlets
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -11,7 +10,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.52.2
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -44,7 +43,7 @@ BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
-Requires(post,preun):	rc-scripts
+Requires:	rc-scripts
 # only for light upgrade from old version < 0.47
 # remove it after some time
 Requires(post):	courier-authlib-userdb
@@ -394,7 +393,7 @@ sed -i 's/^ESMTPDSTART.*/ESMTPDSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.
 
 # run script from install-configure (make config files)
 for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissions.dat`
-do %{_bindir}/perl ././sysconftool $RPM_BUILD_ROOT$confdist
+do %{__perl} ././sysconftool $RPM_BUILD_ROOT$confdist
 done
 
 # make locals, esmtpacceptmailfor.dir/default
