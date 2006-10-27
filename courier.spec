@@ -180,7 +180,7 @@ Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	FHS >= 2.3-12
+Requires:	filesystem >= 3.0-11
 Requires:	webapps
 Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
