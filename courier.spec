@@ -162,7 +162,7 @@ Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	webapps
 Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
@@ -180,7 +180,7 @@ Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	webapps
 Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
