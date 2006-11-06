@@ -1,18 +1,21 @@
+# TODO
+# - doesn't -webadmin need webserver integration?
+# - use rc-scripts in %%post scriptlets
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
+%bcond_with	tests		# without tests
 #
 Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
-Version:	0.50.1
-Release:	1
+Version:	0.52.2
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
-#Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-Source0:	http://citkit.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	6fb2b188bba8fbf244f2feb80ad99a70
-Patch0: 	%{name}-openssl-path.patch
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	73cda41adc5425ade94e1f9005b2218b
+Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
@@ -22,20 +25,25 @@ Patch6:		%{name}-db.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	courier-authlib-devel
+BuildRequires:	courier-authlib-devel >= 0.57
 BuildRequires:	expect
+%{?with_fam:BuildRequires:	fam-devel}
+BuildRequires:	gettext-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
+BuildRequires:	openldap-devel >= 2.3.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
+BuildRequires:	pcre-devel
 BuildRequires:	perl-devel
+BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
-%{?with_fam:BuildRequires:	fam-devel}
 Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 # only for light upgrade from old version < 0.47
 # remove it after some time
 Requires(post):	courier-authlib-userdb
@@ -59,20 +67,17 @@ Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_datadir	%{_prefix}/share/courier
-%define		_mandir		/usr/share/man
-%define		_libdir		%{_prefix}/%{_lib}/courier
+%define		_libdir		%{_prefix}/%{_lib}/%{name}
 %define		_libexecdir	%{_libdir}
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		_certsdir	%{_sysconfdir}/certs
 %define		_initrddir	/etc/rc.d/init.d
 
-%define		_httpdir	/home/services/httpd
-%define		_cgibindir	%{_httpdir}/cgi-bin
+%define		_webapps	/etc/webapps
+%define		_cgibindir	%{_prefix}/lib/cgi-bin
 %define		_imagedir	%{_datadir}/sqwebmail/images
 %define		_imageurl	/webmail
-%define		_apache1dir	/etc/apache
-%define		_apache2dir	/etc/httpd
 
 %description
 Courier is a fully functional mail server, that can completely take
@@ -90,8 +95,8 @@ management and spam filtering.
 Courier jest w pe³ni funkcjonalnym serwerem poczty, mo¿e ca³kowicie
 zast±piæ us³ugi pocztowe dawane przez sendmail, Qmaila i inne serwery.
 Wprawdzie Courier nie ma wszystkich mo¿liwo¶ci istniej±cych serwerów,
-ilo¶æ nie obs³ugiwanych funkcji jest bardzo ma³a, i s± dostêpne
-lepsze alternatywy.
+ilo¶æ nie obs³ugiwanych funkcji jest bardzo ma³a, i s± dostêpne lepsze
+alternatywy.
 
 Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME. Ma
 tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
@@ -101,8 +106,8 @@ filtrowania spamu.
 Summary:	Courier Integrated POP3 server
 Summary(pl):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7d
+Requires:	%{name} = %{version}-%{release}
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
@@ -122,8 +127,8 @@ obs³uguje skrzynek w postaci pojedynczych plików.
 Summary:	Courier Integrated IMAP server
 Summary(pl):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
-Requires:	%{name} = %{version}-%{release}
 Requires(post):	openssl-tools >= 0.9.7d
+Requires:	%{name} = %{version}-%{release}
 Obsoletes:	courier-imap
 Obsoletes:	courier-imap-common
 
@@ -157,8 +162,11 @@ Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{_cgibindir}
-Requires:	webserver
+Requires:	filesystem >= 2.0-1
+Requires:	webapps
+Requires:	webserver = apache
+Conflicts:	apache-base < 2.2.0-8
+Conflicts:	apache1 < 1.3.34-5.11
 
 %description webadmin
 This is a web-based administration tool. Webadmin is a web CGI
@@ -172,7 +180,11 @@ Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	%{_cgibindir}
+Requires:	filesystem >= 2.0-1
+Requires:	webapps
+Requires:	webserver = apache
+Conflicts:	apache-base < 2.2.0-8
+Conflicts:	apache1 < 1.3.34-5.11
 
 %description webmail
 This package installs Courier mail server's integrated HTTP webmail
@@ -204,7 +216,8 @@ Requires:	%{name} = %{version}-%{release}
 This package contains tools for mail folders in Maildir format.
 
 %description maildir-tools -l pl
-Ten pakiet zawiera narzêdzia do zarz±dzania folderami w formacie Maildir.
+Ten pakiet zawiera narzêdzia do zarz±dzania folderami w formacie
+Maildir.
 
 %package mlm
 Summary:	Courier Integrated Mailing List Manager
@@ -258,57 +271,38 @@ potrzebny do filtrowania przychodz±cej poczty.
 %patch5 -p1
 %patch6 -p1
 
+echo "
+Alias /webmail %{_imagedir}
+<Directory %{_imagedir}>
+	AllowOverride None
+	Options None
+	# FIXME: is allow from all the most safest way?
+	Allow from all
+</Directory>
+" > apache.conf
+
 %build
 # we don't want fax module
 rm -rf courier/module.fax
 cp -f /usr/share/automake/config.sub webmail
 
-cd rootcerts
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
+# Change Makefile.am files and force recreate Makefile.in's.
+OLDDIR=`pwd`
+find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE; do
+	cd "`dirname "$FILE"`"
 
-%{__libtoolize}
-%{__aclocal}
-%{__autoconf}
-%{__automake}
+	if [ -f Makefile.am ]; then
+		sed -i -e '/_[L]DFLAGS=-static/d' Makefile.am
+	fi
 
-cd courier
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
+	%{__libtoolize}
+	%{__aclocal}
+	%{__autoconf}
+	%{__autoheader}
+	%{__automake}
 
-cd module.esmtp
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ../..
-
-cd imap
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
-
-cd webadmin
-%{__aclocal}
-%{__autoconf}
-%{__automake}
-cd ..
-
-cd maildir
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
-
-cd maildrop
-%{__aclocal}
-%{__autoconf}
-automake -a -c --foreign
-cd ..
+	cd "$OLDDIR"
+done
 
 %configure \
 	--localstatedir=%{_localstatedir} \
@@ -325,13 +319,13 @@ cd ..
 	--with-mailgid=2
 
 %{__make}
-%{__make} check
+%{!?with_tests:%{__make} check}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
-	$RPM_BUILD_ROOT{%{_cgibindir},/usr/lib,%{_sysconfdir}/hosteddomains} \
+	$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} install \
@@ -341,7 +335,7 @@ install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 for X in imap esmtp pop3 webmail calendar
 do
-	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<EOF
+	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<'EOF'
 #%PAM-1.0
 auth	required	pam_unix.so shadow nullok
 account	required	pam_unix.so
@@ -370,9 +364,9 @@ echo '.so courierpop3d.8' > $RPM_BUILD_ROOT%{_mandir}/man8/courierpop3login.8
 %{__make} install-perms
 
 # Move webmail and webadmin to cgibindir
-mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webmail \
+mv -f $RPM_BUILD_ROOT%{_libdir}/courier/webmail/webmail \
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
-mv -f $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
+mv -f $RPM_BUILD_ROOT%{_libdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
 
 # install a cron job to clean out webmail's cache
@@ -399,7 +393,7 @@ sed -i 's/^ESMTPDSTART.*/ESMTPDSTART=YES/' $RPM_BUILD_ROOT%{_sysconfdir}/esmtpd.
 
 # run script from install-configure (make config files)
 for confdist in `awk ' $5 == "config" && $1 ~ /\.dist$/ { print $1 }' <permissions.dat`
-do /usr/bin/perl ././sysconftool $RPM_BUILD_ROOT$confdist
+do %{__perl} ././sysconftool $RPM_BUILD_ROOT$confdist
 done
 
 # make locals, esmtpacceptmailfor.dir/default
@@ -423,42 +417,9 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
 
 install courier.sysvinit $RPM_BUILD_ROOT%{_initrddir}/courier
-#
-# Red Hat /etc/profile.d scripts
-#
-
-install -d $RPM_BUILD_ROOT/etc/profile.d
-cat >$RPM_BUILD_ROOT/etc/profile.d/courier.sh <<EOF
-if echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
-then
-	:
-else
-	if test -w /etc
-	then
-		PATH="%{_sbindir}:\$PATH"
-	fi
-	PATH="%{_bindir}:\$PATH"
-	export PATH
-fi
-EOF
-
-cat >$RPM_BUILD_ROOT/etc/profile.d/courier.csh <<EOF
-
-echo "\$PATH" | tr ':' '\012' | fgrep -qx %{_bindir}
-
-if ( \$? ) then
-	true
-else
-	test -w /etc
-	if ( \$? ) then
-		setenv PATH "%{_sbindir}:\$PATH"
-	endif
-	setenv PATH "%{_bindir}:\$PATH"
-endif
-EOF
 
 # sendmail soft links
-ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
+ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_prefix}/lib/sendmail
 
 # fix rmail link
 rm -f $RPM_BUILD_ROOT%{_bindir}/rmail
@@ -468,8 +429,8 @@ ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_bindir}/rmail
 ln -sf %{_datadir}/esmtpd-ssl $RPM_BUILD_ROOT%{_sbindir}/esmtpd-ssl
 
 # for apache
-echo "Alias /webmail %{_imagedir}" >apache-%{name}.conf
-install apache-%{name}.conf $RPM_BUILD_ROOT%{_sysconfdir}/apache-%{name}.conf
+install apache.conf $RPM_BUILD_ROOT%{_webapps}/courier-webmail/apache.conf
+install apache.conf $RPM_BUILD_ROOT%{_webapps}/courier-webmail/httpd.conf
 
 # remove unpackaged files
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.dist
@@ -485,44 +446,36 @@ echo Directory with certificates has changed to %{_certsdir}
 echo
 
 %post
-/sbin/chkconfig --add courier
-
 if [ "$1" = "1" ]; then
-	/bin/hostname -f >/etc/courier/me
-	cat <<EOF
+	[ -s %{_sysconfdir}/me ] || /bin/hostname -f > %{_sysconfdir}/me
+	%banner -e %{name} <<'EOF'
 
 Now courier will refuse to accept SMTP messages except to localhost
-add hosts to /etc/courier/esmtpacceptmailfor.dir/default
+add hosts to %{_sysconfdir}/esmtpacceptmailfor.dir/default
 run makeacceptmailfor
 
-Add hosts to /etc/courier/locals you want to accept mail for
+Add hosts to %{_sysconfdir}/locals you want to accept mail for
 run makealiases
 
 Enter user, who should receive mail for root, mailer-daemon and postmaster
-into /etc/courier/aliases/system
+into %{_sysconfdir}/aliases/system
 
 Default maildir is in ~/Mail/Maildir
 
 EOF
 fi
 
-if [ -e /var/lock/subsys/courier ]; then
-	%{_initrddir}/courier restart
-else
-	echo
-	echo 'Type "%{_initrddir}/courier start" to start courier'
-	echo
-fi
+/sbin/chkconfig --add courier
+%service courier restart
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -e /var/lock/subsys/courier ]; then
-		%{_initrddir}/courier stop
-	fi
+	%service courier stop
 	/sbin/chkconfig --del courier
 fi
 
 %post imapd
+# TODO: use rc-scripts here
 if [ -e %{_localstatedir}/tmp/imapd.pid ]; then
 	%{_sbindir}/imapd stop
 	%{_sbindir}/imapd start
@@ -601,40 +554,50 @@ else
 	echo
 fi
 
-# apache1
-if [ -d %{_apache1dir}/conf.d ]; then
-	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache1dir}/conf.d/99_%{name}.conf
-	if [ -f /var/lock/subsys/apache ]; then
-		/etc/rc.d/init.d/apache restart 1>&2
-	fi
-fi
-# apache2
-if [ -d %{_apache2dir}/httpd.conf ]; then
-	ln -sf %{_sysconfdir}/apache-%{name}.conf %{_apache2dir}/httpd.conf/99_%{name}.conf
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
-	fi
-fi
-
 %preun webmail
 if [ "$1" = "0" ]; then
 	if [ -e %{_localstatedir}/tmp/sqwebmaild.pid ]; then
 		%{_sbindir}/webmaild stop
 	fi
-	# apache1
-	if [ -d %{_apache1dir}/conf.d ]; then
-		rm -f %{_apache1dir}/conf.d/99_%{name}.conf
-		if [ -f /var/lock/subsys/apache ]; then
-			/etc/rc.d/init.d/apache restart 1>&2
-		fi
+fi
+
+%triggerin webmail -- apache1 < 1.3.37-3, apache1-base
+%webapp_register apache courier-webmail
+
+%triggerun webmail -- apache1 < 1.3.37-3, apache1-base
+%webapp_unregister apache courier-webmail
+
+%triggerin webmail -- apache < 2.2.0, apache-base
+%webapp_register httpd courier-webmail
+
+%triggerun webmail -- apache < 2.2.0, apache-base
+%webapp_unregister httpd courier-webmail
+
+%triggerpostun webmail -- courier-webmail < 0.52.2-0.2
+# migrate from apache-config macros
+if [ -f /etc/courier/apache-courier.conf.rpmsave ]; then
+	if [ -d /etc/apache/webapps.d ]; then
+		cp -f %{_webapps}/courier-webmail/apache.conf{,.rpmnew}
+		cp -f /etc/courier/apache-courier.conf.rpmsave %{_webapps}/courier-webmail/apache.conf
 	fi
-	# apache2
-	if [ -d %{_apache2dir}/httpd.conf ]; then
-		rm -f %{_apache2dir}/httpd.conf/99_%{name}.conf
-		if [ -f /var/lock/subsys/httpd ]; then
-			/etc/rc.d/init.d/httpd restart 1>&2
-		fi
+
+	if [ -d /etc/httpd/webapps.d ]; then
+		cp -f %{_webapps}/courier-webmail/httpd.conf{,.rpmnew}
+		cp -f /etc/courier/apache-courier.conf.rpmsave %{_webapps}/courier-webmail/httpd.conf
 	fi
+	rm -f /etc/courier/apache-courier.conf.rpmsave
+fi
+
+# migrating apache-config symlinks
+if [ -L /etc/apache/conf.d/99_courier.conf ]; then
+	rm -f /etc/apache/conf.d/99_courier.conf
+	/usr/sbin/webapp register apache courier-webmail
+	%service -q apache reload
+fi
+if [ -L /etc/httpd/httpd.conf/99_courier.conf ]; then
+	rm -f /etc/httpd/httpd.conf/99_courier.conf
+	/usr/sbin/webapp register httpd courier-webmail
+	%service -q httpd reload
 fi
 
 %files
@@ -682,19 +645,19 @@ fi
 %attr(755,daemon,daemon) %dir %{_sysconfdir}
 %attr(750,daemon,daemon) %dir %{_certsdir}
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/hosteddomains
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/me
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaddressbook
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/me
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldapaddressbook
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/aliasdir
 %attr(750,daemon,daemon) %dir %{_sysconfdir}/aliases
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/enablefiltering
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/enablefiltering
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/smtpaccess
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/smtpaccess/default
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpacceptmailfor.dir/default
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/bofh
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/locals
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/courierd
-%attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/aliases/system
-%attr(644,root,root) %{_sysconfdir}/quotawarnmsg.example
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/smtpaccess/default
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpacceptmailfor.dir/default
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/bofh
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/locals
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/courierd
+%attr(640,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/aliases/system
+%{_sysconfdir}/quotawarnmsg.example
 %dir %{_libdir}
 %dir %{_libdir}/courier
 %dir %{_datadir}
@@ -717,17 +680,17 @@ fi
 %attr(754,root,daemon) %{_sbindir}/courierfilter
 %dir %{_libdir}/courier/modules
 %dir %{_libdir}/courier/modules/uucp
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.uucp
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/module.uucp
 %attr(755,root,root) %{_libdir}/courier/modules/uucp/courieruucp
 %attr(755,root,root) %{_sbindir}/makeuucpneighbors
 %attr(755,root,root) %{_datadir}/makeuucpneighbors
 %dir %{_libdir}/courier/modules/local
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.local
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/module.local
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierlocal
 %attr(755,root,root) %{_libdir}/courier/modules/local/courierdeliver
 %attr(755,root,root) %{_bindir}/preline
 %dir %{_libdir}/courier/modules/esmtp
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.esmtp
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/module.esmtp
 %attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtp
 %attr(750,root,daemon) %{_libdir}/courier/modules/esmtp/courieresmtpd
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/addcr
@@ -749,23 +712,23 @@ fi
 %attr(755,root,root) %{_sbindir}/makesmtpaccess-msa
 %attr(755,root,root) %{_sbindir}/sharedindexinstall
 %attr(755,root,root) %{_sbindir}/sharedindexsplit
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-msa
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpd
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpd-msa
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpd-ssl
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtpacceptmailfor.dir
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/esmtppercentrelay.dir
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpd.cnf
-%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/esmtpauthclient
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsndelayed.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsndelivered.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnfailed.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnrelayed.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnfooter.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnsubjectnotice.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnsubjectwarn.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/dsnheader.txt
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/module.dsn
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/rfcerr*.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpd.cnf
+%attr(600,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/esmtpauthclient
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsndelayed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsndelivered.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnfailed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnrelayed.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnfooter.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnsubjectnotice.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnsubjectwarn.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnheader.txt
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/module.dsn
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rfcerr*.txt
 %dir %{_libdir}/courier/modules/dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
@@ -799,30 +762,28 @@ fi
 %attr(750,root,daemon) %{_sbindir}/showmodules
 %attr(4755,root,root) %{_sbindir}/sendmail
 %attr(755,root,root) %{_bindir}/testmxlookup
-%attr(640,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/ldapaliasrc
+%attr(640,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ldapaliasrc
 %attr(700,daemon,daemon) %{_sbindir}/courierldapaliasd
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/esmtp
-%attr(755,root,root) /etc/profile.d/courier.sh
-%attr(755,root,root) /etc/profile.d/courier.csh
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/esmtp
 %attr(754,root,root) /etc/rc.d/init.d/courier
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
 %attr(755,daemon,daemon) %dir %{_localstatedir}/track
-%attr(755,root,root) /usr/lib/sendmail
+%attr(755,root,root) %{_prefix}/lib/sendmail
 
 %files pop3d
 %defattr(644,root,root,755)
 %doc htmldoc/*pop3d*
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/pop3
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/pop3
 %{_mandir}/man8/courierpop3d.8*
 %{_mandir}/man8/courierpop3login.8*
 %{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d
-%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d.cnf
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pop3d-ssl
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pop3d
+%attr(600,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pop3d.cnf
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pop3d-ssl
 %attr(755,root,root) %{_libdir}/courier/courierpop3d
 %attr(755,root,root) %{_libdir}/courier/courierpop3login
 %attr(755,root,root) %{_datadir}/mkpop3dcert
@@ -835,14 +796,14 @@ fi
 %files imapd
 %defattr(644,root,root,755)
 %doc htmldoc/*imapd*
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/imap
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/imap
 %{_mandir}/man8/imapd.8*
 %{_mandir}/man8/mkimapdcert.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-40imap.pl
-%attr(644,root,root) %{_datadir}/courierwebadmin/admin-40imap.html
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd-ssl
-%attr(600,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/imapd.cnf
+%{_datadir}/courierwebadmin/admin-40imap.html
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd-ssl
+%attr(600,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/imapd.cnf
 %attr(755,root,root) %{_libdir}/courier/imaplogin
 %attr(755,root,root) %{_sbindir}/imapd
 %attr(755,root,root) %{_sbindir}/imapd-ssl
@@ -854,12 +815,13 @@ fi
 
 %files webadmin
 %defattr(644,root,root,755)
+# suid root to cgi-bin??? and it's not secured by apache config!
 %attr(4755,root,root) %{_cgibindir}/webadmin
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/removed
-%attr(400,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webadmin/password
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/webadmin/unsecureok
+%attr(400,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/webadmin/password
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/webadmin/unsecureok
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-main.pl
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-save.pl
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-cancel.pl
@@ -880,9 +842,9 @@ fi
 %defattr(644,root,root,755)
 %doc htmldoc/pcp* gpglib/README.html
 %attr(755,root,root) %{_cgibindir}/webmail
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/webmail
-%attr(644,root,root) %config(noreplace) %verify(not size mtime md5) /etc/pam.d/calendar
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sqwebmaild
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/webmail
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/calendar
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sqwebmaild
 %attr(755,root,root) %{_sbindir}/webmaild
 %dir %{_datadir}/sqwebmail
 %dir %{_datadir}/sqwebmail/html
@@ -904,12 +866,14 @@ fi
 %attr(755,root,root) %{_libdir}/courier/sqwebpasswd
 %attr(700, bin, bin) %dir %{_localstatedir}/webmail-logincache
 %attr(755,root,root) /etc/cron.hourly/courier-webmail-cleancache
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/calendarmode
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/calendarmode
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar
 %attr(700,bin,daemon) %dir %{_localstatedir}/calendar/localcache
 %attr(750,bin,daemon) %dir %{_localstatedir}/calendar/private
 %attr(755,bin,daemon) %dir %{_localstatedir}/calendar/public
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/apache-%{name}.conf
+%dir %attr(750,root,http) %{_webapps}/courier-webmail
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/apache.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/httpd.conf
 
 %files maildrop
 %defattr(644,root,root,755)
@@ -917,7 +881,7 @@ fi
 %{_mandir}/man1/maildrop.1*
 %{_mandir}/man1/refor*
 %{_mandir}/man7/maildrop*
-%attr(644,daemon,daemon) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/maildrop
+%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/maildrop
 %attr(4755,root,root) %{_bindir}/maildrop
 %attr(755,root,root) %{_bindir}/reformail
 %attr(755,root,root) %{_bindir}/reformime
