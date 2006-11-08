@@ -1,11 +1,32 @@
+diff -Nur old/courier/Makefile.am new/courier/Makefile.am
+--- old/courier/Makefile.am	2006-03-26 15:33:12.000000000 +0000
++++ new/courier/Makefile.am	2006-11-07 19:10:21.776006250 +0000
+@@ -51,7 +51,7 @@
+ extrabin=maildrop lockmail reformail reformime mailbot mimegpg \
+ 	imapd makemime deliverquota maildirmake maildiracl maildirkw
+ 
+-bin_PROGRAMS=cancelmsg mailq sendmail \
++bin_PROGRAMS=cancelmsg mailq \
+ 	testmxlookup dotforward \
+ 	couriermlm \
+ 	courier-config @couriertls@ @EXTRABIN@
+@@ -63,7 +63,7 @@
+ sbin_SCRIPTS=@SBINSCRIPTS@
+ EXTRA_SCRIPTS=
+ 
+-sbin_PROGRAMS=courier showconfig showmodules aliaslookup \
++sbin_PROGRAMS=courier showconfig showmodules aliaslookup sendmail \
+ 	@COURIERLDAPALIASD@ @EXTRASBIN@
+ 
+ sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
 diff -Nur old/courier/cmlm.h new/courier/cmlm.h
---- old/courier/cmlm.h	2001-08-05 20:00:33.000000000 +0000
-+++ new/courier/cmlm.h	2004-10-06 19:10:33.000000000 +0000
+--- old/courier/cmlm.h	2005-04-03 16:22:06.000000000 +0000
++++ new/courier/cmlm.h	2006-11-07 19:11:13.283225250 +0000
 @@ -18,6 +18,7 @@
  
  using namespace std;
  
-+#define	SBINDIR "/usr/sbin"
++#define SBINDIR "/usr/sbin"
  #define	TMP	"tmp"
  #define	TMPLOCK	"tmp.lock"
  
@@ -18,24 +39,3 @@ diff -Nur old/courier/cmlm.h new/courier/cmlm.h
  #define	REFORMIME	BINDIR "/reformime"
  #define	MAXRCPTS	20
  
-diff -Nur old/courier/Makefile.am new/courier/Makefile.am
---- old/courier/Makefile.am	2004-01-11 05:37:59.000000000 +0000
-+++ new/courier/Makefile.am	2004-03-16 18:20:36.000000000 +0000
-@@ -51,7 +51,7 @@
- extrabin=maildrop lockmail reformail reformime mailbot mimegpg \
- 	imapd makemime deliverquota maildirmake maildiracl maildirkw
- 
--bin_PROGRAMS=cancelmsg mailq sendmail \
-+bin_PROGRAMS=cancelmsg mailq \
- 	testmxlookup dotforward \
- 	couriermlm \
- 	courier-config @couriertls@ @EXTRABIN@
-@@ -60,7 +60,7 @@
- 	authenumerate$(EXEEXT) \
- 	sharedindexsplit sharedindexinstall
- 
--sbin_PROGRAMS=courier showconfig showmodules \
-+sbin_PROGRAMS=courier showconfig showmodules sendmail \
- 	@COURIERLDAPALIASD@ @EXTRASBIN@
- 
- sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
