@@ -1,6 +1,9 @@
 # TODO
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
+# - unpackaged files:
+#   /usr/sbin/aliaslookup
+#   /usr/share/man/man8/aliaslookup.8.gz
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
