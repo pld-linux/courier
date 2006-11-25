@@ -1,6 +1,9 @@
 # TODO
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
+# - unpackaged files:
+#   /usr/sbin/aliaslookup
+#   /usr/share/man/man8/aliaslookup.8.gz
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -10,11 +13,10 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.53.3
-Release:	1
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
-#Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-Source0:	http://heanet.dl.sourceforge.net/sourceforge/courier/%{name}-%{version}.tar.bz2
+Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	e75013df7deebd463656b81cc3e245f4
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
@@ -163,7 +165,7 @@ Summary:	Courier Integrated HTTP administraton panel
 Summary(pl):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	webapps
 Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
@@ -181,7 +183,7 @@ Summary:	Courier Integrated HTTP (webmail) server
 Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
-Requires:	filesystem >= 3.0-11
+Requires:	filesystem >= 2.0-1
 Requires:	webapps
 Requires:	webserver = apache
 Conflicts:	apache-base < 2.2.0-8
@@ -282,9 +284,10 @@ Alias /webmail %{_imagedir}
 </Directory>
 " > apache.conf
 
-%build
 # we don't want fax module
 rm -rf courier/module.fax
+
+%build
 cp -f /usr/share/automake/config.sub webmail
 
 # Change Makefile.am files and force recreate Makefile.in's.
@@ -299,7 +302,9 @@ find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE
 	%{__libtoolize}
 	%{__aclocal}
 	%{__autoconf}
-	%{__autoheader}
+	if grep -q AM_CONFIG_HEADER configure.in; then
+		%{__autoheader}
+	fi
 	%{__automake}
 
 	cd "$OLDDIR"
