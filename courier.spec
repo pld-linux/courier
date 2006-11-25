@@ -13,7 +13,7 @@ Summary:	Courier mail server
 Summary(pl):	Serwer poczty Courier
 Name:		courier
 Version:	0.53.3
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -284,9 +284,10 @@ Alias /webmail %{_imagedir}
 </Directory>
 " > apache.conf
 
-%build
 # we don't want fax module
 rm -rf courier/module.fax
+
+%build
 cp -f /usr/share/automake/config.sub webmail
 
 # Change Makefile.am files and force recreate Makefile.in's.
@@ -301,7 +302,9 @@ find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE
 	%{__libtoolize}
 	%{__aclocal}
 	%{__autoconf}
-	%{__autoheader}
+	if grep -q AM_CONFIG_HEADER configure.in; then
+		%{__autoheader}
+	fi
 	%{__automake}
 
 	cd "$OLDDIR"
