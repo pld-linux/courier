@@ -10,7 +10,7 @@
 %bcond_with	tests		# without tests
 #
 Summary:	Courier mail server
-Summary(pl.UTF-8):   Serwer poczty Courier
+Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	0.53.3
 Release:	1
@@ -107,7 +107,7 @@ filtrowania spamu.
 
 %package pop3d
 Summary:	Courier Integrated POP3 server
-Summary(pl.UTF-8):   Zintegrowany serwer POP3 do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
@@ -128,7 +128,7 @@ obsługuje skrzynek w postaci pojedynczych plików.
 
 %package imapd
 Summary:	Courier Integrated IMAP server
-Summary(pl.UTF-8):   Zintegrowany serwer IMAP do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
@@ -162,7 +162,7 @@ pakietu automatycznie odinstaluje Courier-IMAP jeśli był zinstalowany.
 
 %package webadmin
 Summary:	Courier Integrated HTTP administraton panel
-Summary(pl.UTF-8):   Panel administracyjny przez HTTP dla Couriera
+Summary(pl.UTF-8):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	filesystem >= 3.0-11
@@ -180,7 +180,7 @@ Webadmin jest narzędziem administracyjnym obsługiwanym przez WWW.
 
 %package webmail
 Summary:	Courier Integrated HTTP (webmail) server
-Summary(pl.UTF-8):   Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	filesystem >= 3.0-11
@@ -211,7 +211,7 @@ SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 
 %package maildir-tools
 Summary:	Tools for mail folders in Maildir format
-Summary(pl.UTF-8):   Narzędzia do zarządzania skrzynkami Maildir
+Summary(pl.UTF-8):	Narzędzia do zarządzania skrzynkami Maildir
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
@@ -224,7 +224,7 @@ Maildir.
 
 %package mlm
 Summary:	Courier Integrated Mailing List Manager
-Summary(pl.UTF-8):   Zintegrowany zarządca list dyskusyjnych do Couriera
+Summary(pl.UTF-8):	Zintegrowany zarządca list dyskusyjnych do Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
@@ -251,7 +251,7 @@ aliasy pocztowe tylko do wysyłania i listy moderowane.
 
 %package maildrop
 Summary:	Courier Integrated mail filter
-Summary(pl.UTF-8):   Zintegrowany filtr poczty do Couriera
+Summary(pl.UTF-8):	Zintegrowany filtr poczty do Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
