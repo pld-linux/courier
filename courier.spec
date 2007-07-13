@@ -13,7 +13,7 @@ Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	0.53.3
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -53,7 +53,6 @@ Requires(post):	courier-authlib-userdb
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
-Provides:	/usr/lib/sendmail
 Obsoletes:	courier-smtpauth
 Obsoletes:	exim
 Obsoletes:	masqmail
