@@ -53,7 +53,6 @@ Requires(post):	courier-authlib-userdb
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
-Provides:	/usr/lib/sendmail
 Obsoletes:	courier-smtpauth
 Obsoletes:	exim
 Obsoletes:	masqmail
