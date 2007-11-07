@@ -47,10 +47,6 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
-# only for light upgrade from old version < 0.47
-# remove it after some time
-Requires(post):	courier-authlib-userdb
-Requires(post):	openssl-tools >= 0.9.7d
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
 Obsoletes:	smtpdaemon
