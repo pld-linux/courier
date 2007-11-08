@@ -1,4 +1,5 @@
 # TODO
+# - build fails due auto* macros on ac/th
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
 # - unpackaged files:
@@ -35,7 +36,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
-BuildRequires:	openldap-devel >= 2.4.6
+BuildRequires:	openldap-devel >= 2.3.0
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	openssl-tools-perl >= 0.9.7d
