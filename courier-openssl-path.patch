@@ -1,11 +1,11 @@
---- courier-0.42.0/rootcerts/configure.in.orig	Sun Mar 30 23:52:10 2003
-+++ courier-0.42.0/rootcerts/configure.in	Sun Mar 30 23:52:50 2003
-@@ -10,7 +10,7 @@
+--- courier-0.58.0/rootcerts/configure.in.orig	2007-11-11 19:19:14.000000000 +0100
++++ courier-0.58.0/rootcerts/configure.in	2008-01-19 23:22:59.778578088 +0100
+@@ -14,7 +14,7 @@
+ AC_PROG_INSTALL
  AC_PROG_LN_S
- AM_INIT_AUTOMAKE(rootcerts, 0.50)
  
 -EXTRA_PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin
 +EXTRA_PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/lib/openssl:/usr/bin:/usr/lib64/openssl
- AC_PATH_PROG(OPENSSL, openssl, "", $EXTRA_PATH)
- AC_PATH_PROG(REHASH, c_rehash, "", $EXTRA_PATH)
  AC_PATH_PROGS(PERL, perl5 perl, "", $EXTRA_PATH)
+ 
+ if test "$PERL" = ""
