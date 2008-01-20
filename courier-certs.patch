@@ -1,0 +1,539 @@
+diff -urN courier-0.58.0.orig/configure.in courier-0.58.0/configure.in
+--- courier-0.58.0.orig/configure.in	2007-11-24 04:25:52.000000000 +0100
++++ courier-0.58.0/configure.in	2008-01-19 23:37:26.428337743 +0100
+@@ -70,6 +70,11 @@
+ eval "localstatedir=$localstatedir"
+ eval "datadir=$datadir"
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$datadir)
++
++AC_SUBST(certsdir)
++
+ AC_ARG_WITH(makedatprog, [], ,
+ 	ac_configure_args="$ac_configure_args --with-makedatprog=${libexecdir}/courier/makedatprog")
+ 
+diff -urN courier-0.58.0.orig/courier/configure.in courier-0.58.0/courier/configure.in
+--- courier-0.58.0.orig/courier/configure.in	2007-11-24 04:25:52.000000000 +0100
++++ courier-0.58.0/courier/configure.in	2008-01-19 23:38:38.745253650 +0100
+@@ -498,6 +498,12 @@
+ eval "datarootdir=$datarootdir"
+ eval "bindir=$bindir"
+ eval "localstatedir=$localstatedir"
++eval "datadir=$datadir"
++
++AC_ARG_WITH(certsdir, [ --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$datadir)
++
++AC_SUBST(certsdir)
+ 
+ MAILDROP="$bindir/maildrop"
+ AC_SUBST(MAILDROP)
+diff -urN courier-0.58.0.orig/courier/imapd-ssl.rc.in courier-0.58.0/courier/imapd-ssl.rc.in
+--- courier-0.58.0.orig/courier/imapd-ssl.rc.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/courier/imapd-ssl.rc.in	2008-01-19 23:37:26.428337743 +0100
+@@ -28,6 +28,11 @@
+ 
+ case $1 in
+ start)
++        # If we do not have a certificate, make one up.
++        if [ ! -f @certsdir@/imapd.pem ]; then
++        @sbindir@/mkimapdcert
++        fi
++
+ 	umask $IMAP_UMASK
+ 	@ULIMIT@ $IMAP_ULIMITD
+ 	@SETENV@ -i @SHELL@ -c " set -a ;
+diff -urN courier-0.58.0.orig/courier/module.esmtp/configure.in courier-0.58.0/courier/module.esmtp/configure.in
+--- courier-0.58.0.orig/courier/module.esmtp/configure.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.58.0/courier/module.esmtp/configure.in	2008-01-19 23:37:26.428337743 +0100
+@@ -306,6 +306,11 @@
+ AC_SUBST(mydatadir)   # Quell automake warning
+ 
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$datadir)
++
++AC_SUBST(certsdir)
++
+ dnl
+ dnl  Check what libraries are available
+ dnl
+diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd.cnf.openssl.in courier-0.58.0/courier/module.esmtp/esmtpd.cnf.openssl.in
+--- courier-0.58.0.orig/courier/module.esmtp/esmtpd.cnf.openssl.in	2007-07-01 17:36:34.000000000 +0200
++++ courier-0.58.0/courier/module.esmtp/esmtpd.cnf.openssl.in	2008-01-19 23:39:34.911369481 +0100
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @mydatadir@/esmtpd.rnd
++RANDFILE = @certsdir@/esmtpd.rnd
+ 
+ [ req ]
+ default_bits = 1024
+diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd.dist.in courier-0.58.0/courier/module.esmtp/esmtpd.dist.in
+--- courier-0.58.0.orig/courier/module.esmtp/esmtpd.dist.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.58.0/courier/module.esmtp/esmtpd.dist.in	2008-01-19 23:39:44.028487817 +0100
+@@ -233,7 +233,7 @@
+ #
+ # This is an experimental feature.
+ 
+-TLS_CERTFILE=@mydatadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_CERTINFO:0
+ #
+diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.dist.in courier-0.58.0/courier/module.esmtp/esmtpd-ssl.dist.in
+--- courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.dist.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.58.0/courier/module.esmtp/esmtpd-ssl.dist.in	2008-01-19 23:39:22.684097067 +0100
+@@ -256,7 +256,7 @@
+ #
+ # This is an experimental feature.
+ 
+-TLS_CERTFILE=@mydatadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
+diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.in courier-0.58.0/courier/module.esmtp/esmtpd-ssl.in
+--- courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/courier/module.esmtp/esmtpd-ssl.in	2008-01-19 23:37:26.431671242 +0100
+@@ -25,6 +25,10 @@
+ 
+ case $1 in
+ start)
++	# If we do not have a certificate, make one up.
++	if [ ! -f @certsdir@/esmtpd.pem ]; then
++	@sbindir@/mkesmtpdcert
++	fi
+ 	;;
+ stop)
+ 	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
+diff -urN courier-0.58.0.orig/courier/module.esmtp/mkesmtpdcert.in courier-0.58.0/courier/module.esmtp/mkesmtpdcert.in
+--- courier-0.58.0.orig/courier/module.esmtp/mkesmtpdcert.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.58.0/courier/module.esmtp/mkesmtpdcert.in	2008-01-19 23:40:14.373324466 +0100
+@@ -16,38 +16,38 @@
+ 	test -x @CERTTOOL@ || exit 0
+ fi
+ 
+-if test -f @mydatadir@/esmtpd.pem
++if test -f @certsdir@/esmtpd.pem
+ then
+-	echo "@mydatadir@/esmtpd.pem already exists."
++	echo "@certsdir@/esmtpd.pem already exists."
+ 	exit 1
+ fi
+ 
+ cleanup() {
+-	rm -f @mydatadir@/esmtpd.rand
+-	rm -f @mydatadir@/esmtpd.pem
+-	rm -f @mydatadir@/esmtpd.key
+-	rm -f @mydatadir@/esmtpd.cert
++	rm -f @certsdir@/esmtpd.rand
++	rm -f @certsdir@/esmtpd.pem
++	rm -f @certsdir@/esmtpd.key
++	rm -f @certsdir@/esmtpd.cert
+ 	exit 1
+ }
+ 
+-cd @mydatadir@
++cd @certsdir@
+ 
+ if test "@ssllib@" = "openssl"
+ then
+-	cp /dev/null @mydatadir@/esmtpd.pem
+-	chmod 600 @mydatadir@/esmtpd.pem
+-	chown @mailuser@ @mydatadir@/esmtpd.pem
+-	dd if=@RANDOMV@ of=@mydatadir@/esmtpd.rand count=1 2>/dev/null
++	cp /dev/null @certsdir@/esmtpd.pem
++	chmod 600 @certsdir@/esmtpd.pem
++	chown @mailuser@ @certsdir@/esmtpd.pem
++	dd if=@RANDOMV@ of=@certsdir@/esmtpd.rand count=1 2>/dev/null
+ 	@OPENSSL@ req -new -x509 -days 365 -nodes \
+-		  -config @sysconfdir@/esmtpd.cnf -out @mydatadir@/esmtpd.pem -keyout @mydatadir@/esmtpd.pem || cleanup
+-	@OPENSSL@ gendh -rand @mydatadir@/esmtpd.rand 512 >>@mydatadir@/esmtpd.pem || cleanup
+-	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
+-	rm -f @mydatadir@/esmtpd.rand
++		  -config @sysconfdir@/esmtpd.cnf -out @certsdir@/esmtpd.pem -keyout @certsdir@/esmtpd.pem || cleanup
++	@OPENSSL@ gendh -rand @certsdir@/esmtpd.rand 512 >>@certsdir@/esmtpd.pem || cleanup
++	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/esmtpd.pem || cleanup
++	rm -f @certsdir@/esmtpd.rand
+ else
+-	cp /dev/null @mydatadir@/esmtpd.key
+-	chmod 600 @mydatadir@/esmtpd.key
+-	cp /dev/null @mydatadir@/esmtpd.cert
+-	chmod 600 @mydatadir@/esmtpd.cert
++	cp /dev/null @certsdir@/esmtpd.key
++	chmod 600 @certsdir@/esmtpd.key
++	cp /dev/null @certsdir@/esmtpd.cert
++	chmod 600 @certsdir@/esmtpd.cert
+ 
+ 	@CERTTOOL@ --generate-privkey --outfile esmtpd.key
+ 	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
+diff -urN courier-0.58.0.orig/courier/pop3d-ssl.in courier-0.58.0/courier/pop3d-ssl.in
+--- courier-0.58.0.orig/courier/pop3d-ssl.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/courier/pop3d-ssl.in	2008-01-19 23:37:26.431671242 +0100
+@@ -29,6 +29,11 @@
+ 
+ case $1 in
+ start)
++        # If we do not have a certificate, make one up.
++        if [ ! -f @certsdir@/pop3d.pem ]; then
++        @sbindir@/mkpop3dcert
++        fi
++
+ 	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
+ 		@SHELL@ -c " set -a ; \
+ 		prefix=@prefix@ ; \
+diff -urN courier-0.58.0.orig/courier.sysvinit.in courier-0.58.0/courier.sysvinit.in
+--- courier-0.58.0.orig/courier.sysvinit.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/courier.sysvinit.in	2008-01-19 23:37:26.431671242 +0100
+@@ -18,7 +18,7 @@
+ sbindir="@sbindir@"
+ bindir="@bindir@"
+ libexecdir="@libexecdir@"
+-datadir="@datadir@"
++certsdir="@certsdir@"
+ 
+ if test ! -f ${sysconfdir}/esmtpd
+ then
+@@ -85,7 +85,7 @@
+ 	then
+ # If we do not have a certificate, make one up.
+ 
+-		if test ! -f ${datadir}/esmtpd.pem
++		if test ! -f ${certsdir}/esmtpd.pem
+ 		then
+ 			if test -x $COURIERTLS
+ 			then
+@@ -152,7 +152,7 @@
+ 			then
+ # If we do not have a certificate, make one up.
+ 
+-				if test ! -f ${datadir}/pop3d.pem
++				if test ! -f ${certsdir}/pop3d.pem
+ 				then
+ 					echo -n " generating-POP3-SSL-certificate..."
+ 
+@@ -182,7 +182,7 @@
+ 			then
+ # If we do not have a certificate, make one up.
+ 
+-				if test ! -f ${datadir}/imapd.pem
++				if test ! -f ${certsdir}/imapd.pem
+ 				then
+ 					echo -n " generating-IMAP-SSL-certificate..."
+ 
+diff -urN courier-0.58.0.orig/imap/configure.in courier-0.58.0/imap/configure.in
+--- courier-0.58.0.orig/imap/configure.in	2007-11-24 04:23:13.000000000 +0100
++++ courier-0.58.0/imap/configure.in	2008-01-19 23:37:26.435004741 +0100
+@@ -300,6 +300,11 @@
+ mydatadir="$datadir"
+ AC_SUBST(mydatadir)   # Avoid useless autoconf warning
+ 
++AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
++certsdir="$withval", certsdir=$datadir)
++
++AC_SUBST(certsdir)
++
+ #
+ # Check for PAM configuration flavor
+ 
+diff -urN courier-0.58.0.orig/imap/imapd.cnf.openssl.in courier-0.58.0/imap/imapd.cnf.openssl.in
+--- courier-0.58.0.orig/imap/imapd.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.58.0/imap/imapd.cnf.openssl.in	2008-01-19 23:40:41.287991189 +0100
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @mydatadir@/imapd.rand
++RANDFILE = @certsdir@/imapd.rand
+ 
+ [ req ]
+ default_bits = 1024
+diff -urN courier-0.58.0.orig/imap/imapd-ssl.dist.in courier-0.58.0/imap/imapd-ssl.dist.in
+--- courier-0.58.0.orig/imap/imapd-ssl.dist.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/imap/imapd-ssl.dist.in	2008-01-19 23:40:36.037731086 +0100
+@@ -254,7 +254,7 @@
+ #
+ # This is an experimental feature.
+ 
+-TLS_CERTFILE=@mydatadir@/imapd.pem
++TLS_CERTFILE=@certsdir@/imapd.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
+diff -urN courier-0.58.0.orig/imap/mkimapdcert.8.in courier-0.58.0/imap/mkimapdcert.8.in
+--- courier-0.58.0.orig/imap/mkimapdcert.8.in	2007-04-22 20:19:43.000000000 +0200
++++ courier-0.58.0/imap/mkimapdcert.8.in	2008-01-19 23:41:04.485807114 +0100
+@@ -21,18 +21,18 @@
+ .SH "DESCRIPTION"
+ .PP
+ IMAP over SSL requires a valid, signed, X.509 certificate. The default location for the certificate file is
+-\fI@datadir@/imapd.pem\fR.
++\fI@certsdir@/imapd.pem\fR.
+ \fBmkimapdcert\fR
+ generates a self\-signed X.509 certificate, mainly for testing. For production use the X.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate.
+ .PP
+ 
+-\fI@datadir@/imapd.pem\fR
++\fI@certsdir@/imapd.pem\fR
+ must be owned by the @mailuser@ user and have no group or world permissions. The
+ \fBmkimapdcert\fR
+ command will enforce this. To prevent an unfortunate accident,
+ \fBmkimapdcert\fR
+ will not work if
+-\fB@datadir@/imapd.pem\fR
++\fB@certsdir@/imapd.pem\fR
+ already exists.
+ .PP
+ 
+@@ -42,7 +42,7 @@
+ to be installed.
+ .SH "FILES"
+ .PP
+-@datadir@/imapd.pem
++@certsdir@/imapd.pem
+ .RS 4
+ X.509 certificate.
+ .RE
+diff -urN courier-0.58.0.orig/imap/mkimapdcert.html.in courier-0.58.0/imap/mkimapdcert.html.in
+--- courier-0.58.0.orig/imap/mkimapdcert.html.in	2007-04-22 20:19:42.000000000 +0200
++++ courier-0.58.0/imap/mkimapdcert.html.in	2008-01-19 23:41:31.457143328 +0100
+@@ -7,22 +7,22 @@
+ --></head><body><div class="refentry" lang="en" xml:lang="en"><a id="mkimapdcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkimapdcert — create a test SSL certificate for IMAP over SSL</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkimapdcert</code> </p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id281688" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+ IMAP over SSL requires a valid, signed, X.509 certificate.  The default
+ location for the certificate file is
+-<code class="filename">@datadir@/imapd.pem</code>.
++<code class="filename">@certsdir@/imapd.pem</code>.
+ <span><strong class="command">mkimapdcert</strong></span> generates a self-signed X.509 certificate,
+ mainly for
+ testing.
+ For production use the X.509 certificate must be signed by a
+ recognized certificate authority, in order for mail clients to accept the
+ certificate.</p><p>
+-<code class="filename">@datadir@/imapd.pem</code> must be owned by the
++<code class="filename">@certsdir@/imapd.pem</code> must be owned by the
+ @mailuser@ user and
+ have no group or world permissions.
+ The <span><strong class="command">mkimapdcert</strong></span> command will
+ enforce this.  To prevent an unfortunate accident,
+ <span><strong class="command">mkimapdcert</strong></span>
+-will not work if <span><strong class="command">@datadir@/imapd.pem</strong></span> already exists.</p><p>
++will not work if <span><strong class="command">@certsdir@/imapd.pem</strong></span> already exists.</p><p>
+ <span><strong class="command">mkimapdcert</strong></span> requires
+-<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id282351" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/imapd.pem</span></dt><dd>
++<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id282351" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/imapd.pem</span></dt><dd>
+ X.509 certificate.
+ </dd><dt><span class="term">@sysconfdir@/imapd.cnf</span></dt><dd>
+ Parameters used by OpenSSL to
+diff -urN courier-0.58.0.orig/imap/mkimapdcert.in courier-0.58.0/imap/mkimapdcert.in
+--- courier-0.58.0.orig/imap/mkimapdcert.in	2007-11-04 21:53:05.000000000 +0100
++++ courier-0.58.0/imap/mkimapdcert.in	2008-01-19 23:42:07.038906129 +0100
+@@ -18,41 +18,41 @@
+ 
+ prefix="@prefix@"
+ 
+-if test -f @mydatadir@/imapd.pem
++if test -f @certsdir@/imapd.pem
+ then
+-	echo "@mydatadir@/imapd.pem already exists."
++	echo "@certsdir@/imapd.pem already exists."
+ 	exit 1
+ fi
+ 
+ umask 077
+ 
+ cleanup() {
+-	rm -f @mydatadir@/imapd.pem
+-	rm -f @mydatadir@/imapd.rand
+-	rm -f @mydatadir@/imapd.key
+-	rm -f @mydatadir@/imapd.cert
++	rm -f @certsdir@/imapd.pem
++	rm -f @certsdir@/imapd.rand
++	rm -f @certsdir@/imapd.key
++	rm -f @certsdir@/imapd.cert
+ 	exit 1
+ }
+ 
+-cd @mydatadir@
++cd @certsdir@
+ 
+ if test "@ssllib@" = "openssl"
+ then
+-	cp /dev/null @mydatadir@/imapd.pem
+-	chmod 600 @mydatadir@/imapd.pem
+-	chown @mailuser@ @mydatadir@/imapd.pem
++	cp /dev/null @certsdir@/imapd.pem
++	chmod 600 @certsdir@/imapd.pem
++	chown @mailuser@ @certsdir@/imapd.pem
+ 
+-	dd if=@RANDOMV@ of=@mydatadir@/imapd.rand count=1 2>/dev/null
++	dd if=@RANDOMV@ of=@certsdir@/imapd.rand count=1 2>/dev/null
+ 	@OPENSSL@ req -new -x509 -days 365 -nodes \
+-		  -config @sysconfdir@/imapd.cnf -out @mydatadir@/imapd.pem -keyout @mydatadir@/imapd.pem || cleanup
+-	@OPENSSL@ gendh -rand @mydatadir@/imapd.rand 512 >>@mydatadir@/imapd.pem || cleanup
+-	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/imapd.pem || cleanup
+-	rm -f @mydatadir@/imapd.rand
++		  -config @sysconfdir@/imapd.cnf -out @certsdir@/imapd.pem -keyout @certsdir@/imapd.pem || cleanup
++	@OPENSSL@ gendh -rand @certsdir@/imapd.rand 512 >>@certsdir@/imapd.pem || cleanup
++	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/imapd.pem || cleanup
++	rm -f @certsdir@/imapd.rand
+ else
+-	cp /dev/null @mydatadir@/imapd.key
+-	chmod 600 @mydatadir@/imapd.key
+-	cp /dev/null @mydatadir@/imapd.cert
+-	chmod 600 @mydatadir@/imapd.cert
++	cp /dev/null @certsdir@/imapd.key
++	chmod 600 @certsdir@/imapd.key
++	cp /dev/null @certsdir@/imapd.cert
++	chmod 600 @certsdir@/imapd.cert
+ 
+ 	@CERTTOOL@ --generate-privkey --outfile imapd.key
+ 	@CERTTOOL@ --generate-self-signed --load-privkey imapd.key --outfile imapd.cert --template @sysconfdir@/imapd.cnf
+diff -urN courier-0.58.0.orig/imap/mkpop3dcert.8.in courier-0.58.0/imap/mkpop3dcert.8.in
+--- courier-0.58.0.orig/imap/mkpop3dcert.8.in	2007-04-22 20:19:45.000000000 +0200
++++ courier-0.58.0/imap/mkpop3dcert.8.in	2008-01-19 23:42:20.199558142 +0100
+@@ -21,18 +21,18 @@
+ .SH "DESCRIPTION"
+ .PP
+ POP3 over SSL requires a valid, signed, X.509 certificate. The default location for the certificate file is
+-\fI@datadir@/pop3d.pem\fR.
++\fI@certsdir@/pop3d.pem\fR.
+ \fBmkpop3dcert\fR
+ generates a self\-signed X.509 certificate, mainly for testing. For production use the X.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate.
+ .PP
+ 
+-\fI@datadir@/pop3d.pem\fR
++\fI@certsdir@/pop3d.pem\fR
+ must be owned by the @mailuser@ user and have no group or world permissions. The
+ \fBmkpop3dcert\fR
+ command will enforce this. To prevent an unfortunate accident,
+ \fBmkpop3dcert\fR
+ will not work if
+-\fB@datadir@/pop3d.pem\fR
++\fB@certsdir@/pop3d.pem\fR
+ already exists.
+ .PP
+ 
+@@ -42,7 +42,7 @@
+ to be installed.
+ .SH "FILES"
+ .PP
+-@datadir@/pop3d.pem
++@certsdir@/pop3d.pem
+ .RS 4
+ X.509 certificate.
+ .RE
+diff -urN courier-0.58.0.orig/imap/mkpop3dcert.html.in courier-0.58.0/imap/mkpop3dcert.html.in
+--- courier-0.58.0.orig/imap/mkpop3dcert.html.in	2007-04-22 20:19:45.000000000 +0200
++++ courier-0.58.0/imap/mkpop3dcert.html.in	2008-01-19 23:42:28.846653207 +0100
+@@ -7,22 +7,22 @@
+ --></head><body><div class="refentry" lang="en" xml:lang="en"><a id="mkpop3dcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkpop3dcert — create a test SSL certificate for POP3 over SSL</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkpop3dcert</code> </p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id281688" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+ POP3 over SSL requires a valid, signed, X.509 certificate.  The default
+ location for the certificate file is
+-<code class="filename">@datadir@/pop3d.pem</code>.
++<code class="filename">@certsdir@/pop3d.pem</code>.
+ <span><strong class="command">mkpop3dcert</strong></span> generates a self-signed X.509 certificate,
+ mainly for
+ testing.
+ For production use the X.509 certificate must be signed by a
+ recognized certificate authority, in order for mail clients to accept the
+ certificate.</p><p>
+-<code class="filename">@datadir@/pop3d.pem</code> must be owned by the
++<code class="filename">@certsdir@/pop3d.pem</code> must be owned by the
+ @mailuser@ user and
+ have no group or world permissions.
+ The <span><strong class="command">mkpop3dcert</strong></span> command will
+ enforce this.  To prevent an unfortunate accident,
+ <span><strong class="command">mkpop3dcert</strong></span>
+-will not work if <span><strong class="command">@datadir@/pop3d.pem</strong></span> already exists.</p><p>
++will not work if <span><strong class="command">@certsdir@/pop3d.pem</strong></span> already exists.</p><p>
+ <span><strong class="command">mkpop3dcert</strong></span> requires
+-<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id282351" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/pop3d.pem</span></dt><dd>
++<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id282351" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/pop3d.pem</span></dt><dd>
+ X.509 certificate.
+ </dd><dt><span class="term">@sysconfdir@/pop3d.cnf</span></dt><dd>
+ Parameters used by OpenSSL to
+diff -urN courier-0.58.0.orig/imap/mkpop3dcert.in courier-0.58.0/imap/mkpop3dcert.in
+--- courier-0.58.0.orig/imap/mkpop3dcert.in	2007-11-04 21:53:05.000000000 +0100
++++ courier-0.58.0/imap/mkpop3dcert.in	2008-01-19 23:42:50.974416143 +0100
+@@ -18,41 +18,41 @@
+ 
+ prefix="@prefix@"
+ 
+-if test -f @mydatadir@/pop3d.pem
++if test -f @certsdir@/pop3d.pem
+ then
+-	echo "@mydatadir@/pop3d.pem already exists."
++	echo "@certsdir@/pop3d.pem already exists."
+ 	exit 1
+ fi
+ 
+ umask 077
+ 
+ cleanup() {
+-	rm -f @mydatadir@/pop3d.pem
+-	rm -f @mydatadir@/pop3d.rand
+-	rm -f @mydatadir@/pop3d.key
+-	rm -f @mydatadir@/pop3d.cert
++	rm -f @certsdir@/pop3d.pem
++	rm -f @certsdir@/pop3d.rand
++	rm -f @certsdir@/pop3d.key
++	rm -f @certsdir@/pop3d.cert
+ 	exit 1
+ }
+ 
+-cd @mydatadir@
++cd @certsdir@
+ 
+ if test "@ssllib@" = "openssl"
+ then
+-	cp /dev/null @mydatadir@/pop3d.pem
+-	chmod 600 @mydatadir@/pop3d.pem
+-	chown @mailuser@ @mydatadir@/pop3d.pem
++	cp /dev/null @certsdir@/pop3d.pem
++	chmod 600 @certsdir@/pop3d.pem
++	chown @mailuser@ @certsdir@/pop3d.pem
+ 
+-	dd if=@RANDOMV@ of=@mydatadir@/pop3d.rand count=1 2>/dev/null
++	dd if=@RANDOMV@ of=@certsdir@/pop3d.rand count=1 2>/dev/null
+ 	@OPENSSL@ req -new -x509 -days 365 -nodes \
+-		  -config @sysconfdir@/pop3d.cnf -out @mydatadir@/pop3d.pem -keyout @mydatadir@/pop3d.pem || cleanup
+-	@OPENSSL@ gendh -rand @mydatadir@/pop3d.rand 512 >>@mydatadir@/pop3d.pem || cleanup
+-	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/pop3d.pem || cleanup
+-	rm -f @mydatadir@/pop3d.rand
++		  -config @sysconfdir@/pop3d.cnf -out @certsdir@/pop3d.pem -keyout @certsdir@/pop3d.pem || cleanup
++	@OPENSSL@ gendh -rand @certsdir@/pop3d.rand 512 >>@certsdir@/pop3d.pem || cleanup
++	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/pop3d.pem || cleanup
++	rm -f @certsdir@/pop3d.rand
+ else
+-	cp /dev/null @mydatadir@/pop3d.key
+-	chmod 600 @mydatadir@/pop3d.key
+-	cp /dev/null @mydatadir@/pop3d.cert
+-	chmod 600 @mydatadir@/pop3d.cert
++	cp /dev/null @certsdir@/pop3d.key
++	chmod 600 @certsdir@/pop3d.key
++	cp /dev/null @certsdir@/pop3d.cert
++	chmod 600 @certsdir@/pop3d.cert
+ 
+ 	@CERTTOOL@ --generate-privkey --outfile pop3d.key
+ 	@CERTTOOL@ --generate-self-signed --load-privkey pop3d.key --outfile pop3d.cert --template @sysconfdir@/pop3d.cnf
+diff -urN courier-0.58.0.orig/imap/pop3d.cnf.openssl.in courier-0.58.0/imap/pop3d.cnf.openssl.in
+--- courier-0.58.0.orig/imap/pop3d.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.58.0/imap/pop3d.cnf.openssl.in	2008-01-19 23:43:08.841968023 +0100
+@@ -1,5 +1,5 @@
+ 
+-RANDFILE = @mydatadir@/pop3d.rand
++RANDFILE = @certsdir@/pop3d.rand
+ 
+ [ req ]
+ default_bits = 1024
+diff -urN courier-0.58.0.orig/imap/pop3d-ssl.dist.in courier-0.58.0/imap/pop3d-ssl.dist.in
+--- courier-0.58.0.orig/imap/pop3d-ssl.dist.in	2008-01-19 23:30:56.000000000 +0100
++++ courier-0.58.0/imap/pop3d-ssl.dist.in	2008-01-19 23:43:02.304977494 +0100
+@@ -241,7 +241,7 @@
+ #
+ # This is an experimental feature.
+ 
+-TLS_CERTFILE=@mydatadir@/pop3d.pem
++TLS_CERTFILE=@certsdir@/pop3d.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
