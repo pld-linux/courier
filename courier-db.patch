@@ -12,3 +12,22 @@
  
  EXTRA_DIST = maildroptips.html $(BUILT_SOURCES)\
  	maildrop.lsm testsuite.txt
+--- courier-0.58.0.orig/tcpd/configure.in	2008-01-20 00:58:25.950145421 +0100
++++ courier-0.58.0/tcpd/configure.in	2008-01-20 01:00:02.381596233 +0100
+@@ -83,14 +83,14 @@
+ 	USE_DB=0
+ 	LIBDB=""
+ 	dblibrary=../gdbmobj/libgdbmobj.la
+-	LIBGDBM="-Wl,$LIBGDBM"
++	LIBGDBM="$LIBGDBM"
+ 	;;
+ db)
+ 	USE_DB=1
+ 	USE_GDBM=0
+ 	LIBGDBM=""
+ 	dblibrary=../bdbobj/libbdbobj.la
+-	LIBDB="-Wl,$LIBDB"
++	LIBDB="$LIBDB"
+ 	;;
+ *)
+ 	COURIERTCPD=""
