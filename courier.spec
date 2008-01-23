@@ -1,8 +1,14 @@
 # TODO
+# - build fails due auto* macros on ac/th
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
 # - unpackaged files:
+#   /etc/courier/webmlmrc
+#   /usr/bin/webmlmd
+#   /usr/bin/webmlmd.rc
+#   /usr/lib/courier/courier/webmail/webmlm
 #   /usr/sbin/aliaslookup
+#   /usr/share/man/man1/webmlmd.1.gz
 #   /usr/share/man/man8/aliaslookup.8.gz
 #
 # Conditional build:
@@ -12,12 +18,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.53.3
-Release:	4
+Version:	0.58.0
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	e75013df7deebd463656b81cc3e245f4
+# Source0-md5:	64218b525c5ef256e4dc1e9fe2180d22
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -47,26 +53,9 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
-# only for light upgrade from old version < 0.47
-# remove it after some time
-Requires(post):	courier-authlib-userdb
-Requires(post):	openssl-tools >= 0.9.7d
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	smtpdaemon
-Obsoletes:	courier-smtpauth
-Obsoletes:	exim
-Obsoletes:	masqmail
-Obsoletes:	nullmailer
-Obsoletes:	omta
-Obsoletes:	postfix
-Obsoletes:	qmail
-Obsoletes:	sendmail
-Obsoletes:	sendmail-cf
-Obsoletes:	sendmail-doc
-Obsoletes:	smail
 Obsoletes:	smtpdaemon
-Obsoletes:	ssmtp
-Obsoletes:	zmailer
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_datadir	%{_prefix}/share/courier
@@ -284,10 +273,9 @@ Alias /webmail %{_imagedir}
 </Directory>
 " > apache.conf
 
+%build
 # we don't want fax module
 rm -rf courier/module.fax
-
-%build
 cp -f /usr/share/automake/config.sub webmail
 
 # Change Makefile.am files and force recreate Makefile.in's.
