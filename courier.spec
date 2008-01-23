@@ -10,7 +10,7 @@
 %bcond_with	tests		# without tests
 #
 Summary:	Courier mail server
-Summary(pl):	Serwer poczty Courier
+Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	0.53.3
 Release:	4
@@ -94,20 +94,20 @@ Courier implements many SMTP extensions: DSN, PIPELINING, 8BITMIME.
 Courier also implements several new SMTP extensions for mailing list
 management and spam filtering.
 
-%description -l pl
-Courier jest w pe³ni funkcjonalnym serwerem poczty, mo¿e ca³kowicie
-zast±piæ us³ugi pocztowe dawane przez sendmail, Qmaila i inne serwery.
-Wprawdzie Courier nie ma wszystkich mo¿liwo¶ci istniej±cych serwerów,
-ilo¶æ nie obs³ugiwanych funkcji jest bardzo ma³a, i s± dostêpne lepsze
+%description -l pl.UTF-8
+Courier jest w peÅ‚ni funkcjonalnym serwerem poczty, moÅ¼e caÅ‚kowicie
+zastÄ…piÄ‡ usÅ‚ugi pocztowe dawane przez sendmail, Qmaila i inne serwery.
+Wprawdzie Courier nie ma wszystkich moÅ¼liwoÅ›ci istniejÄ…cych serwerÃ³w,
+iloÅ›Ä‡ nie obsÅ‚ugiwanych funkcji jest bardzo maÅ‚a, i sÄ… dostÄ™pne lepsze
 alternatywy.
 
-Courier zawiera wiele rozszerzeñ SMTP: DSN, PIPELINING, 8BITMIME. Ma
-tak¿e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
+Courier zawiera wiele rozszerzeÅ„ SMTP: DSN, PIPELINING, 8BITMIME. Ma
+takÅ¼e nowe rozszerzenia SMTP dla pocztowych list dyskusyjnych i
 filtrowania spamu.
 
 %package pop3d
 Summary:	Courier Integrated POP3 server
-Summary(pl):	Zintegrowany serwer POP3 do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
@@ -120,15 +120,15 @@ maildir mailboxes. This server does not support mailbox files. If you
 do not need the ability to download your mail using a POP3 client, you
 do not need to install this package.
 
-%description pop3d -l pl
-Ten pakiet zawiera zintegrowany serwer POP3 do Couriera, pozwalaj±cy
-na ¶ci±ganie poczty ze skrzynki przy pomocy dowolnego klienta POP3.
-Serwer POP3 Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir, nie
-obs³uguje skrzynek w postaci pojedynczych plików.
+%description pop3d -l pl.UTF-8
+Ten pakiet zawiera zintegrowany serwer POP3 do Couriera, pozwalajÄ…cy
+na Å›ciÄ…ganie poczty ze skrzynki przy pomocy dowolnego klienta POP3.
+Serwer POP3 Couriera moÅ¼e byÄ‡ uÅ¼ywany tylko ze skrzynkami Maildir, nie
+obsÅ‚uguje skrzynek w postaci pojedynczych plikÃ³w.
 
 %package imapd
 Summary:	Courier Integrated IMAP server
-Summary(pl):	Zintegrowany serwer IMAP do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer IMAP do Couriera
 Group:		Networking/Daemons
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
@@ -149,20 +149,20 @@ If you have the standalone version of the Courier-IMAP server already
 installed, installing this package will automatically remove the
 standalone version.
 
-%description imapd -l pl
+%description imapd -l pl.UTF-8
 Ten pakiet zawiera zintegrowany serwer IMAP do Couriera. Pozwala
-¶ci±gaæ pocztê przy pomocy klienta IMAP. Serwer IMAP Couriera mo¿e byæ
-u¿ywany tylko ze skrzynkami Maildir, nie obs³uguje skrzynek w postaci
-pojedynczych plików.
+Å›ciÄ…gaÄ‡ pocztÄ™ przy pomocy klienta IMAP. Serwer IMAP Couriera moÅ¼e byÄ‡
+uÅ¼ywany tylko ze skrzynkami Maildir, nie obsÅ‚uguje skrzynek w postaci
+pojedynczych plikÃ³w.
 
 Ten pakiet wymaga serwera Courier, to NIE jest samodzielna wersja
-serwera Courier-IMAP. Nie mo¿na te¿ instalowaæ jednocze¶nie tego
+serwera Courier-IMAP. Nie moÅ¼na teÅ¼ instalowaÄ‡ jednoczeÅ›nie tego
 pakietu i samodzielnej wersji Courier-IMAP. Zainstalowanie tego
-pakietu automatycznie odinstaluje Courier-IMAP je¶li by³ zinstalowany.
+pakietu automatycznie odinstaluje Courier-IMAP jeÅ›li byÅ‚ zinstalowany.
 
 %package webadmin
 Summary:	Courier Integrated HTTP administraton panel
-Summary(pl):	Panel administracyjny przez HTTP dla Couriera
+Summary(pl.UTF-8):	Panel administracyjny przez HTTP dla Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	filesystem >= 2.0-1
@@ -175,12 +175,12 @@ Conflicts:	apache1 < 1.3.34-5.11
 This is a web-based administration tool. Webadmin is a web CGI
 application.
 
-%description webadmin -l pl
-Webadmin jest narzêdziem administracyjnym obs³ugiwanym przez WWW.
+%description webadmin -l pl.UTF-8
+Webadmin jest narzÄ™dziem administracyjnym obsÅ‚ugiwanym przez WWW.
 
 %package webmail
 Summary:	Courier Integrated HTTP (webmail) server
-Summary(pl):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
+Summary(pl.UTF-8):	Zintegrowany serwer poczty przez HTTP (webmail) do Couriera
 Group:		Networking/Daemons
 Requires:	%{name} = %{version}-%{release}
 Requires:	filesystem >= 2.0-1
@@ -200,31 +200,31 @@ This is the same server that's distributed separately under the name
 of SqWebMail, however its configuration is customized for the Courier
 mail server.
 
-%description webmail -l pl
+%description webmail -l pl.UTF-8
 Ten pakiet zawiera zintegrowany serwer poczty przez HTTP (webmail) dla
-Couriera, pozwalaj±cy na dostêp do poczty za pomoc± przegl±darki WWW.
-Serwer webmail Couriera mo¿e byæ u¿ywany tylko ze skrzynkami Maildir,
-nie obs³uguje skrzynek w postaci pojedynczych plików.
+Couriera, pozwalajÄ…cy na dostÄ™p do poczty za pomocÄ… przeglÄ…darki WWW.
+Serwer webmail Couriera moÅ¼e byÄ‡ uÅ¼ywany tylko ze skrzynkami Maildir,
+nie obsÅ‚uguje skrzynek w postaci pojedynczych plikÃ³w.
 
-Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazw±
+Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazwÄ…
 SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
 
 %package maildir-tools
 Summary:	Tools for mail folders in Maildir format
-Summary(pl):	Narzêdzia do zarz±dzania skrzynkami Maildir
+Summary(pl.UTF-8):	NarzÄ™dzia do zarzÄ…dzania skrzynkami Maildir
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
 %description maildir-tools
 This package contains tools for mail folders in Maildir format.
 
-%description maildir-tools -l pl
-Ten pakiet zawiera narzêdzia do zarz±dzania folderami w formacie
+%description maildir-tools -l pl.UTF-8
+Ten pakiet zawiera narzÄ™dzia do zarzÄ…dzania folderami w formacie
 Maildir.
 
 %package mlm
 Summary:	Courier Integrated Mailing List Manager
-Summary(pl):	Zintegrowany zarz±dca list dyskusyjnych do Couriera
+Summary(pl.UTF-8):	Zintegrowany zarzÄ…dca list dyskusyjnych do Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
@@ -240,18 +240,18 @@ rolls. Mailing lists managed by couriermlm require zero human
 administrative oversight. couriermlm supports digests, write-only
 posting aliases, and moderated mailing lists.
 
-%description mlm -l pl
-Ten pakiet zawiera couriermlm - program do zarz±dzania listami
-dyskusyjnymi dla Couriera. couriermlm jest u¿ywany do konfigurowania,
-zarz±dzania i prowadzenia pocztowej listy dyskusyjnej. Automatycznie
-obs³uguje ¿±dania zapisywania i wypisywania oraz usuwa z listy
-niedzia³aj±ce adresy subskrybentów. Listy obs³ugiwane przez couriermlm
-nie wymagaj± pracy administratora. couriermlm obs³uguje digesty,
-aliasy pocztowe tylko do wysy³ania i listy moderowane.
+%description mlm -l pl.UTF-8
+Ten pakiet zawiera couriermlm - program do zarzÄ…dzania listami
+dyskusyjnymi dla Couriera. couriermlm jest uÅ¼ywany do konfigurowania,
+zarzÄ…dzania i prowadzenia pocztowej listy dyskusyjnej. Automatycznie
+obsÅ‚uguje Å¼Ä…dania zapisywania i wypisywania oraz usuwa z listy
+niedziaÅ‚ajÄ…ce adresy subskrybentÃ³w. Listy obsÅ‚ugiwane przez couriermlm
+nie wymagajÄ… pracy administratora. couriermlm obsÅ‚uguje digesty,
+aliasy pocztowe tylko do wysyÅ‚ania i listy moderowane.
 
 %package maildrop
 Summary:	Courier Integrated mail filter
-Summary(pl):	Zintegrowany filtr poczty do Couriera
+Summary(pl.UTF-8):	Zintegrowany filtr poczty do Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
 
@@ -260,9 +260,9 @@ This package installs Courier mail server's integrated mail filter.
 You need to install this package if you want to be able to filter your
 incoming mail.
 
-%description maildrop -l pl
+%description maildrop -l pl.UTF-8
 Ten pakiet zawiera zintegrowany filtr poczty dla Couriera. Jest
-potrzebny do filtrowania przychodz±cej poczty.
+potrzebny do filtrowania przychodzÄ…cej poczty.
 
 %prep
 %setup -q
