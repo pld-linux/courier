@@ -3,7 +3,12 @@
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
 # - unpackaged files:
+#   /etc/courier/webmlmrc
+#   /usr/bin/webmlmd
+#   /usr/bin/webmlmd.rc
+#   /usr/lib/courier/courier/webmail/webmlm
 #   /usr/sbin/aliaslookup
+#   /usr/share/man/man1/webmlmd.1.gz
 #   /usr/share/man/man8/aliaslookup.8.gz
 #
 # Conditional build:
