@@ -290,7 +290,7 @@ find -type f -a \( -name configure.in -o -name configure.ac \) | while read FILE
 	%{__libtoolize}
 	%{__aclocal}
 	%{__autoconf}
-	if grep -q AM_CONFIG_HEADER configure.in; then
+	if grep -q AC_CONFIG_HEADER configure.in; then
 		%{__autoheader}
 	fi
 	%{__automake}
