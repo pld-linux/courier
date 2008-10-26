@@ -100,6 +100,8 @@ Summary(pl.UTF-8):	Zintegrowany serwer POP3 do Couriera
 Group:		Networking/Daemons/POP3
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
+Provides:	pop3daemon
+Obsoletes:	pop3daemon
 
 %description pop3d
 This package installs Courier mail server's integrated POP3 server,
