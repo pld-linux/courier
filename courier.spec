@@ -97,7 +97,7 @@ filtrowania spamu.
 %package pop3d
 Summary:	Courier Integrated POP3 server
 Summary(pl.UTF-8):	Zintegrowany serwer POP3 do Couriera
-Group:		Networking/Daemons
+Group:		Networking/Daemons/POP3
 Requires(post):	openssl-tools >= 0.9.7d
 Requires:	%{name} = %{version}-%{release}
 
