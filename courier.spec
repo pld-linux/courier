@@ -18,12 +18,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.59.0
-Release:	2
+Version:	0.61.2
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	ca554bc8f814684ea8ddcbee5fc8a688
+# Source0-md5:	fdd7a26614cba68aa223e481bd7d5eb4
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -34,7 +34,7 @@ Patch6:		%{name}-db.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	courier-authlib-devel >= 0.57
+BuildRequires:	courier-authlib-devel >= 0.61
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
 BuildRequires:	gettext-devel
@@ -257,7 +257,7 @@ potrzebny do filtrowania przychodzącej poczty.
 
 %prep
 %setup -q
-%patch0 -p1
+#%patch0 -p1
 %{!?with_fam:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
@@ -314,8 +314,8 @@ done
 	--with-mailuid=2 \
 	--with-mailgid=2
 
-%{__make}
-%{!?with_tests:%{__make} check}
+%{__make} -j1
+%{!?with_tests:%{__make} -j1 check}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -324,7 +324,7 @@ install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
 	$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
-%{__make} install \
+%{__make} -j1 install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 # fix pam problem
@@ -657,7 +657,6 @@ fi
 %dir %{_libdir}
 %dir %{_libdir}/courier
 %dir %{_datadir}
-%{_datadir}/rootcerts
 %attr(755,root,root) %dir %{_datadir}/courierwebadmin
 %{_datadir}/courierwebadmin/admin-15*
 %dir %{_libdir}/filters
