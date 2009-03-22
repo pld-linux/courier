@@ -64,7 +64,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_localstatedir	/var/spool/courier
 %define		_sysconfdir	/etc/courier
 %define		_certsdir	%{_sysconfdir}/certs
-%define		_initrddir	/etc/rc.d/init.d
 
 %define		_webapps	/etc/webapps
 %define		_cgibindir	%{_prefix}/lib/cgi-bin
@@ -320,7 +319,7 @@ done
 %install
 rm -rf $RPM_BUILD_ROOT
 umask 022
-install -d -p $RPM_BUILD_ROOT{/etc/{cron.hourly,pam.d},%{_initrddir}} \
+install -d -p $RPM_BUILD_ROOT/etc/{cron.hourly,pam.d,rc.d/init.d} \
 	$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
@@ -412,7 +411,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/me
 # create calendarmode
 touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
 
-install courier.sysvinit $RPM_BUILD_ROOT%{_initrddir}/courier
+install courier.sysvinit $RPM_BUILD_ROOT/etc/rc.d/init.d/courier
 
 # sendmail soft links
 ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_prefix}/lib/sendmail
