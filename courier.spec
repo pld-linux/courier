@@ -2,12 +2,7 @@
 # - build fails due auto* macros on ac/th
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
-# - unpackaged files:
-#   /etc/courier/webmlmrc
-#   /usr/bin/webmlmd
-#   /usr/bin/webmlmd.rc
-#   /usr/lib/courier/courier/webmail/webmlm
-#   /usr/share/man/man1/webmlmd.1.gz
+# - init.d script, pre and post for webmlm?
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -195,6 +190,26 @@ nie obsługuje skrzynek w postaci pojedynczych plików.
 
 Jest to ten sam serwer, co dystrybuowany oddzielnie pod nazwą
 SqWebMail, ale jego konfiguracja jest dostosowana do serwera Courier.
+
+%package webmlm
+Summary:	Courier web-based access to some couriermlm commands
+Summary(pl.UTF-8):	Dostęp WWW do niektórych poleceń couriermlm do Couriera
+Group:		Networking/Daemons
+Requires:	%{name} = %{version}-%{release}
+Requires:	filesystem >= 3.0-11
+Requires:	webapps
+Requires:	webserver = apache
+Conflicts:	apache-base < 2.2.0-8
+Conflicts:	apache1 < 1.3.34-5.11
+
+%description webmlm
+WebMLM is a service that offers an alternative web-based access to
+some couriermlm commands, as an alternative to submitting them via
+E-mail.
+
+%description webmail -l pl.UTF-8
+WebMLM to serwis oferujący dostęp WWW do wybranych poleceń couriermlm
+jako alternatywę do wysyłania ich poprzez e-mail.
 
 %package maildir-tools
 Summary:	Tools for mail folders in Maildir format
@@ -868,6 +883,14 @@ fi
 %dir %attr(750,root,http) %{_webapps}/courier-webmail
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/apache.conf
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_webapps}/courier-webmail/httpd.conf
+
+%files webmlm
+%defattr(644,root,root,755)
+%attr(700,daemon,daemon) %dir %{_sysconfdir}/webmlmrc
+%attr(755,root,root) %{_bindir}/webmlmd
+%attr(755,root,root) %{_bindir}/webmlmd.rc
+%attr(755,root,root) %{_libdir}/courier/webmail
+%{_mandir}/man1/webmlmd.1*
 
 %files maildrop
 %defattr(644,root,root,755)
