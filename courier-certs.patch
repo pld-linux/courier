@@ -1,6 +1,6 @@
-diff -urN courier-0.58.0.orig/configure.in courier-0.58.0/configure.in
---- courier-0.58.0.orig/configure.in	2007-11-24 04:25:52.000000000 +0100
-+++ courier-0.58.0/configure.in	2008-01-19 23:37:26.428337743 +0100
+diff -urN courier-0.64.2.orig//configure.in courier-0.64.2/configure.in
+--- courier-0.64.2.orig//configure.in	2010-03-16 23:13:38.000000000 +0100
++++ courier-0.64.2/configure.in	2010-05-08 23:31:10.332622817 +0200
 @@ -70,6 +70,11 @@
  eval "localstatedir=$localstatedir"
  eval "datadir=$datadir"
@@ -13,10 +13,10 @@ diff -urN courier-0.58.0.orig/configure.in courier-0.58.0/configure.in
  AC_ARG_WITH(makedatprog, [], ,
  	ac_configure_args="$ac_configure_args --with-makedatprog=${libexecdir}/courier/makedatprog")
  
-diff -urN courier-0.58.0.orig/courier/configure.in courier-0.58.0/courier/configure.in
---- courier-0.58.0.orig/courier/configure.in	2007-11-24 04:25:52.000000000 +0100
-+++ courier-0.58.0/courier/configure.in	2008-01-19 23:38:38.745253650 +0100
-@@ -498,6 +498,12 @@
+diff -urN courier-0.64.2.orig//courier/configure.in courier-0.64.2/courier/configure.in
+--- courier-0.64.2.orig//courier/configure.in	2010-01-09 22:13:40.000000000 +0100
++++ courier-0.64.2/courier/configure.in	2010-05-08 23:31:10.355976183 +0200
+@@ -480,6 +480,12 @@
  eval "datarootdir=$datarootdir"
  eval "bindir=$bindir"
  eval "localstatedir=$localstatedir"
@@ -29,9 +29,9 @@ diff -urN courier-0.58.0.orig/courier/configure.in courier-0.58.0/courier/config
  
  MAILDROP="$bindir/maildrop"
  AC_SUBST(MAILDROP)
-diff -urN courier-0.58.0.orig/courier/imapd-ssl.rc.in courier-0.58.0/courier/imapd-ssl.rc.in
---- courier-0.58.0.orig/courier/imapd-ssl.rc.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/courier/imapd-ssl.rc.in	2008-01-19 23:37:26.428337743 +0100
+diff -urN courier-0.64.2.orig//courier/imapd-ssl.rc.in courier-0.64.2/courier/imapd-ssl.rc.in
+--- courier-0.64.2.orig//courier/imapd-ssl.rc.in	2010-05-08 23:30:54.599915374 +0200
++++ courier-0.64.2/courier/imapd-ssl.rc.in	2010-05-08 23:31:10.355976183 +0200
 @@ -28,6 +28,11 @@
  
  case $1 in
@@ -44,10 +44,10 @@ diff -urN courier-0.58.0.orig/courier/imapd-ssl.rc.in courier-0.58.0/courier/ima
  	umask $IMAP_UMASK
  	@ULIMIT@ $IMAP_ULIMITD
  	@SETENV@ -i @SHELL@ -c " set -a ;
-diff -urN courier-0.58.0.orig/courier/module.esmtp/configure.in courier-0.58.0/courier/module.esmtp/configure.in
---- courier-0.58.0.orig/courier/module.esmtp/configure.in	2007-11-04 22:17:03.000000000 +0100
-+++ courier-0.58.0/courier/module.esmtp/configure.in	2008-01-19 23:37:26.428337743 +0100
-@@ -306,6 +306,11 @@
+diff -urN courier-0.64.2.orig//courier/module.esmtp/configure.in courier-0.64.2/courier/module.esmtp/configure.in
+--- courier-0.64.2.orig//courier/module.esmtp/configure.in	2008-07-12 22:17:24.000000000 +0200
++++ courier-0.64.2/courier/module.esmtp/configure.in	2010-05-08 23:31:10.355976183 +0200
+@@ -287,6 +287,11 @@
  AC_SUBST(mydatadir)   # Quell automake warning
  
  
@@ -59,9 +59,9 @@ diff -urN courier-0.58.0.orig/courier/module.esmtp/configure.in courier-0.58.0/c
  dnl
  dnl  Check what libraries are available
  dnl
-diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd.cnf.openssl.in courier-0.58.0/courier/module.esmtp/esmtpd.cnf.openssl.in
---- courier-0.58.0.orig/courier/module.esmtp/esmtpd.cnf.openssl.in	2007-07-01 17:36:34.000000000 +0200
-+++ courier-0.58.0/courier/module.esmtp/esmtpd.cnf.openssl.in	2008-01-19 23:39:34.911369481 +0100
+diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd.cnf.openssl.in courier-0.64.2/courier/module.esmtp/esmtpd.cnf.openssl.in
+--- courier-0.64.2.orig//courier/module.esmtp/esmtpd.cnf.openssl.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.64.2/courier/module.esmtp/esmtpd.cnf.openssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -1,5 +1,5 @@
  
 -RANDFILE = @mydatadir@/esmtpd.rnd
@@ -69,22 +69,10 @@ diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd.cnf.openssl.in courier
  
  [ req ]
  default_bits = 1024
-diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd.dist.in courier-0.58.0/courier/module.esmtp/esmtpd.dist.in
---- courier-0.58.0.orig/courier/module.esmtp/esmtpd.dist.in	2007-11-04 22:17:03.000000000 +0100
-+++ courier-0.58.0/courier/module.esmtp/esmtpd.dist.in	2008-01-19 23:39:44.028487817 +0100
-@@ -233,7 +233,7 @@
- #
- # This is an experimental feature.
- 
--TLS_CERTFILE=@mydatadir@/esmtpd.pem
-+TLS_CERTFILE=@certsdir@/esmtpd.pem
- 
- ##NAME: TLS_CERTINFO:0
- #
-diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.dist.in courier-0.58.0/courier/module.esmtp/esmtpd-ssl.dist.in
---- courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.dist.in	2007-11-04 22:17:03.000000000 +0100
-+++ courier-0.58.0/courier/module.esmtp/esmtpd-ssl.dist.in	2008-01-19 23:39:22.684097067 +0100
-@@ -256,7 +256,7 @@
+diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd.dist.in courier-0.64.2/courier/module.esmtp/esmtpd.dist.in
+--- courier-0.64.2.orig//courier/module.esmtp/esmtpd.dist.in	2010-02-02 23:30:00.000000000 +0100
++++ courier-0.64.2/courier/module.esmtp/esmtpd.dist.in	2010-05-08 23:31:10.355976183 +0200
+@@ -242,7 +242,7 @@
  #
  # This is an experimental feature.
  
@@ -93,9 +81,21 @@ diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.dist.in courier-0.
  
  ##NAME: TLS_TRUSTCERTS:0
  #
-diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.in courier-0.58.0/courier/module.esmtp/esmtpd-ssl.in
---- courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/courier/module.esmtp/esmtpd-ssl.in	2008-01-19 23:37:26.431671242 +0100
+diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.dist.in courier-0.64.2/courier/module.esmtp/esmtpd-ssl.dist.in
+--- courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.dist.in	2010-02-02 23:30:00.000000000 +0100
++++ courier-0.64.2/courier/module.esmtp/esmtpd-ssl.dist.in	2010-05-08 23:31:10.355976183 +0200
+@@ -269,7 +269,7 @@
+ #
+ # This is an experimental feature.
+ 
+-TLS_CERTFILE=@mydatadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_TRUSTCERTS:0
+ #
+diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.in courier-0.64.2/courier/module.esmtp/esmtpd-ssl.in
+--- courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.64.2/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -25,6 +25,10 @@
  
  case $1 in
@@ -107,9 +107,9 @@ diff -urN courier-0.58.0.orig/courier/module.esmtp/esmtpd-ssl.in courier-0.58.0/
  	;;
  stop)
  	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
-diff -urN courier-0.58.0.orig/courier/module.esmtp/mkesmtpdcert.in courier-0.58.0/courier/module.esmtp/mkesmtpdcert.in
---- courier-0.58.0.orig/courier/module.esmtp/mkesmtpdcert.in	2007-11-04 22:17:03.000000000 +0100
-+++ courier-0.58.0/courier/module.esmtp/mkesmtpdcert.in	2008-01-19 23:40:14.373324466 +0100
+diff -urN courier-0.64.2.orig//courier/module.esmtp/mkesmtpdcert.in courier-0.64.2/courier/module.esmtp/mkesmtpdcert.in
+--- courier-0.64.2.orig//courier/module.esmtp/mkesmtpdcert.in	2007-11-04 22:17:03.000000000 +0100
++++ courier-0.64.2/courier/module.esmtp/mkesmtpdcert.in	2010-05-08 23:31:10.355976183 +0200
 @@ -16,38 +16,38 @@
  	test -x @CERTTOOL@ || exit 0
  fi
@@ -168,9 +168,9 @@ diff -urN courier-0.58.0.orig/courier/module.esmtp/mkesmtpdcert.in courier-0.58.
  
  	@CERTTOOL@ --generate-privkey --outfile esmtpd.key
  	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
-diff -urN courier-0.58.0.orig/courier/pop3d-ssl.in courier-0.58.0/courier/pop3d-ssl.in
---- courier-0.58.0.orig/courier/pop3d-ssl.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/courier/pop3d-ssl.in	2008-01-19 23:37:26.431671242 +0100
+diff -urN courier-0.64.2.orig//courier/pop3d-ssl.in courier-0.64.2/courier/pop3d-ssl.in
+--- courier-0.64.2.orig//courier/pop3d-ssl.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.64.2/courier/pop3d-ssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -29,6 +29,11 @@
  
  case $1 in
@@ -183,9 +183,9 @@ diff -urN courier-0.58.0.orig/courier/pop3d-ssl.in courier-0.58.0/courier/pop3d-
  	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
  		@SHELL@ -c " set -a ; \
  		prefix=@prefix@ ; \
-diff -urN courier-0.58.0.orig/courier.sysvinit.in courier-0.58.0/courier.sysvinit.in
---- courier-0.58.0.orig/courier.sysvinit.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/courier.sysvinit.in	2008-01-19 23:37:26.431671242 +0100
+diff -urN courier-0.64.2.orig//courier.sysvinit.in courier-0.64.2/courier.sysvinit.in
+--- courier-0.64.2.orig//courier.sysvinit.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.64.2/courier.sysvinit.in	2010-05-08 23:31:10.355976183 +0200
 @@ -18,7 +18,7 @@
  sbindir="@sbindir@"
  bindir="@bindir@"
@@ -222,10 +222,10 @@ diff -urN courier-0.58.0.orig/courier.sysvinit.in courier-0.58.0/courier.sysvini
  				then
  					echo -n " generating-IMAP-SSL-certificate..."
  
-diff -urN courier-0.58.0.orig/imap/configure.in courier-0.58.0/imap/configure.in
---- courier-0.58.0.orig/imap/configure.in	2007-11-24 04:23:13.000000000 +0100
-+++ courier-0.58.0/imap/configure.in	2008-01-19 23:37:26.435004741 +0100
-@@ -300,6 +300,11 @@
+diff -urN courier-0.64.2.orig//imap/configure.in courier-0.64.2/imap/configure.in
+--- courier-0.64.2.orig//imap/configure.in	2009-12-25 23:15:10.000000000 +0100
++++ courier-0.64.2/imap/configure.in	2010-05-08 23:31:10.355976183 +0200
+@@ -284,6 +284,11 @@
  mydatadir="$datadir"
  AC_SUBST(mydatadir)   # Avoid useless autoconf warning
  
@@ -237,9 +237,9 @@ diff -urN courier-0.58.0.orig/imap/configure.in courier-0.58.0/imap/configure.in
  #
  # Check for PAM configuration flavor
  
-diff -urN courier-0.58.0.orig/imap/imapd.cnf.openssl.in courier-0.58.0/imap/imapd.cnf.openssl.in
---- courier-0.58.0.orig/imap/imapd.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
-+++ courier-0.58.0/imap/imapd.cnf.openssl.in	2008-01-19 23:40:41.287991189 +0100
+diff -urN courier-0.64.2.orig//imap/imapd.cnf.openssl.in courier-0.64.2/imap/imapd.cnf.openssl.in
+--- courier-0.64.2.orig//imap/imapd.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.64.2/imap/imapd.cnf.openssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -1,5 +1,5 @@
  
 -RANDFILE = @mydatadir@/imapd.rand
@@ -247,10 +247,10 @@ diff -urN courier-0.58.0.orig/imap/imapd.cnf.openssl.in courier-0.58.0/imap/imap
  
  [ req ]
  default_bits = 1024
-diff -urN courier-0.58.0.orig/imap/imapd-ssl.dist.in courier-0.58.0/imap/imapd-ssl.dist.in
---- courier-0.58.0.orig/imap/imapd-ssl.dist.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/imap/imapd-ssl.dist.in	2008-01-19 23:40:36.037731086 +0100
-@@ -254,7 +254,7 @@
+diff -urN courier-0.64.2.orig//imap/imapd-ssl.dist.in courier-0.64.2/imap/imapd-ssl.dist.in
+--- courier-0.64.2.orig//imap/imapd-ssl.dist.in	2010-05-08 23:28:14.469307022 +0200
++++ courier-0.64.2/imap/imapd-ssl.dist.in	2010-05-08 23:31:10.359913750 +0200
+@@ -260,7 +260,7 @@
  #
  # This is an experimental feature.
  
@@ -259,45 +259,45 @@ diff -urN courier-0.58.0.orig/imap/imapd-ssl.dist.in courier-0.58.0/imap/imapd-s
  
  ##NAME: TLS_TRUSTCERTS:0
  #
-diff -urN courier-0.58.0.orig/imap/mkimapdcert.8.in courier-0.58.0/imap/mkimapdcert.8.in
---- courier-0.58.0.orig/imap/mkimapdcert.8.in	2007-04-22 20:19:43.000000000 +0200
-+++ courier-0.58.0/imap/mkimapdcert.8.in	2008-01-19 23:41:04.485807114 +0100
-@@ -21,18 +21,18 @@
+diff -urN courier-0.64.2.orig//imap/mkimapdcert.8.in courier-0.64.2/imap/mkimapdcert.8.in
+--- courier-0.64.2.orig//imap/mkimapdcert.8.in	2010-02-20 05:11:46.000000000 +0100
++++ courier-0.64.2/imap/mkimapdcert.8.in	2010-05-08 23:31:45.213634288 +0200
+@@ -29,18 +29,18 @@
  .SH "DESCRIPTION"
  .PP
- IMAP over SSL requires a valid, signed, X\.509 certificate\. The default location for the certificate file is
--\fI@datadir@/imapd\.pem\fR\.
-+\fI@certsdir@/imapd\.pem\fR\.
+ IMAP over SSL requires a valid, signed, X\&.509 certificate\&. The default location for the certificate file is
+-@datadir@/imapd\&.pem\&.
++@certsdir@/imapd\&.pem\&.
  \fBmkimapdcert\fR
- generates a self\-signed X\.509 certificate, mainly for testing\. For production use the X\.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate\.
+ generates a self\-signed X\&.509 certificate, mainly for testing\&. For production use the X\&.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate\&.
  .PP
  
--\fI@datadir@/imapd\.pem\fR
-+\fI@certsdir@/imapd\.pem\fR
- must be owned by the @mailuser@ user and have no group or world permissions\. The
+-@datadir@/imapd\&.pem
++@certsdir@/imapd\&.pem
+ must be owned by the @mailuser@ user and have no group or world permissions\&. The
  \fBmkimapdcert\fR
- command will enforce this\. To prevent an unfortunate accident,
+ command will enforce this\&. To prevent an unfortunate accident,
  \fBmkimapdcert\fR
  will not work if
--\fB@datadir@/imapd\.pem\fR
-+\fB@certsdir@/imapd\.pem\fR
- already exists\.
+-\fB@datadir@/imapd\&.pem\fR
++\fB@certsdir@/imapd\&.pem\fR
+ already exists\&.
  .PP
  
-@@ -42,7 +42,7 @@
- to be installed\.
+@@ -50,7 +50,7 @@
+ to be installed\&.
  .SH "FILES"
  .PP
--@datadir@/imapd\.pem
-+@certsdir@/imapd\.pem
+-@datadir@/imapd\&.pem
++@certsdir@/imapd\&.pem
  .RS 4
- X\.509 certificate\.
+ X\&.509 certificate\&.
  .RE
-diff -urN courier-0.58.0.orig/imap/mkimapdcert.html.in courier-0.58.0/imap/mkimapdcert.html.in
---- courier-0.58.0.orig/imap/mkimapdcert.html.in	2007-04-22 20:19:42.000000000 +0200
-+++ courier-0.58.0/imap/mkimapdcert.html.in	2008-01-19 23:41:31.457143328 +0100
+diff -urN courier-0.64.2.orig//imap/mkimapdcert.html.in courier-0.64.2/imap/mkimapdcert.html.in
+--- courier-0.64.2.orig//imap/mkimapdcert.html.in	2010-02-20 05:11:46.000000000 +0100
++++ courier-0.64.2/imap/mkimapdcert.html.in	2010-05-08 23:31:51.539285741 +0200
 @@ -7,22 +7,22 @@
- --></head><body><div class="refentry" lang="en" xml:lang="en"><a id="mkimapdcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkimapdcert — create a test SSL certificate for IMAP over SSL</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkimapdcert</code> </p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id572113" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+ --></head><body><div class="refentry" title="mkimapdcert"><a id="mkimapdcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkimapdcert — create a test SSL certificate for IMAP over SSL</p></div><div class="refsynopsisdiv" title="Synopsis"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkimapdcert</code> </p></div></div><div class="refsect1" title="DESCRIPTION"><a id="id328148" shape="rect"> </a><h2>DESCRIPTION</h2><p>
  IMAP over SSL requires a valid, signed, X.509 certificate.  The default
  location for the certificate file is
 -<code class="filename">@datadir@/imapd.pem</code>.
@@ -318,14 +318,14 @@ diff -urN courier-0.58.0.orig/imap/mkimapdcert.html.in courier-0.58.0/imap/mkima
 -will not work if <span class="command"><strong>@datadir@/imapd.pem</strong></span> already exists.</p><p>
 +will not work if <span class="command"><strong>@certsdir@/imapd.pem</strong></span> already exists.</p><p>
  <span class="command"><strong>mkimapdcert</strong></span> requires
--<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id574718" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/imapd.pem</span></dt><dd>
-+<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id574718" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/imapd.pem</span></dt><dd>
+-<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" title="FILES"><a id="id344462" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/imapd.pem</span></dt><dd>
++<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" title="FILES"><a id="id344462" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/imapd.pem</span></dt><dd>
  X.509 certificate.
  </dd><dt><span class="term">@sysconfdir@/imapd.cnf</span></dt><dd>
  Parameters used by OpenSSL to
-diff -urN courier-0.58.0.orig/imap/mkimapdcert.in courier-0.58.0/imap/mkimapdcert.in
---- courier-0.58.0.orig/imap/mkimapdcert.in	2007-11-04 21:53:05.000000000 +0100
-+++ courier-0.58.0/imap/mkimapdcert.in	2008-01-19 23:42:07.038906129 +0100
+diff -urN courier-0.64.2.orig//imap/mkimapdcert.in courier-0.64.2/imap/mkimapdcert.in
+--- courier-0.64.2.orig//imap/mkimapdcert.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.64.2/imap/mkimapdcert.in	2010-05-08 23:31:10.359913750 +0200
 @@ -18,41 +18,41 @@
  
  prefix="@prefix@"
@@ -387,45 +387,45 @@ diff -urN courier-0.58.0.orig/imap/mkimapdcert.in courier-0.58.0/imap/mkimapdcer
  
  	@CERTTOOL@ --generate-privkey --outfile imapd.key
  	@CERTTOOL@ --generate-self-signed --load-privkey imapd.key --outfile imapd.cert --template @sysconfdir@/imapd.cnf
-diff -urN courier-0.58.0.orig/imap/mkpop3dcert.8.in courier-0.58.0/imap/mkpop3dcert.8.in
---- courier-0.58.0.orig/imap/mkpop3dcert.8.in	2007-04-22 20:19:45.000000000 +0200
-+++ courier-0.58.0/imap/mkpop3dcert.8.in	2008-01-19 23:42:20.199558142 +0100
-@@ -21,18 +21,18 @@
+diff -urN courier-0.64.2.orig//imap/mkpop3dcert.8.in courier-0.64.2/imap/mkpop3dcert.8.in
+--- courier-0.64.2.orig//imap/mkpop3dcert.8.in	2010-02-20 05:11:46.000000000 +0100
++++ courier-0.64.2/imap/mkpop3dcert.8.in	2010-05-08 23:31:57.363659801 +0200
+@@ -29,18 +29,18 @@
  .SH "DESCRIPTION"
  .PP
- POP3 over SSL requires a valid, signed, X\.509 certificate\. The default location for the certificate file is
--\fI@datadir@/pop3d\.pem\fR\.
-+\fI@certsdir@/pop3d\.pem\fR\.
+ POP3 over SSL requires a valid, signed, X\&.509 certificate\&. The default location for the certificate file is
+-@datadir@/pop3d\&.pem\&.
++@certsdir@/pop3d\&.pem\&.
  \fBmkpop3dcert\fR
- generates a self\-signed X\.509 certificate, mainly for testing\. For production use the X\.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate\.
+ generates a self\-signed X\&.509 certificate, mainly for testing\&. For production use the X\&.509 certificate must be signed by a recognized certificate authority, in order for mail clients to accept the certificate\&.
  .PP
  
--\fI@datadir@/pop3d\.pem\fR
-+\fI@certsdir@/pop3d\.pem\fR
- must be owned by the @mailuser@ user and have no group or world permissions\. The
+-@datadir@/pop3d\&.pem
++@certsdir@/pop3d\&.pem
+ must be owned by the @mailuser@ user and have no group or world permissions\&. The
  \fBmkpop3dcert\fR
- command will enforce this\. To prevent an unfortunate accident,
+ command will enforce this\&. To prevent an unfortunate accident,
  \fBmkpop3dcert\fR
  will not work if
--\fB@datadir@/pop3d\.pem\fR
-+\fB@certsdir@/pop3d\.pem\fR
- already exists\.
+-\fB@datadir@/pop3d\&.pem\fR
++\fB@certsdir@/pop3d\&.pem\fR
+ already exists\&.
  .PP
  
-@@ -42,7 +42,7 @@
- to be installed\.
+@@ -50,7 +50,7 @@
+ to be installed\&.
  .SH "FILES"
  .PP
--@datadir@/pop3d\.pem
-+@certsdir@/pop3d\.pem
+-@datadir@/pop3d\&.pem
++@certsdir@/pop3d\&.pem
  .RS 4
- X\.509 certificate\.
+ X\&.509 certificate\&.
  .RE
-diff -urN courier-0.58.0.orig/imap/mkpop3dcert.html.in courier-0.58.0/imap/mkpop3dcert.html.in
---- courier-0.58.0.orig/imap/mkpop3dcert.html.in	2007-04-22 20:19:45.000000000 +0200
-+++ courier-0.58.0/imap/mkpop3dcert.html.in	2008-01-19 23:42:28.846653207 +0100
+diff -urN courier-0.64.2.orig//imap/mkpop3dcert.html.in courier-0.64.2/imap/mkpop3dcert.html.in
+--- courier-0.64.2.orig//imap/mkpop3dcert.html.in	2010-02-20 05:11:46.000000000 +0100
++++ courier-0.64.2/imap/mkpop3dcert.html.in	2010-05-08 23:32:03.082617460 +0200
 @@ -7,22 +7,22 @@
- --></head><body><div class="refentry" lang="en" xml:lang="en"><a id="mkpop3dcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkpop3dcert — create a test SSL certificate for POP3 over SSL</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkpop3dcert</code> </p></div></div><div class="refsect1" lang="en" xml:lang="en"><a id="id327377" shape="rect"> </a><h2>DESCRIPTION</h2><p>
+ --></head><body><div class="refentry" title="mkpop3dcert"><a id="mkpop3dcert" shape="rect"> </a><div class="titlepage"/><div class="refnamediv"><h2>Name</h2><p>mkpop3dcert — create a test SSL certificate for POP3 over SSL</p></div><div class="refsynopsisdiv" title="Synopsis"><h2>Synopsis</h2><div class="cmdsynopsis"><p><code class="command">@sbindir@/mkpop3dcert</code> </p></div></div><div class="refsect1" title="DESCRIPTION"><a id="id435600" shape="rect"> </a><h2>DESCRIPTION</h2><p>
  POP3 over SSL requires a valid, signed, X.509 certificate.  The default
  location for the certificate file is
 -<code class="filename">@datadir@/pop3d.pem</code>.
@@ -446,14 +446,14 @@ diff -urN courier-0.58.0.orig/imap/mkpop3dcert.html.in courier-0.58.0/imap/mkpop
 -will not work if <span class="command"><strong>@datadir@/pop3d.pem</strong></span> already exists.</p><p>
 +will not work if <span class="command"><strong>@certsdir@/pop3d.pem</strong></span> already exists.</p><p>
  <span class="command"><strong>mkpop3dcert</strong></span> requires
--<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id329982" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/pop3d.pem</span></dt><dd>
-+<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" lang="en" xml:lang="en"><a id="id329982" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/pop3d.pem</span></dt><dd>
+-<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" title="FILES"><a id="id451914" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@datadir@/pop3d.pem</span></dt><dd>
++<span class="application">OpenSSL</span> to be installed.</p></div><div class="refsect1" title="FILES"><a id="id451914" shape="rect"> </a><h2>FILES</h2><div class="variablelist"><dl><dt><span class="term">@certsdir@/pop3d.pem</span></dt><dd>
  X.509 certificate.
  </dd><dt><span class="term">@sysconfdir@/pop3d.cnf</span></dt><dd>
  Parameters used by OpenSSL to
-diff -urN courier-0.58.0.orig/imap/mkpop3dcert.in courier-0.58.0/imap/mkpop3dcert.in
---- courier-0.58.0.orig/imap/mkpop3dcert.in	2007-11-04 21:53:05.000000000 +0100
-+++ courier-0.58.0/imap/mkpop3dcert.in	2008-01-19 23:42:50.974416143 +0100
+diff -urN courier-0.64.2.orig//imap/mkpop3dcert.in courier-0.64.2/imap/mkpop3dcert.in
+--- courier-0.64.2.orig//imap/mkpop3dcert.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.64.2/imap/mkpop3dcert.in	2010-05-08 23:31:10.359913750 +0200
 @@ -18,41 +18,41 @@
  
  prefix="@prefix@"
@@ -515,9 +515,9 @@ diff -urN courier-0.58.0.orig/imap/mkpop3dcert.in courier-0.58.0/imap/mkpop3dcer
  
  	@CERTTOOL@ --generate-privkey --outfile pop3d.key
  	@CERTTOOL@ --generate-self-signed --load-privkey pop3d.key --outfile pop3d.cert --template @sysconfdir@/pop3d.cnf
-diff -urN courier-0.58.0.orig/imap/pop3d.cnf.openssl.in courier-0.58.0/imap/pop3d.cnf.openssl.in
---- courier-0.58.0.orig/imap/pop3d.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
-+++ courier-0.58.0/imap/pop3d.cnf.openssl.in	2008-01-19 23:43:08.841968023 +0100
+diff -urN courier-0.64.2.orig//imap/pop3d.cnf.openssl.in courier-0.64.2/imap/pop3d.cnf.openssl.in
+--- courier-0.64.2.orig//imap/pop3d.cnf.openssl.in	2007-11-04 21:49:58.000000000 +0100
++++ courier-0.64.2/imap/pop3d.cnf.openssl.in	2010-05-08 23:31:10.359913750 +0200
 @@ -1,5 +1,5 @@
  
 -RANDFILE = @mydatadir@/pop3d.rand
@@ -525,10 +525,10 @@ diff -urN courier-0.58.0.orig/imap/pop3d.cnf.openssl.in courier-0.58.0/imap/pop3
  
  [ req ]
  default_bits = 1024
-diff -urN courier-0.58.0.orig/imap/pop3d-ssl.dist.in courier-0.58.0/imap/pop3d-ssl.dist.in
---- courier-0.58.0.orig/imap/pop3d-ssl.dist.in	2008-01-19 23:30:56.000000000 +0100
-+++ courier-0.58.0/imap/pop3d-ssl.dist.in	2008-01-19 23:43:02.304977494 +0100
-@@ -241,7 +241,7 @@
+diff -urN courier-0.64.2.orig//imap/pop3d-ssl.dist.in courier-0.64.2/imap/pop3d-ssl.dist.in
+--- courier-0.64.2.orig//imap/pop3d-ssl.dist.in	2010-05-08 23:28:14.479307068 +0200
++++ courier-0.64.2/imap/pop3d-ssl.dist.in	2010-05-08 23:31:10.359913750 +0200
+@@ -248,7 +248,7 @@
  #
  # This is an experimental feature.
  

@@ -1,14 +1,18 @@
---- courier-0.49.0/maildrop/Makefile.am.orig	2004-10-31 04:13:48.000000000 +0100
-+++ courier-0.49.0/maildrop/Makefile.am	2005-03-24 23:14:03.438223172 +0100
-@@ -63,9 +63,8 @@
- mailbot_SOURCES=mailbot.c
- mailbot_DEPENDENCIES=../rfc822/librfc822.la ../liblock/liblock.la \
- 	../numlib/libnumlib.la $(DBLIB)
--mailbot_LDADD=../rfc822/librfc822.la ../liblock/liblock.la \
--	../numlib/libnumlib.la $(DBLIB)
+diff -urN courier-0.64.2.orig//maildrop/Makefile.am courier-0.64.2/maildrop/Makefile.am
+--- courier-0.64.2.orig//maildrop/Makefile.am	2009-11-08 19:14:47.000000000 +0100
++++ courier-0.64.2/maildrop/Makefile.am	2010-05-08 23:35:52.249468988 +0200
+@@ -64,10 +64,10 @@
+ mailbot_DEPENDENCIES=../rfc2045/librfc2045.la \
+ 	../rfc822/librfc822.la ../liblock/liblock.la \
+ 	../numlib/libnumlib.la ../unicode/libunicode.la $(DBLIB)
+-mailbot_LDADD=../rfc2045/librfc2045.la \
+-	../rfc822/librfc822.la ../liblock/liblock.la \
+-	../numlib/libnumlib.la ../unicode/libunicode.la $(DBLIB)
 -mailbot_LDFLAGS = -static
-+mailbot_LDADD=../rfc822/.libs/librfc822.a ../liblock/.libs/liblock.a \
-+	../numlib/.libs/libnumlib.a $(DBLIB) $(LIBGDBM)
++mailbot_LDADD=../rfc2045/.libs/librfc2045.la \
++	../rfc822/.libs/librfc822.la ../liblock/.libs/liblock.la \
++	../numlib/.libs/libnumlib.la ../unicode/.libs/libunicode.la \
++	$(DBLIB) $(LIBGDBM)
  
  EXTRA_DIST = maildroptips.html $(BUILT_SOURCES)\
  	maildrop.lsm testsuite.txt

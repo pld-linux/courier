@@ -1,14 +1,34 @@
-diff -Nur old/courier/Makefile.am new/courier/Makefile.am
---- old/courier/Makefile.am	2006-03-26 15:33:12.000000000 +0000
-+++ new/courier/Makefile.am	2006-11-07 19:10:21.776006250 +0000
-@@ -51,7 +51,7 @@
+diff -ur courier-0.64.2.orig//courier/cmlm.h courier-0.64.2/courier/cmlm.h
+--- courier-0.64.2.orig//courier/cmlm.h	2007-03-11 05:44:43.000000000 +0100
++++ courier-0.64.2/courier/cmlm.h	2010-05-08 23:28:42.329517182 +0200
+@@ -22,6 +22,7 @@
+ #include	<functional>
+ #include	<cctype>
+ 
++#define SBINDIR "/usr/sbin"
+ #define	TMP	"tmp"
+ #define	TMPLOCK	"tmp.lock"
+ 
+@@ -56,7 +57,7 @@
+ 
+ #include	"bindir.h"
+ 
+-#define	SENDMAIL	BINDIR "/sendmail"
++#define	SENDMAIL	SBINDIR "/sendmail"
+ #define	REFORMIME	BINDIR "/reformime"
+ #define	MAXRCPTS	20
+ 
+diff -ur courier-0.64.2.orig//courier/Makefile.am courier-0.64.2/courier/Makefile.am
+--- courier-0.64.2.orig//courier/Makefile.am	2009-12-19 01:59:59.000000000 +0100
++++ courier-0.64.2/courier/Makefile.am	2010-05-08 23:28:42.329517182 +0200
+@@ -49,7 +49,7 @@
  extrabin=maildrop lockmail reformail reformime mailbot mimegpg \
  	imapd makemime deliverquota maildirmake maildiracl maildirkw
  
 -bin_PROGRAMS=cancelmsg mailq sendmail \
 +bin_PROGRAMS=cancelmsg mailq \
  	testmxlookup dotforward \
- 	couriermlm \
+ 	couriermlm webmlmd \
  	courier-config @couriertls@ @EXTRABIN@
 @@ -63,7 +63,7 @@
  sbin_SCRIPTS=@SBINSCRIPTS@
@@ -19,23 +39,3 @@ diff -Nur old/courier/Makefile.am new/courier/Makefile.am
  	@COURIERLDAPALIASD@ @EXTRASBIN@
  
  sysconf_DATA=pop3d.authpam imapd.authpam webmail.authpam imapd.cnf pop3d.cnf \
-diff -Nur old/courier/cmlm.h new/courier/cmlm.h
---- old/courier/cmlm.h	2005-04-03 16:22:06.000000000 +0000
-+++ new/courier/cmlm.h	2006-11-07 19:11:13.283225250 +0000
-@@ -18,6 +18,7 @@
- 
- using namespace std;
- 
-+#define SBINDIR "/usr/sbin"
- #define	TMP	"tmp"
- #define	TMPLOCK	"tmp.lock"
- 
-@@ -52,7 +53,7 @@
- 
- #include	"bindir.h"
- 
--#define	SENDMAIL	BINDIR "/sendmail"
-+#define	SENDMAIL	SBINDIR "/sendmail"
- #define	REFORMIME	BINDIR "/reformime"
- #define	MAXRCPTS	20
- 
