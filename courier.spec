@@ -7,9 +7,7 @@
 #   /usr/bin/webmlmd
 #   /usr/bin/webmlmd.rc
 #   /usr/lib/courier/courier/webmail/webmlm
-#   /usr/sbin/aliaslookup
 #   /usr/share/man/man1/webmlmd.1.gz
-#   /usr/share/man/man8/aliaslookup.8.gz
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
@@ -18,12 +16,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.61.2
-Release:	3
+Version:	0.64.2
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	fdd7a26614cba68aa223e481bd7d5eb4
+# Source0-md5:	b553606fb5cbc3aa3ca16f50992db533
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -313,7 +311,7 @@ done
 	--with-mailgid=2
 
 %{__make} -j1
-%{!?with_tests:%{__make} -j1 check}
+%{?with_tests:%{__make} -j1 check}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -617,6 +615,7 @@ fi
 %{_mandir}/man1/rmail.1*
 %{_mandir}/man5/dot-courier.5*
 %{_mandir}/man7/localmailfilter.7*
+%{_mandir}/man8/aliaslookup.8*
 %{_mandir}/man8/courierfilter.8*
 %{_mandir}/man8/courierperlfilter.8*
 %{_mandir}/man8/dupfilter.8*
@@ -689,6 +688,7 @@ fi
 %attr(755,root,root) %{_libdir}/courier/modules/esmtp/addcr
 %attr(755,root,root) %{_sbindir}/courieresmtpd
 %attr(755,root,root) %{_bindir}/addcr
+%attr(755,root,root) %{_sbindir}/aliaslookup
 %attr(755,root,root) %{_sbindir}/esmtpd
 %attr(755,root,root) %{_datadir}/esmtpd
 %attr(755,root,root) %{_sbindir}/esmtpd-ssl
@@ -772,6 +772,7 @@ fi
 %{_mandir}/man8/courierpop3login.8*
 %{_mandir}/man8/mkpop3dcert.8*
 %{_mandir}/man8/pop3d.8*
+%{_mandir}/man8/pop3d-ssl.8*
 %attr(755,root,root) %{_datadir}/courierwebadmin/admin-45pop3.pl
 %{_datadir}/courierwebadmin/admin-45pop3.html
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pop3d
