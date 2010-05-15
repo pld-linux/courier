@@ -30,7 +30,10 @@ BuildRequires:	automake
 BuildRequires:	courier-authlib-devel >= 0.61
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
+BuildRequires:	gdbm-devel
 BuildRequires:	gettext-devel
+BuildRequires:	gnet-devel
+BuildRequires:	gnupg
 BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	mailcap
@@ -41,6 +44,7 @@ BuildRequires:	openssl-tools-perl >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	pcre-devel
 BuildRequires:	perl-devel
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
@@ -669,7 +673,7 @@ fi
 %dir %{_libdir}
 %dir %{_libdir}/courier
 %dir %{_datadir}
-%attr(755,root,root) %dir %{_datadir}/courierwebadmin
+%dir %{_datadir}/courierwebadmin
 %{_datadir}/courierwebadmin/admin-15*
 %dir %{_libdir}/filters
 %attr(755,daemon,daemon) %{_libdir}/filters/*
