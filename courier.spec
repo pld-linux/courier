@@ -211,7 +211,7 @@ WebMLM is a service that offers an alternative web-based access to
 some couriermlm commands, as an alternative to submitting them via
 E-mail.
 
-%description webmail -l pl.UTF-8
+%description webmlm -l pl.UTF-8
 WebMLM to serwis oferujący dostęp WWW do wybranych poleceń couriermlm
 jako alternatywę do wysyłania ich poprzez e-mail.
 
