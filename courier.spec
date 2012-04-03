@@ -15,7 +15,7 @@ Version:	0.67.0
 Release:	1
 License:	GPL
 Group:		Networking/Daemons
-Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
 # Source0-md5:	c2e26499f9f48577aa7a0735f5e96997
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
