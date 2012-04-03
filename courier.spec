@@ -11,12 +11,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.64.2
-Release:	3
+Version:	0.67.0
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://dl.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	b553606fb5cbc3aa3ca16f50992db533
+# Source0-md5:	c2e26499f9f48577aa7a0735f5e96997
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -740,7 +740,7 @@ fi
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnsubjectwarn.txt
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dsnheader.txt
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/module.dsn
-%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rfcerr*.txt
+#%attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/rfcerr*.txt
 %dir %{_libdir}/courier/modules/dsn
 %attr(755,root,root) %{_libdir}/courier/modules/dsn/courierdsn
 %attr(4550,daemon,daemon) %{_libdir}/courier/submitmkdir
