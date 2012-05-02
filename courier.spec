@@ -62,7 +62,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_certsdir	%{_sysconfdir}/certs
 
 %define		_webapps	/etc/webapps
-%define		_cgibindir	%{_prefix}/lib/cgi-bin
+%define		_cgibindir	/usr/lib/cgi-bin
 %define		_imagedir	%{_datadir}/sqwebmail/images
 %define		_imageurl	/webmail
 
@@ -336,7 +336,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 umask 022
 install -d -p $RPM_BUILD_ROOT/etc/{cron.hourly,pam.d,rc.d/init.d} \
-	$RPM_BUILD_ROOT{%{_prefix}/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
+	$RPM_BUILD_ROOT{/usr/lib,%{_cgibindir},%{_webapps}/courier-webmail,%{_sysconfdir}/hosteddomains} \
 	$RPM_BUILD_ROOT{/etc/cron.hourly,%{_certsdir}}
 
 %{__make} -j1 install \
@@ -430,7 +430,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/calendarmode
 install courier.sysvinit $RPM_BUILD_ROOT/etc/rc.d/init.d/courier
 
 # sendmail soft links
-ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT%{_prefix}/lib/sendmail
+ln -sf %{_sbindir}/sendmail $RPM_BUILD_ROOT/usr/lib/sendmail
 
 # fix rmail link
 rm -f $RPM_BUILD_ROOT%{_bindir}/rmail
@@ -780,7 +780,7 @@ fi
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared
 %attr(755,daemon,daemon) %dir %{_sysconfdir}/shared.tmp
 %attr(755,daemon,daemon) %dir %{_localstatedir}/track
-%attr(755,root,root) %{_prefix}/lib/sendmail
+/usr/lib/sendmail
 
 %files pop3d
 %defattr(644,root,root,755)
