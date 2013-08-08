@@ -11,12 +11,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.67.0
-Release:	2
+Version:	0.71
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	c2e26499f9f48577aa7a0735f5e96997
+# Source0-md5:	a6b70e477f862345fd65c5dc9c085d82
 Patch0:		%{name}-openssl-path.patch
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
@@ -24,6 +24,7 @@ Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
 Patch6:		%{name}-db.patch
+Patch7:		%{name}-werror.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -279,6 +280,7 @@ potrzebny do filtrowania przychodzącej poczty.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 echo "
 Alias /webmail %{_imagedir}
