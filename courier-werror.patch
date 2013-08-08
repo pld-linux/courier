@@ -1,0 +1,24 @@
+diff -ur courier-0.71.orig/webmail/pcp.c courier-0.71/webmail/pcp.c
+--- courier-0.71.orig/webmail/pcp.c	2011-04-04 13:03:52.000000000 +0000
++++ courier-0.71/webmail/pcp.c	2013-08-08 07:18:41.645108559 +0000
+@@ -1518,7 +1518,7 @@
+ 			printf("</span></td><td width=\"30\">&nbsp;</td><td width=\"100%%\"><span class=\"tt\">");
+ 			if (p->address && strcmp(p->address, "@"))
+ 			{
+-				printf(getarg("CONFLICTERR2"));
++				printf("%s", getarg("CONFLICTERR2"));
+ 				print_safe(p->address);
+ 			}
+ 			else
+diff -ur courier-0.71.orig/webmail/sqwebmail.c courier-0.71/webmail/sqwebmail.c
+--- courier-0.71.orig/webmail/sqwebmail.c	2011-04-04 13:03:52.000000000 +0000
++++ courier-0.71/webmail/sqwebmail.c	2013-08-08 07:33:56.217108557 +0000
+@@ -1097,7 +1097,7 @@
+ 				c=strchr(c, '.');
+ 				if (c)
+ 				{
+-					printf(sep);
++					printf("%s", sep);
+ 					print_safe(c+1);
+ 				}
+ 			}
