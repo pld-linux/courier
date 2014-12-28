@@ -32,7 +32,7 @@ BuildRequires:	courier-authlib-devel >= 0.61
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
 BuildRequires:	gdbm-devel
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	gnet-devel
 BuildRequires:	gnupg
 BuildRequires:	libstdc++-devel
