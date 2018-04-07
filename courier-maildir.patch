@@ -1,6 +1,5 @@
-diff -urN courier-0.64.2.orig//courier/courierd.dist.in courier-0.64.2/courier/courierd.dist.in
---- courier-0.64.2.orig//courier/courierd.dist.in	2009-11-08 19:14:47.000000000 +0100
-+++ courier-0.64.2/courier/courierd.dist.in	2010-05-08 23:27:21.826603250 +0200
+--- courier-0.78.2.orig/courier/courierd.dist.in	2009-11-08 19:14:47.000000000 +0100
++++ courier-0.78.2/courier/courierd.dist.in	2010-05-08 23:27:21.826603250 +0200
 @@ -88,9 +88,9 @@
  #  One of the following definitions of DEFAULTDELIVERY should be
  #  uncommented.
@@ -37,45 +36,40 @@ diff -urN courier-0.64.2.orig//courier/courierd.dist.in courier-0.64.2/courier/c
  
  ##NAME: ESMTP_CORK:0
  #
-diff -urN courier-0.64.2.orig//imap/imapd.dist.in courier-0.64.2/imap/imapd.dist.in
---- courier-0.64.2.orig//imap/imapd.dist.in	2008-06-21 18:01:23.000000000 +0200
-+++ courier-0.64.2/imap/imapd.dist.in	2010-05-08 23:27:21.829937594 +0200
+--- courier-0.78.2.orig/libs/imap/imapd.dist.in	2008-06-21 18:01:23.000000000 +0200
++++ courier-0.78.2/libs/imap/imapd.dist.in	2010-05-08 23:27:21.829937594 +0200
 @@ -417,4 +417,4 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
-diff -urN courier-0.64.2.orig//imap/imapd-ssl.dist.in courier-0.64.2/imap/imapd-ssl.dist.in
---- courier-0.64.2.orig//imap/imapd-ssl.dist.in	2009-08-13 00:25:49.000000000 +0200
-+++ courier-0.64.2/imap/imapd-ssl.dist.in	2010-05-08 23:27:21.829937594 +0200
+--- courier-0.78.2.orig/libs/imap/imapd-ssl.dist.in	2009-08-13 00:25:49.000000000 +0200
++++ courier-0.78.2/libs/imap/imapd-ssl.dist.in	2010-05-08 23:27:21.829937594 +0200
 @@ -329,4 +329,4 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
-diff -urN courier-0.64.2.orig//imap/pop3d.dist.in courier-0.64.2/imap/pop3d.dist.in
---- courier-0.64.2.orig//imap/pop3d.dist.in	2005-07-05 14:42:51.000000000 +0200
-+++ courier-0.64.2/imap/pop3d.dist.in	2010-05-08 23:27:21.829937594 +0200
+--- courier-0.78.2.orig/libs/imap/pop3d.dist.in	2005-07-05 14:42:51.000000000 +0200
++++ courier-0.78.2/libs/imap/pop3d.dist.in	2010-05-08 23:27:21.829937594 +0200
 @@ -143,4 +143,4 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
-diff -urN courier-0.64.2.orig//imap/pop3d-ssl.dist.in courier-0.64.2/imap/pop3d-ssl.dist.in
---- courier-0.64.2.orig//imap/pop3d-ssl.dist.in	2009-08-13 00:25:49.000000000 +0200
-+++ courier-0.64.2/imap/pop3d-ssl.dist.in	2010-05-08 23:27:21.835978217 +0200
+--- courier-0.78.2.orig/libs/imap/pop3d-ssl.dist.in	2009-08-13 00:25:49.000000000 +0200
++++ courier-0.78.2/libs/imap/pop3d-ssl.dist.in	2010-05-08 23:27:21.835978217 +0200
 @@ -315,4 +315,4 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
-diff -urN courier-0.64.2.orig//pcp/pcpd.c courier-0.64.2/pcp/pcpd.c
---- courier-0.64.2.orig//pcp/pcpd.c	2006-01-24 00:22:10.000000000 +0100
-+++ courier-0.64.2/pcp/pcpd.c	2010-05-08 23:27:21.835978217 +0200
+--- courier-0.78.2.orig/libs/pcp/pcpd.c	2006-01-24 00:22:10.000000000 +0100
++++ courier-0.78.2/libs/pcp/pcpd.c	2010-05-08 23:27:21.835978217 +0200
 @@ -2187,10 +2187,10 @@
  		exit(1);
  	}
@@ -89,9 +83,8 @@ diff -urN courier-0.64.2.orig//pcp/pcpd.c courier-0.64.2/pcp/pcpd.c
  			strerror(errno));
  		maildir_cache_cancel();
  		exit(1);
-diff -urN courier-0.64.2.orig//webmail/auth.c courier-0.64.2/webmail/auth.c
---- courier-0.64.2.orig//webmail/auth.c	2009-06-27 18:32:50.000000000 +0200
-+++ courier-0.64.2/webmail/auth.c	2010-05-08 23:27:21.835978217 +0200
+--- courier-0.78.2.orig/libs/sqwebmail/auth.c	2009-06-27 18:32:50.000000000 +0200
++++ courier-0.78.2/libs/sqwebmail/auth.c	2010-05-08 23:27:21.835978217 +0200
 @@ -79,7 +79,7 @@
  	if (!maildir || !*maildir)
  		maildir=getenv("MAILDIRPATH");
@@ -101,9 +94,8 @@ diff -urN courier-0.64.2.orig//webmail/auth.c courier-0.64.2/webmail/auth.c
  	if (chdir(maildir))	return (-1);
  	maildir_loginexec();
  	return (0);
-diff -urN courier-0.64.2.orig//webmail/sqwebmaild.dist.in courier-0.64.2/webmail/sqwebmaild.dist.in
---- courier-0.64.2.orig//webmail/sqwebmaild.dist.in	2007-02-10 04:16:35.000000000 +0100
-+++ courier-0.64.2/webmail/sqwebmaild.dist.in	2010-05-08 23:27:21.835978217 +0200
+--- courier-0.78.2.orig/libs/sqwebmail/sqwebmaild.dist.in	2007-02-10 04:16:35.000000000 +0100
++++ courier-0.78.2/libs/sqwebmail/sqwebmaild.dist.in	2010-05-08 23:27:21.835978217 +0200
 @@ -32,7 +32,7 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
@@ -113,9 +105,8 @@ diff -urN courier-0.64.2.orig//webmail/sqwebmaild.dist.in courier-0.64.2/webmail
  
  ##NAME: SQWEBMAIL_PREFORK:0
  #
-diff -urN courier-0.64.2.orig//webmail/sqwebmail.h courier-0.64.2/webmail/sqwebmail.h
---- courier-0.64.2.orig//webmail/sqwebmail.h	2007-02-24 20:02:59.000000000 +0100
-+++ courier-0.64.2/webmail/sqwebmail.h	2010-05-08 23:27:21.835978217 +0200
+--- courier-0.78.2.orig/libs/sqwebmail/sqwebmail.h	2007-02-24 20:02:59.000000000 +0100
++++ courier-0.78.2/libs/sqebmail/sqwebmail.h	2010-05-08 23:27:21.835978217 +0200
 @@ -25,7 +25,7 @@
  
  /* Location of the user's Maildir */

@@ -1,0 +1,33 @@
+--- courier-0.78.2/courier/filters/Makefile.am.orig	2018-03-31 19:59:51.810312201 +0200
++++ courier-0.78.2/courier/filters/Makefile.am	2018-03-31 20:42:30.043616328 +0200
+@@ -21,7 +21,7 @@
+ 
+ noinst_SCRIPTS=courierfilter.start
+ 
+-filterbindir=$(libexecdir)/filters
++filterbindir=$(libexecdir)/courier/filters
+ filterbin_PROGRAMS=dupfilter ratefilter verifyfilter
+ 
+ filtersocketdir=$(localstatedir)/filters
+--- courier-0.78.2/courier/filters/filterctl.in.orig	2018-03-31 20:43:07.570282562 +0200
++++ courier-0.78.2/courier/filters/filterctl.in	2018-03-31 20:43:10.143615867 +0200
+@@ -11,7 +11,7 @@
+ localstatedir="@localstatedir@"
+ piddir="@piddir@"
+ 
+-filterbindir="${libexecdir}/filters"
++filterbindir="${libexecdir}/courier/filters"
+ filteractivedir="${sysconfdir}/filters/active"
+ pidfile="${piddir}/courierfilter.pid"
+ 
+--- courier-0.78.2/courier/filters/perlfilter/Makefile.am.orig	2018-03-31 19:59:58.226978796 +0200
++++ courier-0.78.2/courier/filters/perlfilter/Makefile.am	2018-03-31 20:43:48.556948764 +0200
+@@ -9,7 +9,7 @@
+ 
+ CLEANFILES=$(BUILT_SOURCES) permissions.dat
+ 
+-filterbindir=$(libexecdir)/filters
++filterbindir=$(libexecdir)/courier/filters
+ filterbin_PROGRAMS=@perlfilter_prog@
+ 
+ scriptdir=$(datadir)

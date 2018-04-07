@@ -1,6 +1,5 @@
-diff -urN courier-0.64.2.orig//courier/configure.in courier-0.64.2/courier/configure.in
---- courier-0.64.2.orig//courier/configure.in	2010-01-09 22:13:40.000000000 +0100
-+++ courier-0.64.2/courier/configure.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/configure.ac	2010-01-09 22:13:40.000000000 +0100
++++ courier-0.78.2/courier/configure.ac	2010-05-08 23:31:10.355976183 +0200
 @@ -480,6 +480,12 @@
  eval "datarootdir=$datarootdir"
  eval "bindir=$bindir"
@@ -14,9 +13,8 @@ diff -urN courier-0.64.2.orig//courier/configure.in courier-0.64.2/courier/confi
  
  MAILDROP="$bindir/maildrop"
  AC_SUBST(MAILDROP)
-diff -urN courier-0.64.2.orig//courier/imapd-ssl.rc.in courier-0.64.2/courier/imapd-ssl.rc.in
---- courier-0.64.2.orig//courier/imapd-ssl.rc.in	2010-05-08 23:30:54.599915374 +0200
-+++ courier-0.64.2/courier/imapd-ssl.rc.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/imapd-ssl.rc.in	2010-05-08 23:30:54.599915374 +0200
++++ courier-0.78.2/courier/imapd-ssl.rc.in	2010-05-08 23:31:10.355976183 +0200
 @@ -28,6 +28,11 @@
  
  case $1 in
@@ -29,9 +27,8 @@ diff -urN courier-0.64.2.orig//courier/imapd-ssl.rc.in courier-0.64.2/courier/im
  	umask $IMAP_UMASK
  	@ULIMIT@ $IMAP_ULIMITD
  	@SETENV@ -i @SHELL@ -c " set -a ;
-diff -urN courier-0.64.2.orig//courier/module.esmtp/configure.in courier-0.64.2/courier/module.esmtp/configure.in
---- courier-0.64.2.orig//courier/module.esmtp/configure.in	2008-07-12 22:17:24.000000000 +0200
-+++ courier-0.64.2/courier/module.esmtp/configure.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/module.esmtp/configure.ac	2008-07-12 22:17:24.000000000 +0200
++++ courier-0.78.2/courier/module.esmtp/configure.ac	2010-05-08 23:31:10.355976183 +0200
 @@ -287,6 +287,11 @@
  AC_SUBST(mydatadir)   # Quell automake warning
  
@@ -44,9 +41,8 @@ diff -urN courier-0.64.2.orig//courier/module.esmtp/configure.in courier-0.64.2/
  dnl
  dnl  Check what libraries are available
  dnl
-diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd.dist.in courier-0.64.2/courier/module.esmtp/esmtpd.dist.in
---- courier-0.64.2.orig//courier/module.esmtp/esmtpd.dist.in	2010-02-02 23:30:00.000000000 +0100
-+++ courier-0.64.2/courier/module.esmtp/esmtpd.dist.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/module.esmtp/esmtpd.dist.in	2010-02-02 23:30:00.000000000 +0100
++++ courier-0.78.2/courier/module.esmtp/esmtpd.dist.in	2010-05-08 23:31:10.355976183 +0200
 @@ -242,7 +242,7 @@
  #
  # This is an experimental feature.
@@ -56,9 +52,8 @@ diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd.dist.in courier-0.64.
  
  ##NAME: TLS_TRUSTCERTS:0
  #
-diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.dist.in courier-0.64.2/courier/module.esmtp/esmtpd-ssl.dist.in
---- courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.dist.in	2010-02-02 23:30:00.000000000 +0100
-+++ courier-0.64.2/courier/module.esmtp/esmtpd-ssl.dist.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/module.esmtp/esmtpd-ssl.dist.in	2010-02-02 23:30:00.000000000 +0100
++++ courier-0.78.2/courier/module.esmtp/esmtpd-ssl.dist.in	2010-05-08 23:31:10.355976183 +0200
 @@ -269,7 +269,7 @@
  #
  # This is an experimental feature.
@@ -68,9 +63,8 @@ diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.dist.in courier-0
  
  ##NAME: TLS_TRUSTCERTS:0
  #
-diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.in courier-0.64.2/courier/module.esmtp/esmtpd-ssl.in
---- courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:30:54.612778263 +0200
-+++ courier-0.64.2/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.78.2/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -25,6 +25,10 @@
  
  case $1 in
@@ -82,70 +76,37 @@ diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd-ssl.in courier-0.64.2
  	;;
  stop)
  	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
-diff -urN courier-0.64.2.orig//courier/module.esmtp/mkesmtpdcert.in courier-0.64.2/courier/module.esmtp/mkesmtpdcert.in
---- courier-0.64.2.orig//courier/module.esmtp/mkesmtpdcert.in	2007-11-04 22:17:03.000000000 +0100
-+++ courier-0.64.2/courier/module.esmtp/mkesmtpdcert.in	2010-05-08 23:31:10.355976183 +0200
-@@ -16,38 +16,38 @@
- 	test -x @CERTTOOL@ || exit 0
+--- courier-0.78.2/courier/module.esmtp/mkesmtpdcert.in.orig	2018-03-25 10:15:59.986631408 +0200
++++ courier-0.78.2/courier/module.esmtp/mkesmtpdcert.in	2018-03-25 11:27:37.983248999 +0200
+@@ -11,7 +11,7 @@
+ PEMFILE="$1"
+ 
+ if [ -z "$PEMFILE" ]; then
+-	PEMFILE=@mydatadir@/esmtpd.pem
++	PEMFILE=@certsdir@/esmtpd.pem
  fi
  
--if test -f @mydatadir@/esmtpd.pem
-+if test -f @certsdir@/esmtpd.pem
- then
--	echo "@mydatadir@/esmtpd.pem already exists."
-+	echo "@certsdir@/esmtpd.pem already exists."
- 	exit 1
- fi
- 
- cleanup() {
--	rm -f @mydatadir@/esmtpd.rand
--	rm -f @mydatadir@/esmtpd.pem
--	rm -f @mydatadir@/esmtpd.key
--	rm -f @mydatadir@/esmtpd.cert
-+	rm -f @certsdir@/esmtpd.rand
-+	rm -f @certsdir@/esmtpd.pem
-+	rm -f @certsdir@/esmtpd.key
-+	rm -f @certsdir@/esmtpd.cert
+ if test "@ssllib@" = "openssl"
+@@ -35,7 +35,7 @@
  	exit 1
  }
  
 -cd @mydatadir@
 +cd @certsdir@
- 
- if test "@ssllib@" = "openssl"
- then
--	cp /dev/null @mydatadir@/esmtpd.pem
--	chmod 600 @mydatadir@/esmtpd.pem
--	chown @mailuser@ @mydatadir@/esmtpd.pem
--	dd if=@RANDOMV@ of=@mydatadir@/esmtpd.rand count=1 2>/dev/null
-+	cp /dev/null @certsdir@/esmtpd.pem
-+	chmod 600 @certsdir@/esmtpd.pem
-+	chown @mailuser@ @certsdir@/esmtpd.pem
-+	dd if=@RANDOMV@ of=@certsdir@/esmtpd.rand count=1 2>/dev/null
- 	@OPENSSL@ req -new -x509 -days 365 -nodes \
--		  -config @sysconfdir@/esmtpd.cnf -out @mydatadir@/esmtpd.pem -keyout @mydatadir@/esmtpd.pem || cleanup
--	@OPENSSL@ gendh -rand @mydatadir@/esmtpd.rand 512 >>@mydatadir@/esmtpd.pem || cleanup
--	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @mydatadir@/esmtpd.pem || cleanup
+ umask 077
+ BITS="$BITS"
+ set -e
+@@ -50,7 +50,7 @@
+ 		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE" -keyout "$PEMFILE" || cleanup
+ 	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand 512 >>"$PEMFILE" || cleanup
+ 	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in "$PEMFILE" || cleanup
 -	rm -f @mydatadir@/esmtpd.rand
-+		  -config @sysconfdir@/esmtpd.cnf -out @certsdir@/esmtpd.pem -keyout @certsdir@/esmtpd.pem || cleanup
-+	@OPENSSL@ gendh -rand @certsdir@/esmtpd.rand 512 >>@certsdir@/esmtpd.pem || cleanup
-+	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in @certsdir@/esmtpd.pem || cleanup
 +	rm -f @certsdir@/esmtpd.rand
  else
--	cp /dev/null @mydatadir@/esmtpd.key
--	chmod 600 @mydatadir@/esmtpd.key
--	cp /dev/null @mydatadir@/esmtpd.cert
--	chmod 600 @mydatadir@/esmtpd.cert
-+	cp /dev/null @certsdir@/esmtpd.key
-+	chmod 600 @certsdir@/esmtpd.key
-+	cp /dev/null @certsdir@/esmtpd.cert
-+	chmod 600 @certsdir@/esmtpd.cert
- 
- 	@CERTTOOL@ --generate-privkey --outfile esmtpd.key
- 	@CERTTOOL@ --generate-self-signed --load-privkey esmtpd.key --outfile esmtpd.cert --template @sysconfdir@/esmtpd.cnf
-diff -urN courier-0.64.2.orig//courier/pop3d-ssl.in courier-0.64.2/courier/pop3d-ssl.in
---- courier-0.64.2.orig//courier/pop3d-ssl.in	2010-05-08 23:30:54.612778263 +0200
-+++ courier-0.64.2/courier/pop3d-ssl.in	2010-05-08 23:31:10.355976183 +0200
+ 	if test "$BITS" = ""
+ 	then
+--- courier-0.78.2.orig/courier/pop3d-ssl.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.78.2/courier/pop3d-ssl.in	2010-05-08 23:31:10.355976183 +0200
 @@ -29,6 +29,11 @@
  
  case $1 in
@@ -158,9 +119,8 @@ diff -urN courier-0.64.2.orig//courier/pop3d-ssl.in courier-0.64.2/courier/pop3d
  	exec @SETENV@ -i PATH="$PATH" SHELL="$SHELL" \
  		@SHELL@ -c " set -a ; \
  		prefix=@prefix@ ; \
-diff -urN courier-0.64.2.orig//courier.sysvinit.in courier-0.64.2/courier.sysvinit.in
---- courier-0.64.2.orig//courier.sysvinit.in	2010-05-08 23:30:54.612778263 +0200
-+++ courier-0.64.2/courier.sysvinit.in	2010-05-08 23:31:10.355976183 +0200
+--- courier-0.78.2.orig/courier.sysvinit.in	2010-05-08 23:30:54.612778263 +0200
++++ courier-0.78.2/courier.sysvinit.in	2010-05-08 23:31:10.355976183 +0200
 @@ -18,7 +18,7 @@
  sbindir="@sbindir@"
  bindir="@bindir@"
