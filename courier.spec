@@ -1,18 +1,19 @@
 # TODO
-# - update dependencies
 # - doesn't -webadmin need webserver integration?
 # - use rc-scripts in %%post scriptlets
 # - init.d script, pre and post for webmlm?
 #
 # Conditional build:
 %bcond_without	fam		# with fam support
+%bcond_with	gnutls		# GnuTLS instead of OpenSSL
+%bcond_with	socks		# (Courier) Socks support
 %bcond_with	tests		# without tests
 #
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	0.78.2
-Release:	0.1
+Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -27,26 +28,34 @@ URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel >= 0.61
+%{?with_socks:BuildRequires:	courier-sox-devel}
+BuildRequires:	courier-unicode-devel >= 2.0
+BuildRequires:	db-devel
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
-BuildRequires:	gdbm-devel
 BuildRequires:	gettext-tools
-BuildRequires:	gnet-devel
+# or gnupg2 when --with-gpg2
 BuildRequires:	gnupg
-BuildRequires:	libstdc++-devel
+%{?with_gnutls:BuildRequires:	gnutls-devel >= 3.0}
+%{?with_gnutls:BuildRequires:	libgcrypt-devel}
+%{?with_gnutls:BuildRequires:	libgpg-error-devel}
+BuildRequires:	libidn-devel >= 0.0.0
+BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	libtool >= 2:1.5
 BuildRequires:	mailcap
 BuildRequires:	openldap-devel >= 2.3.0
-BuildRequires:	openssl-devel >= 0.9.7d
+%{!?with_gnutls:BuildRequires:	openssl-devel >= 0.9.7d}
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	pcre-devel
-BuildRequires:	perl-devel
+BuildRequires:	perl-devel >= 5
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
+# even if using OpenSSL libraries, Courier uses certtool from GnuTLS
+Requires:	/usr/bin/certtool
 Requires:	rc-scripts
 Provides:	smtpdaemon
 Obsoletes:	smtpdaemon
@@ -270,6 +279,12 @@ Summary:	Courier fax support
 Summary(pl.UTF-8):	Obsługa faksów dla Couriera
 Group:		Applications/Mail
 Requires:	%{name} = %{version}-%{release}
+Requires:	ghostscript
+Requires:	groff
+Requires:	netpbm-progs
+#Requires:	/usr/bin/sendfax
+# pdftops
+Suggests:	poppler-progs
 
 %description fax
 This package adds support for faxing E-mail messages. It allows to
@@ -319,16 +334,25 @@ find -type f -a -name configure.ac | while read FILE; do
 done
 
 %configure \
+	CERTTOOL=/usr/bin/certtool \
+	GROPS=/usr/bin/grops \
+	GS=/usr/bin/gs \
+	PNMSCALE=/usr/bin/pnmscale \
+	OPENSSL=/usr/bin/openssl \
+	SENDFAX=/usr/bin/sendfax \
 	--datadir=%{_datadir}/courier \
 	--enable-imagedir=%{_imagedir} \
 	--enable-imageurl=%{_imageurl} \
+	--enable-mimetypes=/etc/mime.types \
 	--with-certsdir=%{_certsdir} \
 	--with-db=db \
+	%{?with_gnutls:--with-gnutls} \
 	--with-mailer=%{_sbindir}/sendmail \
 	--with-mailgid=2 \
 	--with-mailgroup=daemon \
 	--with-mailuid=2 \
-	--with-mailuser=daemon
+	--with-mailuser=daemon \
+	%{!?with_socks:--without-socks}
 
 %{__make} -j1
 %{?with_tests:%{__make} -j1 check}
