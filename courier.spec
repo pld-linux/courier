@@ -13,7 +13,7 @@ Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	0.78.2
-Release:	3
+Release:	4
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
