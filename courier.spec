@@ -12,12 +12,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.78.3
+Version:	1.0.3
 Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	d321cead3aae2da45a8a8f9a6bf0b3d3
+# Source0-md5:	54c3ce292169f3de3b0f285f64362dbd
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
@@ -29,7 +29,7 @@ BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 BuildRequires:	courier-authlib-devel >= 0.61
 %{?with_socks:BuildRequires:	courier-sox-devel}
-BuildRequires:	courier-unicode-devel >= 2.0
+BuildRequires:	courier-unicode-devel >= 2.1
 BuildRequires:	db-devel
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
@@ -59,6 +59,7 @@ Requires:	/usr/bin/certtool
 Requires:	rc-scripts
 Provides:	smtpdaemon
 Obsoletes:	smtpdaemon
+Conflicts:	cone < 1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_localstatedir	/var/spool/courier
@@ -352,6 +353,7 @@ done
 	--with-mailgroup=daemon \
 	--with-mailuid=2 \
 	--with-mailuser=daemon \
+	--with-notice=unicode \
 	%{!?with_socks:--without-socks}
 
 %{__make} -j1
