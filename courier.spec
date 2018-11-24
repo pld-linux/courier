@@ -12,12 +12,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	0.78.2
-Release:	4
+Version:	0.78.3
+Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	6e8e8617cccc152c2b03f8faf3e5d2e7
+# Source0-md5:	d321cead3aae2da45a8a8f9a6bf0b3d3
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
