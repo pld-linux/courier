@@ -27,7 +27,7 @@ Patch6:		%{name}-filterbindir.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
-BuildRequires:	courier-authlib-devel >= 0.61
+BuildRequires:	courier-authlib-devel >= 0.66
 %{?with_socks:BuildRequires:	courier-sox-devel}
 BuildRequires:	courier-unicode-devel >= 2.1
 BuildRequires:	db-devel
@@ -56,6 +56,8 @@ BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
 # even if using OpenSSL libraries, Courier uses certtool from GnuTLS
 Requires:	/usr/bin/certtool
+Requires:	courier-authlib >= 0.66
+Requires:	courier-unicode >= 2.1
 Requires:	rc-scripts
 Provides:	smtpdaemon
 Obsoletes:	smtpdaemon
