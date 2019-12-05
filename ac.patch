@@ -1,0 +1,22 @@
+--- courier-1.0.9/libs/pcp/configure.ac~	2018-07-29 04:31:27.000000000 +0200
++++ courier-1.0.9/libs/pcp/configure.ac	2019-12-05 22:20:54.236362325 +0100
+@@ -23,7 +23,7 @@
+ 
+ CFLAGS="-I.. -I${srcdir}/.. -I$srcdir/../.. -I../.. $CFLAGS"
+ ALL_LINGUAS=""
+-AM_GNU_GETTEXT
++AM_GNU_GETTEXT([external])
+ 
+ AC_PATH_PROGS(COURIERAUTHCONFIG, courierauthconfig)
+ 
+--- courier-1.0.9/libs/sqwebmail/configure.ac~	2019-08-29 02:09:32.000000000 +0200
++++ courier-1.0.9/libs/sqwebmail/configure.ac	2019-12-05 22:33:09.629079684 +0100
+@@ -252,8 +252,6 @@
+   fi
+   AC_DEFINE_UNQUOTED(USE_LIBCHARSET, 1,
+ 	[ Set this to 1 to use libcharset library. ])
+-else
+-  AM_LANGINFO_CODESET
+ fi
+ 
+ dnl Other

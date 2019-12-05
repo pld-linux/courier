@@ -12,18 +12,19 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	1.0.4
+Version:	1.0.9
 Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	2227a73ca745aabef5eb57dda0b0d30d
+# Source0-md5:	3a716dd3eabadb991ffcc4ee9d06afa0
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
 Patch6:		%{name}-filterbindir.patch
+Patch7:		ac.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
@@ -305,6 +306,7 @@ wysyłać faksy wysyłając po prostu e-maila na numertelefonu@fax.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 cat >apache.conf <<EOF
 Alias /webmail %{_imagedir}
@@ -326,7 +328,7 @@ find -type f -a -name configure.ac | while read FILE; do
 		sed -i -e '/_[L]DFLAGS=-static/d' Makefile.am
 	fi
 
-	%{__aclocal}
+	%{__aclocal} -I m4
 	%{__autoconf}
 	if grep -q AC_CONFIG_HEADER configure.ac; then
 		%{__autoheader}
