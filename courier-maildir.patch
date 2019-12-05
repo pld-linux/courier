@@ -54,12 +54,15 @@
 +MAILDIRPATH=Mail/Maildir
 --- courier-0.78.2.orig/libs/imap/pop3d.dist.in	2005-07-05 14:42:51.000000000 +0200
 +++ courier-0.78.2/libs/imap/pop3d.dist.in	2010-05-08 23:27:21.829937594 +0200
-@@ -143,4 +143,4 @@
+@@ -143,7 +143,7 @@
  #
  # MAILDIRPATH - directory name of the maildir directory.
  #
 -MAILDIRPATH=Maildir
 +MAILDIRPATH=Mail/Maildir
+ 
+ ##NAME: MIME_UNICODE_MESSAGE_TYPE:0
+ #
 --- courier-0.78.2.orig/libs/imap/pop3d-ssl.dist.in	2009-08-13 00:25:49.000000000 +0200
 +++ courier-0.78.2/libs/imap/pop3d-ssl.dist.in	2010-05-08 23:27:21.835978217 +0200
 @@ -315,4 +315,4 @@
