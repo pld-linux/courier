@@ -1,6 +1,7 @@
---- courier-0.78.2.orig/courier/configure.ac	2010-01-09 22:13:40.000000000 +0100
-+++ courier-0.78.2/courier/configure.ac	2010-05-08 23:31:10.355976183 +0200
-@@ -480,6 +480,12 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/configure.ac courier-1.0.9/courier/configure.ac
+--- courier-1.0.9.org/courier/configure.ac	2019-06-08 15:03:56.000000000 +0200
++++ courier-1.0.9/courier/configure.ac	2021-05-07 22:54:47.564469723 +0200
+@@ -472,6 +472,12 @@ eval "exec_prefix=$exec_prefix"
  eval "datarootdir=$datarootdir"
  eval "bindir=$bindir"
  eval "localstatedir=$localstatedir"
@@ -13,9 +14,10 @@
  
  MAILDROP="$bindir/maildrop"
  AC_SUBST(MAILDROP)
---- courier-1.0.3/courier/imapd-ssl.rc.in.orig	2018-11-24 08:32:30.698359598 +0100
-+++ courier-1.0.3/courier/imapd-ssl.rc.in	2018-11-24 08:46:40.145016565 +0100
-@@ -27,6 +27,12 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/imapd-ssl.rc.in courier-1.0.9/courier/imapd-ssl.rc.in
+--- courier-1.0.9.org/courier/imapd-ssl.rc.in	2021-05-07 22:54:46.201129431 +0200
++++ courier-1.0.9/courier/imapd-ssl.rc.in	2021-05-07 22:54:47.564469723 +0200
+@@ -27,6 +27,12 @@ fi
  
  case $1 in
  start)
@@ -28,9 +30,10 @@
  	if test "$TLS_CACHEFILE" != ""
  	then
  		rm -f "$TLS_CACHEFILE"
---- courier-0.78.2.orig/courier/module.esmtp/configure.ac	2008-07-12 22:17:24.000000000 +0200
-+++ courier-0.78.2/courier/module.esmtp/configure.ac	2010-05-08 23:31:10.355976183 +0200
-@@ -287,6 +287,11 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/configure.ac courier-1.0.9/courier/module.esmtp/configure.ac
+--- courier-1.0.9.org/courier/module.esmtp/configure.ac	2018-07-29 05:16:41.000000000 +0200
++++ courier-1.0.9/courier/module.esmtp/configure.ac	2021-05-07 22:54:47.564469723 +0200
+@@ -288,6 +288,11 @@ mydatadir="$datadir"
  AC_SUBST(mydatadir)   # Quell automake warning
  
  
@@ -42,31 +45,22 @@
  dnl
  dnl  Check what libraries are available
  dnl
---- courier-0.78.2.orig/courier/module.esmtp/esmtpd.dist.in	2010-02-02 23:30:00.000000000 +0100
-+++ courier-0.78.2/courier/module.esmtp/esmtpd.dist.in	2010-05-08 23:31:10.355976183 +0200
-@@ -242,7 +242,7 @@
- #
- # This is an experimental feature.
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.dist.in courier-1.0.9/courier/module.esmtp/esmtpd-ssl.dist.in
+--- courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.dist.in	2018-11-10 01:50:19.000000000 +0100
++++ courier-1.0.9/courier/module.esmtp/esmtpd-ssl.dist.in	2021-05-07 22:54:47.567803074 +0200
+@@ -236,7 +236,7 @@ COURIERTLS=@bindir@/couriertls
+ # In all cases, $TLS_CERTFILE needs to be linked to one of the existing
+ # certificate files.
  
 -TLS_CERTFILE=@mydatadir@/esmtpd.pem
 +TLS_CERTFILE=@certsdir@/esmtpd.pem
  
- ##NAME: TLS_TRUSTCERTS:0
+ ##NAME: TLS_PRIVATE_KEYFILE:0
  #
---- courier-0.78.2.orig/courier/module.esmtp/esmtpd-ssl.dist.in	2010-02-02 23:30:00.000000000 +0100
-+++ courier-0.78.2/courier/module.esmtp/esmtpd-ssl.dist.in	2010-05-08 23:31:10.355976183 +0200
-@@ -269,7 +269,7 @@
- #
- # This is an experimental feature.
- 
--TLS_CERTFILE=@mydatadir@/esmtpd.pem
-+TLS_CERTFILE=@certsdir@/esmtpd.pem
- 
- ##NAME: TLS_TRUSTCERTS:0
- #
---- courier-0.78.2.orig/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:30:54.612778263 +0200
-+++ courier-0.78.2/courier/module.esmtp/esmtpd-ssl.in	2010-05-08 23:31:10.355976183 +0200
-@@ -25,6 +25,10 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.in courier-1.0.9/courier/module.esmtp/esmtpd-ssl.in
+--- courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.in	2021-05-07 22:54:46.201129431 +0200
++++ courier-1.0.9/courier/module.esmtp/esmtpd-ssl.in	2021-05-07 22:54:47.567803074 +0200
+@@ -24,6 +24,10 @@ export SHELL
  
  case $1 in
  start)
@@ -77,8 +71,21 @@
  	;;
  stop)
  	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
---- courier-0.78.2/courier/module.esmtp/mkesmtpdcert.in.orig	2018-03-25 10:15:59.986631408 +0200
-+++ courier-0.78.2/courier/module.esmtp/mkesmtpdcert.in	2018-03-25 11:27:37.983248999 +0200
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd.dist.in courier-1.0.9/courier/module.esmtp/esmtpd.dist.in
+--- courier-1.0.9.org/courier/module.esmtp/esmtpd.dist.in	2018-11-10 01:50:19.000000000 +0100
++++ courier-1.0.9/courier/module.esmtp/esmtpd.dist.in	2021-05-07 22:54:47.564469723 +0200
+@@ -211,7 +211,7 @@ COURIERTLS=@bindir@/couriertls
+ # In all cases, $TLS_CERTFILE needs to be linked to one of the existing
+ # certificate files.
+ 
+-TLS_CERTFILE=@mydatadir@/esmtpd.pem
++TLS_CERTFILE=@certsdir@/esmtpd.pem
+ 
+ ##NAME: TLS_DHPARAMS:0
+ #
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/mkesmtpdcert.in courier-1.0.9/courier/module.esmtp/mkesmtpdcert.in
+--- courier-1.0.9.org/courier/module.esmtp/mkesmtpdcert.in	2017-01-28 04:06:06.000000000 +0100
++++ courier-1.0.9/courier/module.esmtp/mkesmtpdcert.in	2021-05-07 22:54:47.567803074 +0200
 @@ -11,7 +11,7 @@
  PEMFILE="$1"
  
@@ -88,7 +95,7 @@
  fi
  
  if test "@ssllib@" = "openssl"
-@@ -35,7 +35,7 @@
+@@ -35,7 +35,7 @@ cleanup() {
  	exit 1
  }
  
@@ -97,7 +104,7 @@
  umask 077
  BITS="$BITS"
  set -e
-@@ -50,7 +50,7 @@
+@@ -50,7 +50,7 @@ then
  		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE" -keyout "$PEMFILE" || cleanup
  	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand 512 >>"$PEMFILE" || cleanup
  	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in "$PEMFILE" || cleanup
@@ -106,9 +113,10 @@
  else
  	if test "$BITS" = ""
  	then
---- courier-1.0.3/courier/pop3d-ssl.in.orig	2018-11-24 08:32:30.701692932 +0100
-+++ courier-1.0.3/courier/pop3d-ssl.in	2018-11-24 08:47:26.655016034 +0100
-@@ -28,6 +28,12 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/pop3d-ssl.in courier-1.0.9/courier/pop3d-ssl.in
+--- courier-1.0.9.org/courier/pop3d-ssl.in	2021-05-07 22:54:46.201129431 +0200
++++ courier-1.0.9/courier/pop3d-ssl.in	2021-05-07 22:54:47.567803074 +0200
+@@ -28,6 +28,12 @@ fi
  
  case $1 in
  start)
@@ -121,9 +129,10 @@
  	if test "$TLS_CACHEFILE" != ""
  	then
  		rm -f "$TLS_CACHEFILE"
---- courier-0.78.2.orig/courier.sysvinit.in	2010-05-08 23:30:54.612778263 +0200
-+++ courier-0.78.2/courier.sysvinit.in	2010-05-08 23:31:10.355976183 +0200
-@@ -18,7 +18,7 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier.sysvinit.in courier-1.0.9/courier.sysvinit.in
+--- courier-1.0.9.org/courier.sysvinit.in	2021-05-07 22:54:46.201129431 +0200
++++ courier-1.0.9/courier.sysvinit.in	2021-05-07 22:54:47.567803074 +0200
+@@ -18,7 +18,7 @@ sysconfdir="@sysconfdir@"
  sbindir="@sbindir@"
  bindir="@bindir@"
  libexecdir="@libexecdir@"
@@ -132,7 +141,7 @@
  
  if test ! -f ${sysconfdir}/esmtpd
  then
-@@ -85,7 +85,7 @@
+@@ -92,7 +92,7 @@ start)
  	then
  # If we do not have a certificate, make one up.
  
@@ -141,7 +150,7 @@
  		then
  			if test -x $COURIERTLS
  			then
-@@ -152,7 +152,7 @@
+@@ -159,7 +159,7 @@ start)
  			then
  # If we do not have a certificate, make one up.
  
@@ -150,7 +159,7 @@
  				then
  					echo -n " generating-POP3-SSL-certificate..."
  
-@@ -182,7 +182,7 @@
+@@ -189,7 +189,7 @@ start)
  			then
  # If we do not have a certificate, make one up.
  

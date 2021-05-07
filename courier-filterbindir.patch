@@ -1,17 +1,19 @@
---- courier-0.78.2/courier/filters/Makefile.am.orig	2018-03-31 19:59:51.810312201 +0200
-+++ courier-0.78.2/courier/filters/Makefile.am	2018-03-31 20:42:30.043616328 +0200
-@@ -21,7 +21,7 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/filters/Makefile.am courier-1.0.9/courier/filters/Makefile.am
+--- courier-1.0.9.org/courier/filters/Makefile.am	2019-02-03 21:11:16.000000000 +0100
++++ courier-1.0.9/courier/filters/Makefile.am	2021-05-07 22:54:50.187816338 +0200
+@@ -21,7 +21,7 @@ courierfilterexec_PROGRAMS=courierfilter
  
  noinst_SCRIPTS=courierfilter.start
  
 -filterbindir=$(libexecdir)/filters
 +filterbindir=$(libexecdir)/courier/filters
  filterbin_PROGRAMS=dupfilter ratefilter verifyfilter
+ bin_SCRIPTS=verifysmtp
  
- filtersocketdir=$(localstatedir)/filters
---- courier-0.78.2/courier/filters/filterctl.in.orig	2018-03-31 20:43:07.570282562 +0200
-+++ courier-0.78.2/courier/filters/filterctl.in	2018-03-31 20:43:10.143615867 +0200
-@@ -11,7 +11,7 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/filters/filterctl.in courier-1.0.9/courier/filters/filterctl.in
+--- courier-1.0.9.org/courier/filters/filterctl.in	2018-06-10 03:51:05.000000000 +0200
++++ courier-1.0.9/courier/filters/filterctl.in	2021-05-07 22:54:50.187816338 +0200
+@@ -11,7 +11,7 @@ sysconfdir="@sysconfdir@"
  localstatedir="@localstatedir@"
  piddir="@piddir@"
  
@@ -20,9 +22,10 @@
  filteractivedir="${sysconfdir}/filters/active"
  pidfile="${piddir}/courierfilter.pid"
  
---- courier-0.78.2/courier/filters/perlfilter/Makefile.am.orig	2018-03-31 19:59:58.226978796 +0200
-+++ courier-0.78.2/courier/filters/perlfilter/Makefile.am	2018-03-31 20:43:48.556948764 +0200
-@@ -9,7 +9,7 @@
+diff -urNp -x '*.orig' courier-1.0.9.org/courier/filters/perlfilter/Makefile.am courier-1.0.9/courier/filters/perlfilter/Makefile.am
+--- courier-1.0.9.org/courier/filters/perlfilter/Makefile.am	2018-07-29 05:19:55.000000000 +0200
++++ courier-1.0.9/courier/filters/perlfilter/Makefile.am	2021-05-07 22:54:50.187816338 +0200
+@@ -9,7 +9,7 @@ BUILT_SOURCES=filtersocketdir.h wrapperp
  
  CLEANFILES=$(BUILT_SOURCES) permissions.dat
  
