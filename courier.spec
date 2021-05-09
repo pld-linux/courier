@@ -13,7 +13,7 @@ Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
 Version:	1.0.9
-Release:	1
+Release:	2
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
@@ -985,7 +985,7 @@ fi
 
 %files webmlm
 %defattr(644,root,root,755)
-%attr(700,daemon,daemon) %dir %{_sysconfdir}/webmlmrc
+%attr(700,daemon,daemon) %{_sysconfdir}/webmlmrc
 %attr(755,root,root) %{_bindir}/webmlmd
 %attr(755,root,root) %{_bindir}/webmlmd.rc
 %dir %{_libexecdir}/courier/webmail
