@@ -12,23 +12,22 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	1.0.9
-Release:	4
+Version:	1.1.8
+Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
-Source0:	http://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	3a716dd3eabadb991ffcc4ee9d06afa0
+Source0:	https://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
+# Source0-md5:	13de4bf23524c64f270161d22e59a593
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
 Patch4:		%{name}-start_scripts.patch
 Patch5:		%{name}-certs.patch
 Patch6:		%{name}-filterbindir.patch
-Patch7:		ac.patch
 URL:		http://www.courier-mta.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
-BuildRequires:	courier-authlib-devel >= 0.66
+BuildRequires:	courier-authlib-devel >= 0.71
 %{?with_socks:BuildRequires:	courier-sox-devel}
 BuildRequires:	courier-unicode-devel >= 2.1
 BuildRequires:	db-devel
@@ -48,7 +47,7 @@ BuildRequires:	openldap-devel >= 2.3.0
 %{!?with_gnutls:BuildRequires:	openssl-devel >= 0.9.7d}
 BuildRequires:	openssl-tools >= 0.9.7d
 BuildRequires:	pam-devel
-BuildRequires:	pcre-devel
+BuildRequires:	pcre2-8-devel
 BuildRequires:	perl-devel >= 5
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -57,7 +56,7 @@ BuildRequires:	sysconftool
 Requires(post,preun):	/sbin/chkconfig
 # even if using OpenSSL libraries, Courier uses certtool from GnuTLS
 Requires:	/usr/bin/certtool
-Requires:	courier-authlib >= 0.66
+Requires:	courier-authlib >= 0.71
 Requires:	courier-unicode >= 2.1
 Requires:	rc-scripts
 Provides:	smtpdaemon
@@ -306,7 +305,6 @@ wysyłać faksy wysyłając po prostu e-maila na numertelefonu@fax.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 cat >apache.conf <<EOF
 Alias /webmail %{_imagedir}
@@ -328,7 +326,7 @@ find -type f -a -name configure.ac | while read FILE; do
 		sed -i -e '/_[L]DFLAGS=-static/d' Makefile.am
 	fi
 
-	%{__aclocal} -I m4
+	%{__aclocal} $(test ! -d m4 || echo -I m4)
 	%{__autoconf}
 	if grep -q AC_CONFIG_HEADER configure.ac; then
 		%{__autoheader}
@@ -373,7 +371,7 @@ install -d -p $RPM_BUILD_ROOT/etc/{cron.hourly,pam.d,rc.d/init.d} \
 	DESTDIR=$RPM_BUILD_ROOT
 
 # fix pam problem
-rm -f $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
+%{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/*.authpam
 for X in imap esmtp pop3 webmail calendar
 do
 	cat > $RPM_BUILD_ROOT/etc/pam.d/$X <<'EOF'
@@ -391,6 +389,9 @@ done
 	$RPM_BUILD_ROOT%{_cgibindir}/webmail
 %{__mv} $RPM_BUILD_ROOT%{_libexecdir}/courier/webmail/webadmin \
 	$RPM_BUILD_ROOT%{_cgibindir}/webadmin
+
+# noinst program (as of 1.1.8)
+%{__rm} $RPM_BUILD_ROOT%{_mandir}/man1/maildirwatch.1
 
 # install a cron job to clean out webmail's cache
 install libs/sqwebmail/cron.cmd $RPM_BUILD_ROOT/etc/cron.hourly/courier-webmail-cleancache

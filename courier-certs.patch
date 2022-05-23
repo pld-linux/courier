@@ -30,33 +30,6 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier/imapd-ssl.rc.in courier-1.0.9/c
  	if test "$TLS_CACHEFILE" != ""
  	then
  		rm -f "$TLS_CACHEFILE"
-diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/configure.ac courier-1.0.9/courier/module.esmtp/configure.ac
---- courier-1.0.9.org/courier/module.esmtp/configure.ac	2018-07-29 05:16:41.000000000 +0200
-+++ courier-1.0.9/courier/module.esmtp/configure.ac	2021-05-07 22:54:47.564469723 +0200
-@@ -288,6 +288,11 @@ mydatadir="$datadir"
- AC_SUBST(mydatadir)   # Quell automake warning
- 
- 
-+AC_ARG_WITH(certsdir, [  --with-certsdir Directory where certs are created ],
-+certsdir="$withval", certsdir=$datadir)
-+
-+AC_SUBST(certsdir)
-+
- dnl
- dnl  Check what libraries are available
- dnl
-diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.dist.in courier-1.0.9/courier/module.esmtp/esmtpd-ssl.dist.in
---- courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.dist.in	2018-11-10 01:50:19.000000000 +0100
-+++ courier-1.0.9/courier/module.esmtp/esmtpd-ssl.dist.in	2021-05-07 22:54:47.567803074 +0200
-@@ -236,7 +236,7 @@ COURIERTLS=@bindir@/couriertls
- # In all cases, $TLS_CERTFILE needs to be linked to one of the existing
- # certificate files.
- 
--TLS_CERTFILE=@mydatadir@/esmtpd.pem
-+TLS_CERTFILE=@certsdir@/esmtpd.pem
- 
- ##NAME: TLS_PRIVATE_KEYFILE:0
- #
 diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.in courier-1.0.9/courier/module.esmtp/esmtpd-ssl.in
 --- courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.in	2021-05-07 22:54:46.201129431 +0200
 +++ courier-1.0.9/courier/module.esmtp/esmtpd-ssl.in	2021-05-07 22:54:47.567803074 +0200
@@ -71,30 +44,9 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd-ssl.in cour
  	;;
  stop)
  	${sbindir}/couriertcpd -pid=$SSLPIDFILE -stop
-diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/esmtpd.dist.in courier-1.0.9/courier/module.esmtp/esmtpd.dist.in
---- courier-1.0.9.org/courier/module.esmtp/esmtpd.dist.in	2018-11-10 01:50:19.000000000 +0100
-+++ courier-1.0.9/courier/module.esmtp/esmtpd.dist.in	2021-05-07 22:54:47.564469723 +0200
-@@ -211,7 +211,7 @@ COURIERTLS=@bindir@/couriertls
- # In all cases, $TLS_CERTFILE needs to be linked to one of the existing
- # certificate files.
- 
--TLS_CERTFILE=@mydatadir@/esmtpd.pem
-+TLS_CERTFILE=@certsdir@/esmtpd.pem
- 
- ##NAME: TLS_DHPARAMS:0
- #
 diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/mkesmtpdcert.in courier-1.0.9/courier/module.esmtp/mkesmtpdcert.in
 --- courier-1.0.9.org/courier/module.esmtp/mkesmtpdcert.in	2017-01-28 04:06:06.000000000 +0100
 +++ courier-1.0.9/courier/module.esmtp/mkesmtpdcert.in	2021-05-07 22:54:47.567803074 +0200
-@@ -11,7 +11,7 @@
- PEMFILE="$1"
- 
- if [ -z "$PEMFILE" ]; then
--	PEMFILE=@mydatadir@/esmtpd.pem
-+	PEMFILE=@certsdir@/esmtpd.pem
- fi
- 
- if test "@ssllib@" = "openssl"
 @@ -35,7 +35,7 @@ cleanup() {
  	exit 1
  }
@@ -104,15 +56,6 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier/module.esmtp/mkesmtpdcert.in co
  umask 077
  BITS="$BITS"
  set -e
-@@ -50,7 +50,7 @@ then
- 		  -config @sysconfdir@/esmtpd.cnf -out "$PEMFILE" -keyout "$PEMFILE" || cleanup
- 	@OPENSSL@ dhparam -2 -rand "$PEMFILE".rand 512 >>"$PEMFILE" || cleanup
- 	@OPENSSL@ x509 -subject -dates -fingerprint -noout -in "$PEMFILE" || cleanup
--	rm -f @mydatadir@/esmtpd.rand
-+	rm -f @certsdir@/esmtpd.rand
- else
- 	if test "$BITS" = ""
- 	then
 diff -urNp -x '*.orig' courier-1.0.9.org/courier/pop3d-ssl.in courier-1.0.9/courier/pop3d-ssl.in
 --- courier-1.0.9.org/courier/pop3d-ssl.in	2021-05-07 22:54:46.201129431 +0200
 +++ courier-1.0.9/courier/pop3d-ssl.in	2021-05-07 22:54:47.567803074 +0200

@@ -9,17 +9,16 @@ diff -urN courier-0.64.2.orig//courier/imapd.rc.in courier-0.64.2/courier/imapd.
  	;;
  restart)
  	@courierlogger@ -pid=$PIDFILE -restart
-diff -urN courier-0.64.2.orig//courier/imapd-ssl.rc.in courier-0.64.2/courier/imapd-ssl.rc.in
---- courier-0.64.2.orig//courier/imapd-ssl.rc.in	2005-07-03 00:53:19.000000000 +0200
-+++ courier-0.64.2/courier/imapd-ssl.rc.in	2010-05-08 23:30:04.685962634 +0200
-@@ -49,6 +49,7 @@
+--- courier-1.1.8.orig//courier/imapd-ssl.rc.in	2005-07-03 00:53:19.000000000 +0200
++++ courier-1.1.8/courier/imapd-ssl.rc.in	2010-05-08 23:30:04.685962634 +0200
+@@ -73,6 +73,7 @@ start)
  	;;
  stop)
  	@courierlogger@ -pid=$SSLPIDFILE -stop
 +	rm -f $SSLPIDFILE
  	;;
- esac
- exit 0
+ restart)
+ 	@courierlogger@ -pid=$SSLPIDFILE -restart
 diff -urN courier-0.64.2.orig//courier/module.esmtp/esmtpd.in courier-0.64.2/courier/module.esmtp/esmtpd.in
 --- courier-0.64.2.orig//courier/module.esmtp/esmtpd.in	2009-07-30 04:29:54.000000000 +0200
 +++ courier-0.64.2/courier/module.esmtp/esmtpd.in	2010-05-08 23:30:04.695962596 +0200
