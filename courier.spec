@@ -315,6 +315,8 @@ Alias /webmail %{_imagedir}
 </Directory>
 EOF
 
+%{__rm} libs/pcp/m4/ltversion.m4
+
 %build
 %{__libtoolize}
 # Change Makefile.am files and force recreate Makefile.in's.
