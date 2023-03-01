@@ -72,19 +72,18 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier/pop3d-ssl.in courier-1.0.9/cour
  	if test "$TLS_CACHEFILE" != ""
  	then
  		rm -f "$TLS_CACHEFILE"
-diff -urNp -x '*.orig' courier-1.0.9.org/courier.sysvinit.in courier-1.0.9/courier.sysvinit.in
---- courier-1.0.9.org/courier.sysvinit.in	2021-05-07 22:54:46.201129431 +0200
-+++ courier-1.0.9/courier.sysvinit.in	2021-05-07 22:54:47.567803074 +0200
+--- courier-1.2.2.org/courier.sysvinit.in	2021-05-07 22:54:46.201129431 +0200
++++ courier-1.2.2/courier.sysvinit.in	2021-05-07 22:54:47.567803074 +0200
 @@ -18,7 +18,7 @@ sysconfdir="@sysconfdir@"
  sbindir="@sbindir@"
  bindir="@bindir@"
  libexecdir="@libexecdir@"
 -datadir="@datadir@"
 +certsdir="@certsdir@"
+ localstatedir="@localstatedir@"
+ webadmin="${libexecdir}/courier/webmail/webadmin"
  
- if test ! -f ${sysconfdir}/esmtpd
- then
-@@ -92,7 +92,7 @@ start)
+@@ -102,7 +102,7 @@ start)
  	then
  # If we do not have a certificate, make one up.
  
@@ -93,7 +92,7 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier.sysvinit.in courier-1.0.9/couri
  		then
  			if test -x $COURIERTLS
  			then
-@@ -159,7 +159,7 @@ start)
+@@ -169,7 +169,7 @@ start)
  			then
  # If we do not have a certificate, make one up.
  
@@ -102,7 +101,7 @@ diff -urNp -x '*.orig' courier-1.0.9.org/courier.sysvinit.in courier-1.0.9/couri
  				then
  					echo -n " generating-POP3-SSL-certificate..."
  
-@@ -189,7 +189,7 @@ start)
+@@ -199,7 +199,7 @@ start)
  			then
  # If we do not have a certificate, make one up.
  

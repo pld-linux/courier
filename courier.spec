@@ -12,12 +12,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	1.1.8
-Release:	2
+Version:	1.2.2
+Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	https://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	13de4bf23524c64f270161d22e59a593
+# Source0-md5:	4f27683022efc180a8a46cdbca99d3b9
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
@@ -39,9 +39,9 @@ BuildRequires:	gnupg
 %{?with_gnutls:BuildRequires:	gnutls-devel >= 3.0}
 %{?with_gnutls:BuildRequires:	libgcrypt-devel}
 %{?with_gnutls:BuildRequires:	libgpg-error-devel}
-BuildRequires:	libidn-devel >= 0.0.0
+BuildRequires:	libidn2-devel >= 0.0.0
 BuildRequires:	libstdc++-devel >= 6:4.7
-BuildRequires:	libtool >= 2:1.5
+BuildRequires:	libtool >= 2:2
 BuildRequires:	mailcap
 BuildRequires:	openldap-devel >= 2.3.0
 %{!?with_gnutls:BuildRequires:	openssl-devel >= 0.9.7d}
@@ -654,7 +654,6 @@ fi
 %{_docdir}/courier/couriertls.html
 %{_docdir}/courier/deliverquota.html
 %{_docdir}/courier/documentation.html
-%{_docdir}/courier/download.html
 %{_docdir}/courier/index.html
 %{_docdir}/courier/install.html
 %{_docdir}/courier/layout.html
@@ -930,6 +929,7 @@ fi
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/added
 %attr(700,daemon,daemon) %dir %{_sysconfdir}/webadmin/removed
 %attr(400,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/webadmin/password
+%attr(400,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/webadmin/restartauthcmd
 %attr(644,daemon,daemon) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/webadmin/unsecureok
 %attr(755,root,root) %{_datadir}/courier/courierwebadmin/admin-main.pl
 %attr(755,root,root) %{_datadir}/courier/courierwebadmin/admin-save.pl
