@@ -345,6 +345,7 @@ done
 	PNMSCALE=/usr/bin/pnmscale \
 	OPENSSL=/usr/bin/openssl \
 	SENDFAX=/usr/bin/sendfax \
+	WGET=/usr/bin/wget \
 	--datadir=%{_datadir}/courier \
 	--enable-imagedir=%{_imagedir} \
 	--enable-imageurl=%{_imageurl} \
