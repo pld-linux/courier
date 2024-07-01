@@ -53,6 +53,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	sed >= 4.0
 BuildRequires:	sysconftool
+BuildRequires:	wget
 Requires(post,preun):	/sbin/chkconfig
 # even if using OpenSSL libraries, Courier uses certtool from GnuTLS
 Requires:	/usr/bin/certtool
