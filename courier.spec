@@ -300,12 +300,12 @@ wysyłać faksy wysyłając po prostu e-maila na numertelefonu@fax.
 
 %prep
 %setup -q
-%{!?with_fam:%patch1 -p1}
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
+%{!?with_fam:%patch -P1 -p1}
+%patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
 
 cat >apache.conf <<EOF
 Alias /webmail %{_imagedir}
