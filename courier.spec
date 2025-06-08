@@ -12,12 +12,12 @@
 Summary:	Courier mail server
 Summary(pl.UTF-8):	Serwer poczty Courier
 Name:		courier
-Version:	1.2.2
-Release:	3
+Version:	1.4.1
+Release:	1
 License:	GPL v3 with OpenSSL exception
 Group:		Networking/Daemons
 Source0:	https://downloads.sourceforge.net/courier/%{name}-%{version}.tar.bz2
-# Source0-md5:	4f27683022efc180a8a46cdbca99d3b9
+# Source0-md5:	22005051fd8f349cf39eacb8b194dedb
 Patch1:		%{name}-withoutfam.patch
 Patch2:		%{name}-maildir.patch
 Patch3:		%{name}-sendmail_dir.patch
@@ -34,12 +34,12 @@ BuildRequires:	db-devel
 BuildRequires:	expect
 %{?with_fam:BuildRequires:	fam-devel}
 BuildRequires:	gettext-tools
-# or gnupg2 when --with-gpg2
-BuildRequires:	gnupg
+# gpg2 as /usr/bin/gpg
+BuildRequires:	gnupg2 >= 2.2.7
 %{?with_gnutls:BuildRequires:	gnutls-devel >= 3.0}
 %{?with_gnutls:BuildRequires:	libgcrypt-devel}
 %{?with_gnutls:BuildRequires:	libgpg-error-devel}
-BuildRequires:	libidn2-devel >= 0.0.0
+BuildRequires:	libidn2-devel >= 2.0.5
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	libtool >= 2:2
 BuildRequires:	mailcap
@@ -59,6 +59,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	/usr/bin/certtool
 Requires:	courier-authlib >= 0.71
 Requires:	courier-unicode >= 2.1
+Requires:	libidn2 >= 2.0.5
 Requires:	rc-scripts
 Provides:	smtpdaemon
 Obsoletes:	smtpdaemon
@@ -341,6 +342,7 @@ done
 
 %configure \
 	CERTTOOL=/usr/bin/certtool \
+	GPG=/usr/bin/gpg \
 	GROPS=/usr/bin/grops \
 	GS=/usr/bin/gs \
 	PNMSCALE=/usr/bin/pnmscale \
